@@ -5,15 +5,11 @@ class MenuPesquisador(BaseFrame):
 
     """Menu principal"""
 
-    def __init__(self, master, voltar_callback, abrir_tela_pesquisador, abrir_tela_paciente):
+    def __init__(self, master, voltar_callback, abrir_tela_paciente):
         super().__init__(master, titulo="Menu Pesquisador")
 
         self.voltar_callback = voltar_callback
-        self.abrir_tela_pesquisador = abrir_tela_pesquisador
         self.abrir_tela_paciente = abrir_tela_paciente
-
-        self.btn_pesquisador = customtkinter.CTkButton(self.container, text="Cadastrar Pesquisador", width=250, height=40, command=self.abrir_tela_pesquisador, font=("Arial", 20, "bold"))
-        self.btn_pesquisador.grid(row=1, column=0, padx=20, pady=20)
 
         self.btn = customtkinter.CTkButton(self.container, text="Cadastrar Paciente", width=250, height=40, command=self.abrir_tela_paciente, font=("Arial", 20, "bold"))
         self.btn.grid(row=1, column=1, padx=20, pady=20)

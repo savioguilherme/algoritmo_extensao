@@ -5,6 +5,7 @@ from interfacegrafica.menu_principal import MenuPrincipal
 from interfacegrafica.cadastro_paciente import CadastroPaciente
 from interfacegrafica.cadastro_fisioterapeuta import CadastroFisioterapeuta
 from interfacegrafica.cadastro_pesquisador import CadastroPesquisador
+from interfacegrafica.menu_administrador import MenuAdministrador
 from interfacegrafica.menu_pesquisador import MenuPesquisador
 from interfacegrafica.menu_fisioterapeuta import MenuFisioterapeuta
 from armazenamento.guardar import Guardar
@@ -42,15 +43,19 @@ class App(customtkinter.CTk):
 
     def abrir_menu(self):
         self.limpar_tela()
-        self.menu = MenuPrincipal(self, self.abrir_menu_fisioterapeuta, self.abrir_menu_pesquisador, self.abrir_login)
+        self.menu = MenuPrincipal(self, self.abrir_menu_administrador, self.abrir_menu_fisioterapeuta, self.abrir_menu_pesquisador, self.encerrar)
+
+    def abrir_menu_administrador(self):
+        self.limpar_tela()
+        self.tela_fisio = MenuAdministrador(self, self.abrir_menu, self.abrir_tela_fisioterapeuta, self.abrir_tela_pesquisador)
 
     def abrir_menu_fisioterapeuta(self):
         self.limpar_tela()
-        self.tela_fisio = MenuFisioterapeuta(self, self.abrir_menu, self.abrir_tela_fisioterapeuta)
+        self.tela_fisio = MenuFisioterapeuta(self, self.abrir_menu)
 
     def abrir_tela_fisioterapeuta(self):
         self.limpar_tela()
-        self.tela_fisio = CadastroFisioterapeuta(self, self.abrir_menu_fisioterapeuta, self.storage)
+        self.tela_fisio = CadastroFisioterapeuta(self, self.abrir_menu_administrador, self.storage)
 
     def abrir_tela_paciente(self):
         self.limpar_tela()
@@ -58,11 +63,11 @@ class App(customtkinter.CTk):
 
     def abrir_menu_pesquisador(self):
         self.limpar_tela()
-        self.tela_menu_pesquisador = MenuPesquisador(self, self.abrir_menu, self.abrir_tela_pesquisador, self.abrir_tela_paciente)
+        self.tela_menu_pesquisador = MenuPesquisador(self, self.abrir_menu, self.abrir_tela_paciente)
 
     def abrir_tela_pesquisador(self):
         self.limpar_tela()
-        self.tela_pesquisador = CadastroPesquisador(self, self.abrir_menu_pesquisador, self.storage)
+        self.tela_pesquisador = CadastroPesquisador(self, self.abrir_menu_administrador, self.storage)
 
     def encerrar(self): 
         self.destroy()
