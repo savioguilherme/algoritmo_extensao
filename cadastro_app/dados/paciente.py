@@ -1,6 +1,4 @@
 from dados.pessoa import Pessoa
-from dados.pesquisador import Pesquisador
-from dados.fisioterapeuta import Fisioterapeuta
 from dados.agenda import Agenda
 
 class Paciente(Pessoa):
