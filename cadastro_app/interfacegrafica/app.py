@@ -1,14 +1,14 @@
 import customtkinter
 from tkinter import TclError
 from interfacegrafica.login import Login
+from interfacegrafica.menu_administrador import MenuAdministrador
+from interfacegrafica.menu_pesquisador import MenuPesquisador
+from interfacegrafica.menu_fisioterapeuta import MenuFisioterapeuta
 from interfacegrafica.menu_principal import MenuPrincipal
 from interfacegrafica.cadastro_paciente import CadastroPaciente
 from interfacegrafica.cadastro_fisioterapeuta import CadastroFisioterapeuta
 from interfacegrafica.cadastro_pesquisador import CadastroPesquisador
-from interfacegrafica.menu_administrador import MenuAdministrador
-from interfacegrafica.menu_pesquisador import MenuPesquisador
-from interfacegrafica.menu_fisioterapeuta import MenuFisioterapeuta
-from armazenamento.guardar import Guardar
+from armazenamento.armazenamento import Armazenamento
 
 class App(customtkinter.CTk):
 
@@ -33,7 +33,7 @@ class App(customtkinter.CTk):
         self.grid_columnconfigure(0, weight=1)
 
         # Cria o objeto que salva as classes de objetos em listas
-        self.storage = Guardar()
+        self.storage = Armazenamento()
 
         # Inicia o login
         self.abrir_login()
@@ -47,25 +47,25 @@ class App(customtkinter.CTk):
 
     def abrir_menu_administrador(self):
         self.limpar_tela()
-        self.tela_fisio = MenuAdministrador(self, self.abrir_menu, self.abrir_tela_fisioterapeuta, self.abrir_tela_pesquisador)
+        self.tela_fisio = MenuAdministrador(self, self.abrir_menu, self.cadastro_fisioterapeuta, self.cadastro_pesquisador)
 
     def abrir_menu_fisioterapeuta(self):
         self.limpar_tela()
         self.tela_fisio = MenuFisioterapeuta(self, self.abrir_menu)
 
-    def abrir_tela_fisioterapeuta(self):
+    def cadastro_fisioterapeuta(self):
         self.limpar_tela()
         self.tela_fisio = CadastroFisioterapeuta(self, self.abrir_menu_administrador, self.storage)
 
-    def abrir_tela_paciente(self):
+    def cadastro_paciente(self):
         self.limpar_tela()
         self.tela_paciente = CadastroPaciente(self, self.abrir_menu_pesquisador, self.storage)
 
     def abrir_menu_pesquisador(self):
         self.limpar_tela()
-        self.tela_menu_pesquisador = MenuPesquisador(self, self.abrir_menu, self.abrir_tela_paciente)
+        self.tela_menu_pesquisador = MenuPesquisador(self, self.abrir_menu, self.cadastro_paciente)
 
-    def abrir_tela_pesquisador(self):
+    def cadastro_pesquisador(self):
         self.limpar_tela()
         self.tela_pesquisador = CadastroPesquisador(self, self.abrir_menu_administrador, self.storage)
 
