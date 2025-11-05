@@ -8,11 +8,11 @@ class CadastroFisioterapeuta(BaseFrame):
 
     ''' '''
 
-    def __init__(self, master, voltar_callback, storage: Armazenamento):
+    def __init__(self, master, voltar_callback):
         super().__init__(master, "Cadastro de Fisioterapeutas")
 
         self.voltar_callback = voltar_callback
-        self.storage = storage 
+        self.storage = Armazenamento() 
 
         self.label_id = customtkinter.CTkLabel(self.container, text="ID Fisioterapeuta:", font=("Arial", 20, "bold"))
         self.label_id.grid(row=1, column=0, sticky="e", padx=10, pady=10)

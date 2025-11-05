@@ -33,9 +33,6 @@ class App(customtkinter.CTk):
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
 
-        # Cria o objeto que salva as classes de objetos em listas
-        self.storage = Armazenamento()
-
         # Inicia o login
         self.abrir_login()
 
@@ -56,23 +53,23 @@ class App(customtkinter.CTk):
 
     def cadastro_fisioterapeuta(self):
         self.limpar_tela()
-        self.tela_fisio = CadastroFisioterapeuta(self, self.abrir_menu_administrador, self.storage)
+        self.tela_fisio = CadastroFisioterapeuta(self, self.abrir_menu_administrador)
 
     def cadastro_paciente(self):
         self.limpar_tela()
-        self.tela_paciente = CadastroPaciente(self, self.abrir_menu_pesquisador, self.storage)
+        self.tela_paciente = CadastroPaciente(self, self.abrir_menu_pesquisador)
 
     def cadastro_pesquisador(self):
         self.limpar_tela()
-        self.tela_pesquisador = CadastroPesquisador(self, self.abrir_menu_administrador, self.storage)
+        self.tela_pesquisador = CadastroPesquisador(self, self.abrir_menu_administrador)
 
     def listar_fisioterapeutas(self): 
         self.limpar_tela()
-        self.listar_fisioterapeutas = ListarFisioterapeutas(self, self.abrir_menu_administrador)
+        self.tela_listar_fisioterapeutas = ListarFisioterapeutas(self, self.abrir_menu_administrador)
 
     def listar_pesquisadores(self): 
         self.limpar_tela()
-        self.listar_pesquisadores = ListarPesquisadores(self, self.abrir_menu_administrador)
+        self.tela_listar_pesquisadores = ListarPesquisadores(self, self.abrir_menu_administrador)
 
     def encerrar(self): 
         self.destroy()
