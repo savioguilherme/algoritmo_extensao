@@ -9,7 +9,6 @@ from interfacegrafica.cadastro_fisioterapeuta import CadastroFisioterapeuta
 from interfacegrafica.listar_pesquisadores import ListarPesquisadores
 from interfacegrafica.listar_fisioterapeutas import ListarFisioterapeutas
 from interfacegrafica.cadastro_pesquisador import CadastroPesquisador
-from armazenamento.armazenamento import Armazenamento
 
 class App(customtkinter.CTk):
 
@@ -37,15 +36,15 @@ class App(customtkinter.CTk):
         self.abrir_login()
 
     def abrir_login(self):
-        self.login = Login(self, self.abrir_menu_administrador, self.abrir_menu_fisioterapeuta, self.abrir_menu_pesquisador, self.encerrar)
+        self.tela_login = Login(self, self.abrir_menu_administrador, self.abrir_menu_fisioterapeuta, self.abrir_menu_pesquisador, self.encerrar)
 
     def abrir_menu_administrador(self):
         self.limpar_tela()
-        self.tela_fisio = MenuAdministrador(self, self.encerrar, self.cadastro_fisioterapeuta, self.cadastro_pesquisador, self.listar_fisioterapeutas, self.listar_pesquisadores)
+        self.tela_menu_administrador = MenuAdministrador(self, self.encerrar, self.cadastro_fisioterapeuta, self.cadastro_pesquisador, self.listar_fisioterapeutas, self.listar_pesquisadores)
 
     def abrir_menu_fisioterapeuta(self):
         self.limpar_tela()
-        self.tela_fisio = MenuFisioterapeuta(self, self.encerrar)
+        self.tela_menu_fisio = MenuFisioterapeuta(self, self.encerrar)
 
     def abrir_menu_pesquisador(self):
         self.limpar_tela()
@@ -53,15 +52,15 @@ class App(customtkinter.CTk):
 
     def cadastro_fisioterapeuta(self):
         self.limpar_tela()
-        self.tela_fisio = CadastroFisioterapeuta(self, self.abrir_menu_administrador)
+        self.tela_cadastro_fisio = CadastroFisioterapeuta(self, self.abrir_menu_administrador)
 
     def cadastro_paciente(self):
         self.limpar_tela()
-        self.tela_paciente = CadastroPaciente(self, self.abrir_menu_pesquisador)
+        self.tela_cadastro_paciente = CadastroPaciente(self, self.abrir_menu_pesquisador)
 
     def cadastro_pesquisador(self):
         self.limpar_tela()
-        self.tela_pesquisador = CadastroPesquisador(self, self.abrir_menu_administrador)
+        self.tela_cadastro_pesquisador = CadastroPesquisador(self, self.abrir_menu_administrador)
 
     def listar_fisioterapeutas(self): 
         self.limpar_tela()
