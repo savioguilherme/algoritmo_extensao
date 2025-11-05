@@ -6,7 +6,8 @@ from interfacegrafica.menu_pesquisador import MenuPesquisador
 from interfacegrafica.menu_fisioterapeuta import MenuFisioterapeuta
 from interfacegrafica.cadastro_paciente import CadastroPaciente
 from interfacegrafica.cadastro_fisioterapeuta import CadastroFisioterapeuta
-from interfacegrafica.listar_fisioterapeutas import ListarFisioterapeuta
+from interfacegrafica.listar_pesquisadores import ListarPesquisadores
+from interfacegrafica.listar_fisioterapeutas import ListarFisioterapeutas
 from interfacegrafica.cadastro_pesquisador import CadastroPesquisador
 from armazenamento.armazenamento import Armazenamento
 
@@ -43,7 +44,7 @@ class App(customtkinter.CTk):
 
     def abrir_menu_administrador(self):
         self.limpar_tela()
-        self.tela_fisio = MenuAdministrador(self, self.encerrar, self.cadastro_fisioterapeuta, self.cadastro_pesquisador, self.listar_fisioterapeutas)
+        self.tela_fisio = MenuAdministrador(self, self.encerrar, self.cadastro_fisioterapeuta, self.cadastro_pesquisador, self.listar_fisioterapeutas, self.listar_pesquisadores)
 
     def abrir_menu_fisioterapeuta(self):
         self.limpar_tela()
@@ -67,7 +68,11 @@ class App(customtkinter.CTk):
 
     def listar_fisioterapeutas(self): 
         self.limpar_tela()
-        self.listar_fisioterapeutas = ListarFisioterapeuta(self, self.abrir_menu_administrador)
+        self.listar_fisioterapeutas = ListarFisioterapeutas(self, self.abrir_menu_administrador)
+
+    def listar_pesquisadores(self): 
+        self.limpar_tela()
+        self.listar_pesquisadores = ListarPesquisadores(self, self.abrir_menu_administrador)
 
     def encerrar(self): 
         self.destroy()
