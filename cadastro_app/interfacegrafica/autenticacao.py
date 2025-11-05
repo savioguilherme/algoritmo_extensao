@@ -1,4 +1,3 @@
-import pandas as pd
 from armazenamento.armazenamento import Armazenamento
 
 class Autenticacao:
@@ -6,13 +5,14 @@ class Autenticacao:
     """Realiza autenticação de usuários (administrador, pesquisador ou fisioterapeuta)."""
 
     def __init__(self, usuario: str, senha: str):
+        # Instancia de armazemaento
         self.guardar = Armazenamento()
+        #usuario e senha recebidos da classe login
         self.usuario = usuario
         self.senha = senha
 
+    # Verifica se o usuário e senha existem em alguma das abas do Excel.
     def verificar(self):
-        """Verifica se o usuário e senha existem em alguma das abas do Excel."""
-
         abas = ["administradores", "fisioterapeutas", "pesquisadores", "pacientes"]
 
         for aba in abas:
