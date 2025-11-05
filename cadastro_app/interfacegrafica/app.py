@@ -49,17 +49,17 @@ class App(customtkinter.CTk):
         self.limpar_tela()
         self.tela_fisio = MenuFisioterapeuta(self, self.encerrar)
 
+    def abrir_menu_pesquisador(self):
+        self.limpar_tela()
+        self.tela_menu_pesquisador = MenuPesquisador(self, self.encerrar, self.cadastro_paciente)
+
     def cadastro_fisioterapeuta(self):
         self.limpar_tela()
-        self.tela_fisio = CadastroFisioterapeuta(self, self.encerrar, self.storage)
+        self.tela_fisio = CadastroFisioterapeuta(self, self.abrir_menu_administrador, self.storage)
 
     def cadastro_paciente(self):
         self.limpar_tela()
         self.tela_paciente = CadastroPaciente(self, self.abrir_menu_pesquisador, self.storage)
-
-    def abrir_menu_pesquisador(self):
-        self.limpar_tela()
-        self.tela_menu_pesquisador = MenuPesquisador(self, self.abrir_login, self.cadastro_paciente)
 
     def cadastro_pesquisador(self):
         self.limpar_tela()
