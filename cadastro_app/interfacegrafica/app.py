@@ -4,9 +4,9 @@ from interfacegrafica.login import Login
 from interfacegrafica.menu_administrador import MenuAdministrador
 from interfacegrafica.menu_pesquisador import MenuPesquisador
 from interfacegrafica.menu_fisioterapeuta import MenuFisioterapeuta
-from interfacegrafica.menu_principal import MenuPrincipal
 from interfacegrafica.cadastro_paciente import CadastroPaciente
 from interfacegrafica.cadastro_fisioterapeuta import CadastroFisioterapeuta
+from interfacegrafica.listar_fisioterapeutas import ListarFisioterapeuta
 from interfacegrafica.cadastro_pesquisador import CadastroPesquisador
 from armazenamento.armazenamento import Armazenamento
 
@@ -39,19 +39,15 @@ class App(customtkinter.CTk):
         self.abrir_login()
 
     def abrir_login(self):
-        self.login = Login(self, self.abrir_menu, self.encerrar)
-
-    def abrir_menu(self):
-        self.limpar_tela()
-        self.menu = MenuPrincipal(self, self.abrir_menu_administrador, self.abrir_menu_fisioterapeuta, self.abrir_menu_pesquisador, self.encerrar)
+        self.login = Login(self, self.abrir_menu_administrador, self.abrir_menu_fisioterapeuta, self.abrir_menu_pesquisador, self.encerrar)
 
     def abrir_menu_administrador(self):
         self.limpar_tela()
-        self.tela_fisio = MenuAdministrador(self, self.abrir_menu, self.cadastro_fisioterapeuta, self.cadastro_pesquisador)
+        self.tela_fisio = MenuAdministrador(self, self.abrir_login, self.cadastro_fisioterapeuta, self.cadastro_pesquisador, self.listar_fisioterapeutas)
 
     def abrir_menu_fisioterapeuta(self):
         self.limpar_tela()
-        self.tela_fisio = MenuFisioterapeuta(self, self.abrir_menu)
+        self.tela_fisio = MenuFisioterapeuta(self, self.abrir_login)
 
     def cadastro_fisioterapeuta(self):
         self.limpar_tela()
@@ -63,12 +59,16 @@ class App(customtkinter.CTk):
 
     def abrir_menu_pesquisador(self):
         self.limpar_tela()
-        self.tela_menu_pesquisador = MenuPesquisador(self, self.abrir_menu, self.cadastro_paciente)
+        self.tela_menu_pesquisador = MenuPesquisador(self, self.abrir_login, self.cadastro_paciente)
 
     def cadastro_pesquisador(self):
         self.limpar_tela()
         self.tela_pesquisador = CadastroPesquisador(self, self.abrir_menu_administrador, self.storage)
 
+    def listar_fisioterapeutas(self): 
+        self.limpar_tela()
+        self.listar_fisioterapeutas = ListarFisioterapeuta(self, self.abrir_menu_administrador)
+        
     def encerrar(self): 
         self.destroy()
 

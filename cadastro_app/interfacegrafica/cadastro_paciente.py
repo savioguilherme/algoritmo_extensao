@@ -1,6 +1,8 @@
 import customtkinter
 from interfacegrafica.base_frame import BaseFrame
 from armazenamento.armazenamento import Armazenamento
+from dados.paciente import Paciente
+from tkinter import messagebox
 
 class CadastroPaciente(BaseFrame):
 
@@ -31,10 +33,29 @@ class CadastroPaciente(BaseFrame):
         self.btn_voltar.grid(row=3, column=1, padx=20, pady=20)
 
     def salvar_paciente(self):
+        id_paciente = self.entry_id.get().strip()
+        nome = self.entry_nome.get().strip()
 
+        if not (id_paciente and nome):
+            messagebox.showerror("Erro", "Preencha todos os campos antes de salvar!")
+            return
+
+        # Criar o objeto Pesquisador
+        paciente = Paciente(id_paciente, nome)
+
+        # Converter para dicionário simplificado para salvar no Excel
         dados = {
-            "ID": self.entry_id.get(),
-            "Nome": self.entry_nome.get(),
+            "ID": paciente.id_pessoa,
+            "Nome": paciente.nome,
         }
 
-        self.storage.salvar("pacientes", dados)
+        try:
+            self.storage.salvar("pacientes", dados)
+            messagebox.showinfo("Sucesso", f"Paciente '{nome}' cadastrado com sucesso!")
+
+            # Limpar campos
+            self.entry_id.delete(0, "end")
+            self.entry_nome.delete(0, "end")
+
+        except Exception as e:
+            messagebox.showerror("Erro", f"Falha ao salvar os dados: {e}")

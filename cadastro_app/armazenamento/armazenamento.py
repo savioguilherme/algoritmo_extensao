@@ -19,7 +19,7 @@ class Armazenamento:
         """Cria um novo arquivo Excel com abas para cada tipo."""
 
         wb = Workbook()
-        abas = ["pacientes", "pesquisadores", "fisioterapeutas"]
+        abas = ["administrador", "pacientes", "pesquisadores", "fisioterapeutas"]
 
         # Remove a aba padrão criada automaticamente
         padrao = wb.active
