@@ -12,7 +12,7 @@ from interfacegrafica.cadastro_pesquisador import CadastroPesquisador
 
 class App(customtkinter.CTk):
 
-    """Janela principal"""
+    """Janela principal e classe principal"""
 
     # aparencia padrao
     customtkinter.set_default_color_theme("dark-blue")
@@ -35,9 +35,11 @@ class App(customtkinter.CTk):
         # Inicia o login
         self.abrir_login()
 
+    # Instancia a classe login
     def abrir_login(self):
         self.tela_login = Login(self, self.abrir_menu_administrador, self.abrir_menu_fisioterapeuta, self.abrir_menu_pesquisador, self.encerrar)
 
+    # Menus em geral
     def abrir_menu_administrador(self):
         self.limpar_tela()
         self.tela_menu_administrador = MenuAdministrador(self, self.encerrar, self.cadastro_fisioterapeuta, self.cadastro_pesquisador, self.listar_fisioterapeutas, self.listar_pesquisadores)
@@ -50,6 +52,7 @@ class App(customtkinter.CTk):
         self.limpar_tela()
         self.tela_menu_pesquisador = MenuPesquisador(self, self.encerrar, self.cadastro_paciente)
 
+    # Cadastros de Objetos em geral
     def cadastro_fisioterapeuta(self):
         self.limpar_tela()
         self.tela_cadastro_fisio = CadastroFisioterapeuta(self, self.abrir_menu_administrador)
@@ -62,6 +65,7 @@ class App(customtkinter.CTk):
         self.limpar_tela()
         self.tela_cadastro_pesquisador = CadastroPesquisador(self, self.abrir_menu_administrador)
 
+    # Telas de listagem de objetos salvos
     def listar_fisioterapeutas(self): 
         self.limpar_tela()
         self.tela_listar_fisioterapeutas = ListarFisioterapeutas(self, self.abrir_menu_administrador)
@@ -70,12 +74,12 @@ class App(customtkinter.CTk):
         self.limpar_tela()
         self.tela_listar_pesquisadores = ListarPesquisadores(self, self.abrir_menu_administrador)
 
+    # Encerra a aplicacao
     def encerrar(self): 
         self.destroy()
 
+    # Remove widgets atuais antes de trocar de tela
     def limpar_tela(self):
-
-        """Remove widgets atuais antes de trocar de tela"""
         
         for widget in self.winfo_children():
             widget.destroy()
