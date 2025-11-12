@@ -26,5 +26,5 @@ class MenuAdministrador(BaseFrame):
         self.btn_listar_pesquisadores = customtkinter.CTkButton(self.container, text="Listar Pesquisadores", width=250, height=40, command=self.listar_pesquisadores, font=("Arial", 20, "bold"))
         self.btn_listar_pesquisadores.grid(row=2, column=1, padx=20, pady=20)
 
-        self.btn_voltar = customtkinter.CTkButton(self.container, text="Encerrar", width=250, height=40, command=self.voltar_callback, font=("Arial", 20, "bold"), fg_color="red")
+        self.btn_voltar = customtkinter.CTkButton(self.container, text="Sair", width=250, height=40, command=self.voltar_callback, font=("Arial", 20, "bold"), fg_color="red")
         self.btn_voltar.grid(row=3, column=0, padx=20, pady=20)
