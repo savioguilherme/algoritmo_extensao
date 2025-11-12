@@ -42,15 +42,15 @@ class App(customtkinter.CTk):
     # Menus em geral
     def abrir_menu_administrador(self):
         self.limpar_tela()
-        self.tela_menu_administrador = MenuAdministrador(self, self.encerrar, self.cadastro_fisioterapeuta, self.cadastro_pesquisador, self.listar_fisioterapeutas, self.listar_pesquisadores)
+        self.tela_menu_administrador = MenuAdministrador(self, self.abrir_login, self.cadastro_fisioterapeuta, self.cadastro_pesquisador, self.listar_fisioterapeutas, self.listar_pesquisadores)
 
     def abrir_menu_fisioterapeuta(self):
         self.limpar_tela()
-        self.tela_menu_fisio = MenuFisioterapeuta(self, self.encerrar)
+        self.tela_menu_fisio = MenuFisioterapeuta(self, self.abrir_login)
 
     def abrir_menu_pesquisador(self):
         self.limpar_tela()
-        self.tela_menu_pesquisador = MenuPesquisador(self, self.encerrar, self.cadastro_paciente)
+        self.tela_menu_pesquisador = MenuPesquisador(self, self.abrir_login, self.cadastro_paciente)
 
     # Cadastros de Objetos em geral
     def cadastro_fisioterapeuta(self):
