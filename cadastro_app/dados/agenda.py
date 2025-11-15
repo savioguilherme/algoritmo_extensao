@@ -2,7 +2,7 @@ import datetime
 
 class Agenda():
 
-    '''Classe base para representar uma pessoa'''
+    ''''''
 
     def __init__(self):
         self.agenda_pessoa = []

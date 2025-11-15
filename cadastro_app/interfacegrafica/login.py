@@ -2,7 +2,6 @@ import customtkinter
 from tkinter import messagebox
 from interfacegrafica.autenticacao import Autenticacao
 from interfacegrafica.base_frame import BaseFrame
-from interfacegrafica.base_widgets import BaseWidgets
 
 class Login(BaseFrame):
 
@@ -16,10 +15,8 @@ class Login(BaseFrame):
         self.abrir_menu_pesquisador = abrir_menu_pesquisador
         self.encerrar = encerrar
 
-        self.a = BaseWidgets("login", "container")
-
-        #self.login = customtkinter.CTkLabel(self.container, text="Login: ", font=("Arial", 20, "bold"))
-        #self.login.grid(row=1, column=0, sticky="e", padx=20, pady=10)
+        self.login = customtkinter.CTkLabel(self.container, text="Login: ", font=("Arial", 20, "bold"))
+        self.login.grid(row=1, column=0, sticky="e", padx=20, pady=10)
 
         self.entry_login= customtkinter.CTkEntry(self.container)
         self.entry_login.grid(row=1, column=1, sticky="w", padx=10, pady=10)
