@@ -10,6 +10,7 @@ class Fisioterapeuta(Pessoa):
         self.login = login 
         self.senha = senha
         self.agenda_fisioterapeuta = Agenda()
+        self.pacientes = []
 
     def __repr__(self):
         return f"Fisioterapeuta(id={self.id_pessoa}, nome='{self.nome}')"
