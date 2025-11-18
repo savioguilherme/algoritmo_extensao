@@ -25,5 +25,13 @@ def greedy_wrapper(func):
         slots = planner.codigo_dos_horarios
         planningHorizon = planner.dias_uteis
         initialDay = planner.dias_uteis[0]
-        func()
+
+        N_i = {}
+        for paciente in pacientes:
+            N_i[paciente.id_pessoa] = planner.calcular_disponibilidade(paciente)
+        N_pf = {}
+        funcionarios = pesquisadores + fisios
+        for funcionario in funcionarios:
+            N_pf[funcionario.id_pessoa] = planner.calcular_disponibilidade(funcionario)
+        
     return wrapper
