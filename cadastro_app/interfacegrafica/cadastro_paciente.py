@@ -3,10 +3,11 @@ from interfacegrafica.base_frame import BaseFrame
 from armazenamento.armazenamento import Armazenamento
 from dados.paciente import Paciente
 from tkinter import messagebox
+import datetime
 
 class CadastroPaciente(BaseFrame):
 
-
+    '''  '''
 
     def __init__(self, master, voltar_callback):
         super().__init__(master, "Cadastro de Pacientes")
@@ -21,10 +22,22 @@ class CadastroPaciente(BaseFrame):
         self.entry_id.grid(row=1, column=1, sticky="w", padx=10, pady=10)
 
         self.label_nome = customtkinter.CTkLabel(self.container, text="Nome:", font=("Arial", 20, "bold"))
-        self.label_nome.grid(row=2, column=0, sticky="e", padx=10, pady=10)
+        self.label_nome.grid(row=1, column=2, sticky="e", padx=10, pady=10)
 
         self.entry_nome = customtkinter.CTkEntry(self.container)
-        self.entry_nome.grid(row=2, column=1, sticky="w", padx=10, pady=10)
+        self.entry_nome.grid(row=1, column=3, sticky="w", padx=10, pady=10)
+
+        self.label_data_nascimento = customtkinter.CTkLabel(self.container, text="Data de Nascimento:", font=("Arial", 20, "bold"))
+        self.label_data_nascimento.grid(row=2, column=0, sticky="e", padx=10, pady=10)
+
+        self.entry_data_nascimento = customtkinter.CTkEntry(self.container)
+        self.entry_data_nascimento.grid(row=2, column=1, sticky="w", padx=10, pady=10)
+
+        self.label_data_inicio = customtkinter.CTkLabel(self.container, text="Data de Inicio:", font=("Arial", 20, "bold"))
+        self.label_data_inicio.grid(row=2, column=2, sticky="e", padx=10, pady=10)
+
+        self.entry_data_inicio = customtkinter.CTkEntry(self.container)
+        self.entry_data_inicio.grid(row=2, column=3, sticky="w", padx=10, pady=10)
 
         self.btn_salvar = customtkinter.CTkButton(self.container, text="Salvar", command=self.salvar_paciente, font=("Arial", 20, "bold"))
         self.btn_salvar.grid(row=3, column=0, padx=20, pady=20)
@@ -35,18 +48,22 @@ class CadastroPaciente(BaseFrame):
     def salvar_paciente(self):
         id_paciente = self.entry_id.get().strip()
         nome = self.entry_nome.get().strip()
+        data_nascimento = self.entry_data_nascimento.get().strip()
+        data_inicio = self.entry_data_inicio.get().strip()
 
         if not (id_paciente and nome):
             messagebox.showerror("Erro", "Preencha todos os campos antes de salvar!")
             return
 
         # Criar o objeto Pesquisador
-        paciente = Paciente(id_paciente, nome)
+        paciente = Paciente(id_paciente, nome, data_nascimento, data_inicio)
 
         # Converter para dicionário simplificado para salvar no Excel
         dados = {
             "ID": paciente.id_pessoa,
             "Nome": paciente.nome,
+            "Data Nascimento": paciente.data_nascimento,
+            "Data Inicio": paciente.data_inicial,
         }
 
         try:
@@ -56,6 +73,8 @@ class CadastroPaciente(BaseFrame):
             # Limpar campos
             self.entry_id.delete(0, "end")
             self.entry_nome.delete(0, "end")
+            self.entry_data_nascimento.delete(0, "end")
+            self.entry_data_inicio.delete(0, "end")
 
         except Exception as e:
             messagebox.showerror("Erro", f"Falha ao salvar os dados: {e}")

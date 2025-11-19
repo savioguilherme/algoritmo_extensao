@@ -1,5 +1,4 @@
 from dados.pessoa import Pessoa
-from dados.agenda import Agenda
 
 class Pesquisador(Pessoa):
 
