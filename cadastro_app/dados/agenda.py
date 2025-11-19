@@ -1,10 +1,13 @@
 import datetime
+from dados.fisioterapeuta import Fisioterapeuta
+from dados.paciente import Paciente
+from dados.pesquisador import Pesquisador
 
 class Agenda():
 
-    ''''''
+    ''' '''
 
-    def __init__(self):
+    def __init__(self, fisioterapeuta: Fisioterapeuta, paciente: Paciente, pesquisador: Pesquisador):
         self.agenda_pessoa = []
 
     def adicionadia(self, dia, mes, ano, hora, minuto, segundo):
