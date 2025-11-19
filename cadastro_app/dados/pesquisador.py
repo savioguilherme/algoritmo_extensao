@@ -1,5 +1,4 @@
 from dados.pessoa import Pessoa
-from dados.agenda import Agenda
 
 class Pesquisador(Pessoa):
 
@@ -9,7 +8,6 @@ class Pesquisador(Pessoa):
         super().__init__(id_pesquisador, nome_pesquisador, tipo)
         self.login = login 
         self.senha = senha
-        self.agenda_pesquisador = Agenda()
 
     def __repr__(self):
         return f"Pesquisador(id={self.id_pessoa}, nome='{self.nome}')"
