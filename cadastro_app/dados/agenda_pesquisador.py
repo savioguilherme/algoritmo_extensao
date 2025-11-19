@@ -1,4 +1,4 @@
-class AgendaPaciente():
+class AgendaPesquisador():
 
     ''' '''
 
