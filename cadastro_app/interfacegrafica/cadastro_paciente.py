@@ -56,7 +56,7 @@ class CadastroPaciente(BaseFrame):
             return
 
         # Criar o objeto Pesquisador
-        paciente = Paciente(id_paciente, nome, data_nascimento, data_inicio)
+        paciente = Paciente(id_paciente, nome, data_nascimento, data_inicio, None, None) #nome pesquisador e fisioterapeuta provisórios. 
 
         # Converter para dicionário simplificado para salvar no Excel
         dados = {
