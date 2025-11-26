@@ -1,5 +1,5 @@
 from dados.pessoa import Pessoa
-from dados.sessao import Sessao
+from dados.agenda import Agenda
 
 class Paciente(Pessoa):
 
@@ -12,9 +12,10 @@ class Paciente(Pessoa):
         self.pesquisador_responsavel = pesquisador
         self.fisioterapeuta_responsavel = fisioterapeuta
         self.sessoes = []
+        self.agenda = Agenda()
 
-    def adicionarSessao(self, cod, horario):
-        self.sessoes.append(Sessao(cod, horario, self.pesquisador_responsavel, self.fisioterapeuta_responsavel, self.nome)) 
+    def adicionarSessao(self, sessao):
+        self.sessoes.append(sessao) 
 
     def __repr__(self):
         return f"Paciente(id={self.id_pessoa}, nome='{self.nome}')"
