@@ -1,36 +1,35 @@
-import holidays
-from datetime import *
+from datetime import date, time
 
 class Agenda():
 
-    '''Classe Agenda recebe todas as outras agendas e organiza todo o sistema de agendamento'''
+    '''Representa disponibilidade'''
 
     def __init__(self):
-        
-        self.agenda_geral = []
+        self.disponibilidade_semanal = [set() for _ in range(7)]
+        self.restricoes = set()
+    
+    def adicionar_disponibilidade(self, dia_semana, horario):
+        self.disponibilidade_semanal[dia_semana%7].add(horario)
 
-        self.dia_inicial_calendario = date(2025,11,1)
+    def remover_disponibilidade(self, dia_semana, horario):
+        self.disponibilidade_semanal[dia_semana%7].discard(horario)
 
-        # dicionario com os 5 slots mostrando os horários inicias de cada um
-        self.slots = {'primeira': time(8), 'segunda': time(10), 'terceira': time(13), 'quarta':time(15), 'quinta':time(17)} 
+    def adicionar_restricao(self, dia_horario):
+        self.restricoes.add(dia_horario)
 
-    def criarcalendario(self):
-        pass
+    def remover_restricao(self, dia_horario):
+        self.restricoes.discard(dia_horario)
 
-    def verificaferiado(self, diarecebido):
-        feriados_brasil = holidays.country_holidays("BR") #recebe todos os feriados do Brasil (em teoria, preciso confirmar)
-        if diarecebido in feriados_brasil:
-            return True #se o dia for um feriado retorna true
-        
-    def verificafinalsemana(self, diarecebido): 
-        diarecebido = date.weekday() #recebe todos os dias e sua posição na semana como um número (seg = 0)
-        if diarecebido == 5 or diarecebido == 6: 
-            return True #se for 5 (sáb) ou 6 (dom) returna true
+    def esta_disponivel(self, dia_horario):
+        dia_semana = dia_horario.weekday()
+        horario = dia_horario.time()
+        return horario in self.disponibilidade_semanal[dia_semana] and not dia_horario in self.restricoes
 
-    def adicionadia(self, dia, mes, ano, hora, minuto, segundo):
-        data = datetime.datetime(ano, mes, dia, hora, minuto, segundo)
-        self.agenda_pessoa.append(data)
+    def get_lista_disponibilidade_semanal(self):
+        return [list(disponibilidade) for disponibilidade in self.disponibilidade_semanal]
 
-    def removedia(self, dia, mes, ano, hora, minuto, segundo):
-        data = datetime.date(ano, mes, dia, hora, minuto, segundo)
-        self.agenda_pessoa.remove(data)
+    def get_lista_restricoes(self):
+        return list(self.restricoes)
+    
+    def get_horarios(self):
+        return set.union(*[horarios for horarios in self.disponibilidade_semanal])
