@@ -10,9 +10,9 @@ import itertools
 codigos = ["S00","S01","S02","S03","S04","S05","S06","S07","S08","S09","F00","F01"]
 
 def wrapper(
-	fisios : list[Fisioterapeuta], 
-	pesquisadores : list[Pesquisador], 
-	pacientes : list[Paciente],
+	fisios,
+	pesquisadores,
+	pacientes,
 	dia_inicial : datetime.date,
 	intervalo = 500
 ):
