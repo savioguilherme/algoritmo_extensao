@@ -9,6 +9,7 @@ from interfacegrafica.cadastro_fisioterapeuta import CadastroFisioterapeuta
 from interfacegrafica.listar_pesquisadores import ListarPesquisadores
 from interfacegrafica.listar_fisioterapeutas import ListarFisioterapeutas
 from interfacegrafica.cadastro_pesquisador import CadastroPesquisador
+from interfacegrafica.agenda import Agenda
 
 class App(customtkinter.CTk):
 
@@ -50,7 +51,7 @@ class App(customtkinter.CTk):
 
     def abrir_menu_pesquisador(self):
         self.limpar_tela()
-        self.tela_menu_pesquisador = MenuPesquisador(self, self.abrir_login, self.cadastro_paciente)
+        self.tela_menu_pesquisador = MenuPesquisador(self, self.abrir_login, self.cadastro_paciente, self.abrir_agenda)
 
     # Cadastros de Objetos em geral
     def cadastro_fisioterapeuta(self):
@@ -73,6 +74,10 @@ class App(customtkinter.CTk):
     def listar_pesquisadores(self): 
         self.limpar_tela()
         self.tela_listar_pesquisadores = ListarPesquisadores(self, self.abrir_menu_administrador)
+
+    def abrir_agenda(self):
+        self.limpar_tela()
+        self.agenda = Agenda(self, self.abrir_menu_pesquisador)
 
     # Encerra a aplicacao
     def encerrar(self): 
