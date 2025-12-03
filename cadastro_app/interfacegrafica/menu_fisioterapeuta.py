@@ -5,7 +5,7 @@ class MenuFisioterapeuta(BaseFrame):
      
     """Menu principal"""
 
-    def __init__(self, master, voltar_callback):
+    def __init__(self, master, voltar_callback, abrir_agenda):
         super().__init__(master, titulo="Menu Fisioterapeuta")
 
         self.voltar_callback = voltar_callback

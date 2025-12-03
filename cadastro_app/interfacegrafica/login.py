@@ -1,6 +1,6 @@
 import customtkinter
 from tkinter import messagebox
-from interfacegrafica.autenticacao import Autenticacao
+from cadastro_app.armazenamento.autenticacao import Autenticacao
 from interfacegrafica.base_frame import BaseFrame
 
 class Login(BaseFrame):
