@@ -2,11 +2,9 @@ import random
 import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta
-from wrapper_greedy import greedy_wrapper
 
-from globalConsts import LANGUAGE
+from greedy.globalConsts import LANGUAGE
 
-@greedy_wrapper
 def greedy(initialDay, planningHorizon, slots, staff, patients, N_i, N_pf, schedule):
     
     s = False
