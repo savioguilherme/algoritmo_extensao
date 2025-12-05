@@ -16,7 +16,10 @@ class CadastroPesquisador(BaseFrame):
         self.storage = Armazenamento()  
         self.widgets = BaseWidgets()
 
-        self.label_id = customtkinter.CTkLabel(self.container, text="ID Pesquisador:", width=200, height=50, corner_radius=5, font=("Arial", 20, "bold"))
+        #self.label_id = customtkinter.CTkLabel(self.container, text="ID Pesquisador:", width=200, height=50, corner_radius=5, font=("Arial", 20, "bold"))
+        #self.label_id.grid(row=1, column=0, sticky="e", padx=20, pady=20)
+
+        self.label_id = self.widgets.label(self.container, texto="ID Pesquisador:", cor="transparent")
         self.label_id.grid(row=1, column=0, sticky="e", padx=20, pady=20)
 
         self.entry_id = customtkinter.CTkEntry(self.container)
