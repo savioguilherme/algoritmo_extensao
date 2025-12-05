@@ -3,20 +3,19 @@ import customtkinter as ctk
 class BaseWidgets():
     def __init__(self):
         pass
-    def label(self, janela, texto_var):
+    def label(self, janela, texto, cor):
         return ctk.CTkLabel(
             master=janela,
-            text=texto_var,
             #textvariable=texto_var,
-            font=("Arial", 20, "bold"),
-            #text_color="#0077ff",
-            fg_color="transparent",
+            text=texto,
             width=200,
-            height=40,
+            height=50,
             corner_radius=10,
-            anchor="center",
-            justify="center",
-            padx=10,
-            pady=5,
-            #cursor="hand2"
+            fg_color=cor,
+            #text_color="#0077ff",
+            font=("Arial", 20, "bold"),
+            #compound="top"
+            #justify="center",
+            padx=1,
+            pady=1,
         )
