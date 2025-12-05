@@ -6,7 +6,7 @@ from tkinter import messagebox
 
 class CadastroPesquisador(BaseFrame):
 
-    ''' '''
+    '''Classe que cria a tela de cadastro para inserir pesquisadores no sistema'''
 
     def __init__(self, master, voltar_callback):
         super().__init__(master, "Cadastro de Pesquisadores")
@@ -14,35 +14,35 @@ class CadastroPesquisador(BaseFrame):
         self.voltar_callback = voltar_callback
         self.storage = Armazenamento()  
 
-        self.label_id = customtkinter.CTkLabel(self.container, text="ID Pesquisador:", font=("Arial", 20, "bold"))
-        self.label_id.grid(row=1, column=0, sticky="e", padx=10, pady=10)
+        self.label_id = customtkinter.CTkLabel(self.container, text="ID Pesquisador:", width=200, height=50, corner_radius=5, font=("Arial", 20, "bold"))
+        self.label_id.grid(row=1, column=0, sticky="e", padx=20, pady=20)
 
         self.entry_id = customtkinter.CTkEntry(self.container)
-        self.entry_id.grid(row=1, column=1, sticky="w", padx=10, pady=10)
+        self.entry_id.grid(row=1, column=1, sticky="w", padx=20, pady=20)
 
         self.label_nome = customtkinter.CTkLabel(self.container, text="Nome:", font=("Arial", 20, "bold"))
-        self.label_nome.grid(row=1, column=2, sticky="e", padx=10, pady=10)
+        self.label_nome.grid(row=1, column=2, sticky="e", padx=20, pady=20)
 
         self.entry_nome = customtkinter.CTkEntry(self.container)
-        self.entry_nome.grid(row=1, column=3, sticky="w", padx=10, pady=10)
+        self.entry_nome.grid(row=1, column=3, sticky="w", padx=20, pady=20)
 
         self.label_login = customtkinter.CTkLabel(self.container, text="Login:", font=("Arial", 20, "bold"))
-        self.label_login.grid(row=2, column=0, sticky="e", padx=10, pady=10)
+        self.label_login.grid(row=2, column=0, sticky="e", padx=20, pady=20)
 
         self.entry_login = customtkinter.CTkEntry(self.container)
-        self.entry_login.grid(row=2, column=1, sticky="w", padx=10, pady=10)
+        self.entry_login.grid(row=2, column=1, sticky="w", padx=20, pady=20)
 
         self.label_senha = customtkinter.CTkLabel(self.container, text="Senha:", font=("Arial", 20, "bold"))
-        self.label_senha.grid(row=2, column=2, sticky="e", padx=10, pady=10)
+        self.label_senha.grid(row=2, column=2, sticky="e", padx=20, pady=20)
 
         self.entry_senha = customtkinter.CTkEntry(self.container, show="*")
-        self.entry_senha.grid(row=2, column=3, sticky="w", padx=10, pady=10)
+        self.entry_senha.grid(row=2, column=3, sticky="w", padx=20, pady=20)
 
         self.btn_salvar = customtkinter.CTkButton(self.container, text="Salvar", command=self.salvar_pesquisador, font=("Arial", 20, "bold"))
-        self.btn_salvar.grid(row=3, column=0, padx=20, pady=20)
+        self.btn_salvar.grid(row=3, column=1, sticky="e", padx=20, pady=20)
 
         self.btn_voltar = customtkinter.CTkButton(self.container, text="Voltar", command=self.voltar_callback, font=("Arial", 20, "bold"), fg_color="red")
-        self.btn_voltar.grid(row=3, column=1, padx=20, pady=20)
+        self.btn_voltar.grid(row=3, column=2, sticky="w", padx=20, pady=20)
 
     def salvar_pesquisador(self):
         id_pesquisador = self.entry_id.get().strip()
