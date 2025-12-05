@@ -47,11 +47,11 @@ class App(customtkinter.CTk):
 
     def abrir_menu_fisioterapeuta(self):
         self.limpar_tela()
-        self.tela_menu_fisio = MenuFisioterapeuta(self, self.abrir_login)
+        self.tela_menu_fisio = MenuFisioterapeuta(self, self.abrir_login, lambda: self.abrir_agenda(self.abrir_menu_fisioterapeuta, "fisioterapeuta"))
 
     def abrir_menu_pesquisador(self):
         self.limpar_tela()
-        self.tela_menu_pesquisador = MenuPesquisador(self, self.abrir_login, self.cadastro_paciente, self.abrir_agenda)
+        self.tela_menu_pesquisador = MenuPesquisador(self, self.abrir_login, self.cadastro_paciente, lambda: self.abrir_agenda(self.abrir_menu_pesquisador, "pesquisador"))
 
     # Cadastros de Objetos em geral
     def cadastro_fisioterapeuta(self):
@@ -75,9 +75,9 @@ class App(customtkinter.CTk):
         self.limpar_tela()
         self.tela_listar_pesquisadores = ListarPesquisadores(self, self.abrir_menu_administrador)
 
-    def abrir_agenda(self):
+    def abrir_agenda(self, retornar, pessoa):
         self.limpar_tela()
-        self.agenda = Agenda(self, self.abrir_menu_pesquisador)
+        self.agenda = Agenda(self, retornar, pessoa)
 
     # Encerra a aplicacao
     def encerrar(self): 
