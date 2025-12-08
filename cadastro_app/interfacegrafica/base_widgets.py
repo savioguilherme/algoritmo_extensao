@@ -64,3 +64,6 @@ class BaseWidgets():
             #compound=,
             #anchor=,
         )
+    
+    def frame(self, janela):
+        return ctk.CTkFrame(master=janela, fg_color="transparent")

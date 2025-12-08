@@ -3,7 +3,7 @@ from interfacegrafica.base_widgets import BaseWidgets
 from datetime import datetime
 import calendar
 
-class Agenda(BaseFrame):
+class AgendaPessoa(BaseFrame):
 
     """Agenda constanto todas as sessões de uma determinada pessoa"""
 
@@ -13,11 +13,17 @@ class Agenda(BaseFrame):
         self.voltar_callback = voltar_callback
         self.pessoa = pessoa
         self.widgets = BaseWidgets()
+        self.frame_auxiliar = self.widgets.frame(self.container)
+        self.frame_auxiliar.grid(row=1, column=0, columnspan=4, sticky="nsew")
+        self.frame_auxiliar.grid_columnconfigure((0,1,2,3), weight=1)
+        self.frame_auxiliar.grid_rowconfigure((0,1,2,3), weight=1)
         self.exibir_sessoes()
 
-        self.btn_voltar = self.widgets.button(self.container, texto="Voltar", comando=self.voltar_callback, cor="red")
-        self.btn_voltar.grid(row=5, column=0, padx=10, pady=10)
+        #self.btn_restricoes = self.widgets.button(self.container, texto="Provisório", comando=None, cor="blue")
+        #self.btn_restricoes.grid(row=2, column=2, sticky="w", padx=10, pady=10)
 
+        self.btn_voltar = self.widgets.button(self.container, texto="Voltar", comando=self.voltar_callback, cor="red")
+        self.btn_voltar.grid(row=2, column=2, sticky="w", padx=10, pady=10)
     def buscar_sessoes(self):
         pass
     def exibir_sessoes(self):
@@ -27,11 +33,7 @@ class Agenda(BaseFrame):
         {"Código": 3,  "Horário": "14:00", "Paciente": "Cleiton"},
         {"Código": 4,  "Horário": "14:00", "Paciente": "Cleiton"},
         ]
-        x = 0
-        for s in sessoes:
+        for i, s in enumerate(sessoes):
             texto = f"Código da Sessão: {s['Código']}, Horário: {s['Horário']}, Paciente: {s['Paciente']}"
-            self.label_sessao = self.widgets.label(self.container, texto=texto, cor="Blue")
-            self.label_sessao.grid(row=x, column=0, padx=10, pady=10)
-            x = x + 1
-    
-    
+            self.label_sessao = self.widgets.label(self.frame_auxiliar, texto=texto, cor="Blue")
+            self.label_sessao.grid(row=i, column=0, sticky="w", padx=10, pady=10)

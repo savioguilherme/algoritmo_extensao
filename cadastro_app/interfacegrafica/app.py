@@ -9,7 +9,8 @@ from interfacegrafica.cadastro_fisioterapeuta import CadastroFisioterapeuta
 from interfacegrafica.listar_pesquisadores import ListarPesquisadores
 from interfacegrafica.listar_fisioterapeutas import ListarFisioterapeutas
 from interfacegrafica.cadastro_pesquisador import CadastroPesquisador
-from interfacegrafica.agenda import Agenda
+from interfacegrafica.agenda_pessoa import AgendaPessoa
+from interfacegrafica.restricoes_pessoa import RestricoesPessoa
 
 class App(customtkinter.CTk):
 
@@ -51,7 +52,11 @@ class App(customtkinter.CTk):
 
     def abrir_menu_pesquisador(self):
         self.limpar_tela()
-        self.tela_menu_pesquisador = MenuPesquisador(self, self.abrir_login, self.cadastro_paciente, lambda: self.abrir_agenda(self.abrir_menu_pesquisador, "pesquisador"))
+        self.tela_menu_pesquisador = MenuPesquisador(
+            self, self.abrir_login, 
+            self.cadastro_paciente, 
+            lambda: self.abrir_agenda(self.abrir_menu_pesquisador, "pesquisador"), 
+            lambda: self.cadastro_restricoes(self.abrir_menu_pesquisador))
 
     # Cadastros de Objetos em geral
     def cadastro_fisioterapeuta(self):
@@ -66,6 +71,10 @@ class App(customtkinter.CTk):
         self.limpar_tela()
         self.tela_cadastro_pesquisador = CadastroPesquisador(self, self.abrir_menu_administrador)
 
+    def cadastro_restricoes(self, retornar):
+        self.limpar_tela()
+        self.tela_cadastro_restricoes = RestricoesPessoa(self, retornar)
+
     # Telas de listagem de objetos salvos
     def listar_fisioterapeutas(self): 
         self.limpar_tela()
@@ -77,7 +86,7 @@ class App(customtkinter.CTk):
 
     def abrir_agenda(self, retornar, pessoa):
         self.limpar_tela()
-        self.agenda = Agenda(self, retornar, pessoa)
+        self.agenda = AgendaPessoa(self, retornar, pessoa)
 
     # Encerra a aplicacao
     def encerrar(self): 
