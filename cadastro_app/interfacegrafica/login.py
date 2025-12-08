@@ -16,13 +16,13 @@ class Login(BaseFrame):
         self.encerrar = encerrar
         self.widgets = BaseWidgets()
 
-        self.label_login = self.widgets.label(self.container, texto="Usuário:")
+        self.label_login = self.widgets.label(self.container, texto="Usuário:", cor="transparent")
         self.label_login.grid(row=1, column=0, sticky="e", padx=20, pady=10)
 
         self.entry_login = self.widgets.entry(self.container, None)
         self.entry_login.grid(row=1, column=1, sticky="w", padx=10, pady=10)
 
-        self.label_senha = self.widgets.label(self.container, texto="Senha:")
+        self.label_senha = self.widgets.label(self.container, texto="Senha:", cor="transparent")
         self.label_senha.grid(row=2, column=0, sticky="e", padx=20, pady=10)
         
         self.entry_senha = self.widgets.entry(self.container, "*")
