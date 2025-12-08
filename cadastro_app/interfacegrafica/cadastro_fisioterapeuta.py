@@ -1,48 +1,50 @@
-import customtkinter
 from interfacegrafica.base_frame import BaseFrame
+from interfacegrafica.base_widgets import BaseWidgets
 from armazenamento.armazenamento import Armazenamento
 from dados.fisioterapeuta import Fisioterapeuta
 from tkinter import messagebox
+from CTkMessagebox import CTkMessagebox
 
 class CadastroFisioterapeuta(BaseFrame):
 
-    ''' '''
+    '''Classe que gera a tela de cadastro de um fisioterapeuta'''
 
     def __init__(self, master, voltar_callback):
         super().__init__(master, "Cadastro de Fisioterapeutas")
 
         self.voltar_callback = voltar_callback
-        self.storage = Armazenamento() 
+        self.storage = Armazenamento()
+        self.widgets = BaseWidgets()
 
-        self.label_id = customtkinter.CTkLabel(self.container, text="ID Fisioterapeuta:", font=("Arial", 20, "bold"))
+        self.label_id = self.widgets.label(self.container, texto="ID Fisioterapeuta:")
         self.label_id.grid(row=1, column=0, sticky="e", padx=10, pady=10)
         
-        self.entry_id = customtkinter.CTkEntry(self.container)
+        self.entry_id = self.widgets.entry(self.container, None)
         self.entry_id.grid(row=1, column=1, sticky="w", padx=10, pady=10)
 
-        self.label_nome = customtkinter.CTkLabel(self.container, text="Nome:", font=("Arial", 20, "bold"))
+        self.label_nome = self.widgets.label(self.container, texto="Nome:")
         self.label_nome.grid(row=1, column=2, sticky="e", padx=10, pady=10)
 
-        self.entry_nome = customtkinter.CTkEntry(self.container)
+        self.entry_nome = self.widgets.entry(self.container, None)
         self.entry_nome.grid(row=1, column=3, sticky="w", padx=10, pady=10)
 
-        self.label_login = customtkinter.CTkLabel(self.container, text="Login:", font=("Arial", 20, "bold"))
+        self.label_login = self.widgets.label(self.container, texto="Login:")
         self.label_login.grid(row=2, column=0, sticky="e", padx=10, pady=10)
 
-        self.entry_login = customtkinter.CTkEntry(self.container)
+        self.entry_login = self.widgets.entry(self.container, None)
         self.entry_login.grid(row=2, column=1, sticky="w", padx=10, pady=10)
 
-        self.label_senha = customtkinter.CTkLabel(self.container, text="Senha:", font=("Arial", 20, "bold"))
+        self.label_senha = self.widgets.label(self.container, texto="Senha:")
         self.label_senha.grid(row=2, column=2, sticky="e", padx=10, pady=10)
 
-        self.entry_senha = customtkinter.CTkEntry(self.container, show="*")
+        self.entry_senha = self.widgets.entry(self.container, "*")
         self.entry_senha.grid(row=2, column=3, sticky="w", padx=10, pady=10)
 
-        self.btn_salvar = customtkinter.CTkButton(self.container, text="Salvar", command=self.salvar_fisioterapeuta, font=("Arial", 20, "bold"))
-        self.btn_salvar.grid(row=3, column=0, padx=20, pady=20)
+        self.btn_salvar = self.widgets.button(self.container, texto="Salvar", comando=self.salvar_fisioterapeuta, cor="blue")
+        self.btn_salvar.grid(row=3, column=0, sticky="e", padx=10, pady=10)
 
-        self.btn_voltar = customtkinter.CTkButton(self.container, text="Voltar", command=self.voltar_callback, font=("Arial", 20, "bold"), fg_color="red")
-        self.btn_voltar.grid(row=3, column=1, padx=20, pady=20)
+        self.btn_voltar = self.widgets.button(self.container, texto="Voltar", comando=self.voltar_callback, cor="red")
+        self.btn_voltar.grid(row=3, column=1, sticky="w", padx=10, pady=10)
 
     def salvar_fisioterapeuta(self):
         id_fisio = self.entry_id.get().strip()
@@ -67,8 +69,7 @@ class CadastroFisioterapeuta(BaseFrame):
 
         try:
             self.storage.salvar("fisioterapeutas", dados)
-            messagebox.showinfo("Sucesso", f"Fisioterapeuta '{nome}' cadastrado com sucesso!")
-
+            CTkMessagebox(title="Sucesso", message=f"Fisioterapeuta, '{nome}' cadastrado com sucesso", icon="check")
             # Limpar campos
             self.entry_id.delete(0, "end")
             self.entry_nome.delete(0, "end")
@@ -76,4 +77,4 @@ class CadastroFisioterapeuta(BaseFrame):
             self.entry_senha.delete(0, "end")
 
         except Exception as e:
-            messagebox.showerror("Erro", f"Falha ao salvar os dados: {e}")
+            CTkMessagebox(title="Erro", message=f"Falha ao salvar os dados: {e}", icon="cancel")

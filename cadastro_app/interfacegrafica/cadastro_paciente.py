@@ -3,6 +3,7 @@ from interfacegrafica.base_frame import BaseFrame
 from armazenamento.armazenamento import Armazenamento
 from dados.paciente import Paciente
 from tkinter import messagebox
+from interfacegrafica.base_widgets import BaseWidgets
 import datetime
 
 class CadastroPaciente(BaseFrame):
@@ -13,7 +14,8 @@ class CadastroPaciente(BaseFrame):
         super().__init__(master, "Cadastro de Pacientes")
 
         self.voltar_callback = voltar_callback
-        self.storage = Armazenamento() 
+        self.storage = Armazenamento()
+        self.widgets = BaseWidgets()
 
         self.label_id = customtkinter.CTkLabel(self.container, text="ID Paciente:", font=("Arial", 20, "bold"))
         self.label_id.grid(row=1, column=0, sticky="e", padx=10, pady=10)

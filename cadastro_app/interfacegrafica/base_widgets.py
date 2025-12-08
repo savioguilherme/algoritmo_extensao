@@ -6,7 +6,8 @@ class BaseWidgets():
 
     def __init__(self):
         pass
-    def label(self, janela, texto, cor):
+
+    def label(self, janela, texto):
         return ctk.CTkLabel(
             master=janela,
             #textvariable=texto_var,
@@ -14,7 +15,7 @@ class BaseWidgets():
             width=200,
             height=50,
             corner_radius=10,
-            fg_color=cor,
+            fg_color="transparent",
             #text_color="#0077ff",
             font=("Arial", 20, "bold"),
             #compound="top"
@@ -22,22 +23,25 @@ class BaseWidgets():
             padx=1,
             pady=1,
         )
-    def entry(self, janela, texto, cor):
+    
+    def entry(self, janela, simbolo):
         return ctk.CTkEntry(
             master=janela,
             #textvariable=texto_var,
-            text=texto,
+            #text=texto,
             width=200,
             height=50,
             corner_radius=10,
-            fg_color=cor,
+            #fg_color=cor,
             text_color="black",
             #placeholder_text_color=,
             #placeholder_text=,
             font=("Arial", 20, "bold"),
             state="normal",
+            show=simbolo,
         )
-    def button(self, janela, texto, cor):
+    
+    def button(self, janela, texto, comando, cor):
         return ctk.CTkButton(
             master=janela,
             width=200,
@@ -53,10 +57,10 @@ class BaseWidgets():
             #placeholder_text=,
             #textvariable=texto_var,
             text=texto,
-            #font=,
+            font=("Arial", 20, "bold"),
             #state=,
             #hover=,
-            #command=,
+            command=comando,
             #compound=,
             #anchor=,
         )
