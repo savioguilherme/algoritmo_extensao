@@ -1,7 +1,7 @@
 from interfacegrafica.base_frame import BaseFrame
 from interfacegrafica.base_widgets import BaseWidgets
 
-class MenuAdministrador(BaseFrame):
+class MenuPaciente(BaseFrame):
      
     """Menu do paciente"""
 
