@@ -2,7 +2,6 @@ from interfacegrafica.base_frame import BaseFrame
 from interfacegrafica.base_widgets import BaseWidgets
 from armazenamento.armazenamento import Armazenamento
 from dados.fisioterapeuta import Fisioterapeuta
-from tkinter import messagebox
 from CTkMessagebox import CTkMessagebox
 
 class CadastroFisioterapeuta(BaseFrame):
@@ -53,7 +52,7 @@ class CadastroFisioterapeuta(BaseFrame):
         senha = self.entry_senha.get().strip()
 
         if not (id_fisio and nome and login and senha):
-            messagebox.showerror("Erro", "Preencha todos os campos antes de salvar!")
+            CTkMessagebox(title="Erro", message="Preencha todos os campos antes de salvar!", icon="cancel")
             return
 
         # Criar o objeto Fisioterapeuta
