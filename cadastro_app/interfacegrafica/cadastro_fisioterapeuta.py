@@ -1,5 +1,6 @@
 from interfacegrafica.base_frame import BaseFrame
 from interfacegrafica.base_widgets import BaseWidgets
+from CTkMessagebox import CTkMessagebox
 from armazenamento.armazenamento import Armazenamento
 from dados.fisioterapeuta import Fisioterapeuta
 from CTkMessagebox import CTkMessagebox
