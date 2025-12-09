@@ -1,8 +1,8 @@
 from interfacegrafica.base_frame import BaseFrame
 from interfacegrafica.base_widgets import BaseWidgets
+from CTkMessagebox import CTkMessagebox
 from armazenamento.armazenamento import Armazenamento
 from dados.paciente import Paciente
-from tkinter import messagebox
 
 class CadastroPaciente(BaseFrame):
 
@@ -36,26 +36,21 @@ class CadastroPaciente(BaseFrame):
     def salvar_paciente(self):
         id_paciente = self.entry_id.get().strip()
         nome = self.entry_nome.get().strip()
-
         if not (id_paciente and nome):
-            messagebox.showerror("Erro", "Preencha todos os campos antes de salvar!")
+            CTkMessagebox(title="Erro", message="Preencha todos os campos antes de salvar!", icon="cancel")
             return
-
         # Criar o objeto Pesquisador
         paciente = Paciente(id_paciente, nome, None, None) #nome pesquisador e fisioterapeuta provisórios. 
-
         # Converter para dicionário simplificado para salvar no Excel
         dados = {
             "ID": paciente.id_pessoa,
             "Nome": paciente.nome,
         }
-
         try:
             self.storage.salvar("pacientes", dados)
-            messagebox.showinfo("Sucesso", f"Paciente '{nome}' cadastrado com sucesso!")
-
+            CTkMessagebox(title="Sucesso", message=f"Paciente '{nome}' cadastrado com sucesso!", icon="check")
             # Limpar campos
             self.entry_id.delete(0, "end")
             self.entry_nome.delete(0, "end")
         except Exception as e:
-            messagebox.showerror("Erro", f"Falha ao salvar os dados: {e}")
+            CTkMessagebox(title="Erro", message=f"Falha ao salvar os dados: {e}", icon="cancel")
