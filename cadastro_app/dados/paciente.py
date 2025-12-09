@@ -12,9 +12,8 @@ class Paciente(Pessoa):
         "retorno1", "retorno2"
     ]
 
-    def __init__(self, id_paciente, nome_paciente, data_nascimento, pesquisador, fisioterapeuta, tipo = "paciente"):
+    def __init__(self, id_paciente, nome_paciente, pesquisador, fisioterapeuta, tipo = "paciente"):
         super().__init__(id_paciente, nome_paciente, tipo)
-        self.data_nascimento = data_nascimento
         self.pesquisador_responsavel = pesquisador
         self.fisioterapeuta_responsavel = fisioterapeuta
         self.sessoes_paciente = [
