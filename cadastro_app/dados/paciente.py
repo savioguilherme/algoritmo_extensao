@@ -6,13 +6,21 @@ class Paciente(Pessoa):
 
     '''Classe que representa um paciente'''
 
-    def __init__(self, id_paciente, nome_paciente, data_nascimento, data_inicial, pesquisador, fisioterapeuta, tipo = "paciente"):
+    CODIGOS_SESSOES = [
+        "fisio1", "fisio2", "fisio3", "fisio4", "fisio5",
+        "fisio6", "fisio7", "fisio8", "exfinal",
+        "retorno1", "retorno2"
+    ]
+
+    def __init__(self, id_paciente, nome_paciente, data_nascimento, pesquisador, fisioterapeuta, tipo = "paciente"):
         super().__init__(id_paciente, nome_paciente, tipo)
         self.data_nascimento = data_nascimento
-        self.data_inicial = data_inicial
         self.pesquisador_responsavel = pesquisador
         self.fisioterapeuta_responsavel = fisioterapeuta
-        self.sessoes = {}
+        self.sessoes_paciente = [
+            Sessao(cod, None, None, False)
+            for cod in self.CODIGOS_SESSOES
+        ]
         self.agenda = Agenda()
 
     def __repr__(self):
