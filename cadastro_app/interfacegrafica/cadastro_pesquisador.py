@@ -1,8 +1,8 @@
 from interfacegrafica.base_frame import BaseFrame
 from interfacegrafica.base_widgets import BaseWidgets
+from CTkMessagebox import CTkMessagebox
 from armazenamento.armazenamento import Armazenamento
 from dados.pesquisador import Pesquisador
-from tkinter import messagebox
 
 class CadastroPesquisador(BaseFrame):
 
@@ -50,14 +50,11 @@ class CadastroPesquisador(BaseFrame):
         nome = self.entry_nome.get().strip()
         login = self.entry_login.get().strip()
         senha = self.entry_senha.get().strip()
-
         if not (id_pesquisador and nome and login and senha):
-            messagebox.showerror("Erro", "Preencha todos os campos antes de salvar!")
+            CTkMessagebox(title="Erro", message="Preencha todos os campos antes de salvar!", icon="cancel")
             return
-
         # Criar o objeto Pesquisador
         pesquisador = Pesquisador(id_pesquisador, nome, login, senha)
-
         # Converter para dicionário simplificado para salvar no Excel
         dados = {
             "ID": pesquisador.id_pessoa,
@@ -65,16 +62,13 @@ class CadastroPesquisador(BaseFrame):
             "Login": pesquisador.login,
             "Senha": pesquisador.senha
         }
-
         try:
             self.storage.salvar("pesquisadores", dados)
-            messagebox.showinfo("Sucesso", f"Pesquisador '{nome}' cadastrado com sucesso!")
-
+            CTkMessagebox(title="Sucesso", message=f"Pesquisador '{nome}' cadastrado com sucesso!", icon="check")
             # Limpar campos
             self.entry_id.delete(0, "end")
             self.entry_nome.delete(0, "end")
             self.entry_login.delete(0, "end")
             self.entry_senha.delete(0, "end")
-
         except Exception as e:
-            messagebox.showerror("Erro", f"Falha ao salvar os dados: {e}")
+            CTkMessagebox(title="Erro", message=f"Falha ao salvar os dados: {e}", icon="cancel")
