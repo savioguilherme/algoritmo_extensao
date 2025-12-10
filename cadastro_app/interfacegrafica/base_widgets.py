@@ -68,10 +68,15 @@ class BaseWidgets():
             fg_color="transparent"
         )
     
-    def option_menu(self, janela,): 
+    def option_menu(self, janela, opcoes, comando): 
         return ctk.CTkOptionMenu(
             master=janela, 
-            values=[], 
-            command=None, 
-            variable=None
+            values=opcoes, 
+            command=comando,
+            width=200,
+            height=50,
+            #state=,
+            #fg_color=cor,
+            button_color="blue",
+            text_color="black",
         )
