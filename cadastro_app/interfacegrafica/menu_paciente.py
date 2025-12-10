@@ -23,5 +23,5 @@ class MenuPaciente(BaseFrame):
         #self.btn_listar_pesquisadores = self.widgets.button(self.container, texto="Listar Pesquisadores", comando=self.listar_pesquisadores, cor="blue")
         #self.btn_listar_pesquisadores.grid(row=1, column=3, sticky="w", padx=10, pady=10)
 
-        self.btn_voltar = self.widgets.button(self.container, texto="Sair", comando=self.voltar_callback, cor="red")
+        self.btn_voltar = self.widgets.button(self.container, texto="Voltar", comando=self.voltar_callback, cor="red")
         self.btn_voltar.grid(row=2, column=1, sticky="e", padx=10, pady=10)
