@@ -21,16 +21,16 @@ class Login(BaseFrame):
         self.grid_columnconfigure((0,1,2,3), weight=1)
 
         self.label_login = self.widgets.label(self, texto="Usuário:", cor="transparent")
-        self.label_login.grid(row=1, column=1, sticky="e", padx=(20,0), pady=(20,10))
+        self.label_login.grid(row=1, column=1, sticky="e", padx=(20,10), pady=(20,10))
 
         self.entry_login = self.widgets.entry(self, None)
-        self.entry_login.grid(row=1, column=2, sticky="w", padx=(0,20), pady=(20,10))
+        self.entry_login.grid(row=1, column=2, sticky="w", padx=(10,20), pady=(20,10))
 
         self.label_senha = self.widgets.label(self, texto="Senha:", cor="transparent")
-        self.label_senha.grid(row=2, column=1, sticky="e", padx=(20,0), pady=(10,20))
+        self.label_senha.grid(row=2, column=1, sticky="e", padx=(20,10), pady=(10,20))
         
         self.entry_senha = self.widgets.entry(self, "*")
-        self.entry_senha.grid(row=2, column=2, sticky="w", padx=(0,20), pady=(10,20))
+        self.entry_senha.grid(row=2, column=2, sticky="w", padx=(10,20), pady=(10,20))
 
         bnt_entrar = self.widgets.button(self, texto="Entrar", comando=self.verificar_login, cor="blue")
         bnt_entrar.grid(row=3, column=1, sticky="e", padx=(20,10), pady=(10,20))

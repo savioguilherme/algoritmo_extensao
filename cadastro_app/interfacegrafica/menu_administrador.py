@@ -15,17 +15,21 @@ class MenuAdministrador(BaseFrame):
         self.listar_pesquisadores = listar_pesquisadores
         self.widgets = BaseWidgets()
         
+        #configurando o frame
+        self.grid_rowconfigure((1,2,3), weight=0)
+        self.grid_columnconfigure((0,1,2,3), weight=1)
+
         self.btn_fisioterapeuta = self.widgets.button(self, texto="Cadastrar Fisioterapeuta", comando=self.cadastro_fisioterapeuta, cor="blue")
-        self.btn_fisioterapeuta.grid(row=1, column=0, sticky="w", padx=10, pady=10)
+        self.btn_fisioterapeuta.grid(row=1, column=1, sticky="e", padx=(20,10), pady=(20,10))
 
         self.btn_pesquisador = self.btn_cadastrar_paci = self.widgets.button(self, texto="Cadastrar Pesquisador", comando=self.cadastro_pesquisador, cor="blue")
-        self.btn_pesquisador.grid(row=1, column=1, sticky="w", padx=10, pady=10)
+        self.btn_pesquisador.grid(row=1, column=2, sticky="w", padx=(10,20), pady=(20,10))
 
         self.btn_listar_fisioterapeuta = self.widgets.button(self, texto="Listar Fisioterapeutas", comando=self.listar_fisioterapeutas, cor="blue")
-        self.btn_listar_fisioterapeuta.grid(row=1, column=2, sticky="w", padx=10, pady=10)
+        self.btn_listar_fisioterapeuta.grid(row=2, column=1, sticky="e", padx=(20,10), pady=10)
 
         self.btn_listar_pesquisadores = self.widgets.button(self, texto="Listar Pesquisadores", comando=self.listar_pesquisadores, cor="blue")
-        self.btn_listar_pesquisadores.grid(row=1, column=3, sticky="w", padx=10, pady=10)
+        self.btn_listar_pesquisadores.grid(row=2, column=2, sticky="w", padx=(10,20), pady=10)
 
         self.btn_voltar = self.widgets.button(self, texto="Sair", comando=self.voltar_callback, cor="red")
-        self.btn_voltar.grid(row=2, column=1, sticky="e", padx=10, pady=10)
+        self.btn_voltar.grid(row=3, column=1, sticky="e", padx=20, pady=(10,20))
