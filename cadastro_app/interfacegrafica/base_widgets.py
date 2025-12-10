@@ -7,7 +7,6 @@ class BaseWidgets():
     def label(self, janela, texto, cor):
         return ctk.CTkLabel(
             master=janela,
-            #textvariable=texto_var,
             text=texto,
             width=100,
             height=25,
@@ -15,8 +14,6 @@ class BaseWidgets():
             fg_color=cor,
             text_color="black",
             font=("Arial", 20, "bold"),
-            #compound="top"
-            #justify="center",
             padx=1,
             pady=1,
         )
@@ -24,15 +21,10 @@ class BaseWidgets():
     def entry(self, janela, simbolo):
         return ctk.CTkEntry(
             master=janela,
-            #textvariable=texto_var,
-            #text=texto,
             width=200,
             height=50,
             corner_radius=10,
-            #fg_color=cor,
             text_color="black",
-            #placeholder_text_color=,
-            #placeholder_text=,
             font=("Arial", 20, "bold"),
             state="normal",
             show=simbolo,
@@ -44,22 +36,10 @@ class BaseWidgets():
             width=200,
             height=50,
             corner_radius=10,
-            #border_width=,
-            #border_spacing=,
             fg_color=cor,
-            #hover_color=,
-            #border_color=,
-            #text_color="#0077ff",
-            #placeholder_text_color=,
-            #placeholder_text=,
-            #textvariable=texto_var,
             text=texto,
             font=("Arial", 20, "bold"),
-            #state=,
-            #hover=,
             command=comando,
-            #compound=,
-            #anchor=,
         )
     
     def frame(self, janela):
@@ -75,9 +55,6 @@ class BaseWidgets():
             command=comando,
             width=200,
             height=50,
-            #state=,
-            #fg_color=cor,
-            #button_color="transparent",
             text_color="black",
             font=("Arial", 20, "bold"),
         )
