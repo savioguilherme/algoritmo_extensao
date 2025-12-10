@@ -77,6 +77,16 @@ class BaseWidgets():
             height=50,
             #state=,
             #fg_color=cor,
-            button_color="blue",
+            #button_color="transparent",
             text_color="black",
+            font=("Arial", 20, "bold"),
+        )
+    
+    def switch(self, janela, texto, comando=None):
+        return ctk.CTkSwitch(
+            master=janela,
+            text=texto,
+            command=comando,
+            text_color="black",
+            font=("Arial", 20, "bold"),
         )
