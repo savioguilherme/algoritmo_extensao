@@ -13,16 +13,16 @@ class AgendaPessoa(BaseFrame):
         self.voltar_callback = voltar_callback
         self.pessoa = pessoa
         self.widgets = BaseWidgets()
-        self.frame_auxiliar = self.widgets.frame(self.container)
+        self.frame_auxiliar = self.widgets.frame(self)
         self.frame_auxiliar.grid(row=1, column=0, columnspan=4, sticky="nsew")
         self.frame_auxiliar.grid_columnconfigure((0,1,2,3), weight=1)
         self.frame_auxiliar.grid_rowconfigure((0,1,2,3), weight=1)
         self.exibir_sessoes()
 
-        #self.btn_restricoes = self.widgets.button(self.container, texto="Provisório", comando=None, cor="blue")
+        #self.btn_restricoes = self.widgets.button(self, texto="Provisório", comando=None, cor="blue")
         #self.btn_restricoes.grid(row=2, column=2, sticky="w", padx=10, pady=10)
 
-        self.btn_voltar = self.widgets.button(self.container, texto="Voltar", comando=self.voltar_callback, cor="red")
+        self.btn_voltar = self.widgets.button(self, texto="Voltar", comando=self.voltar_callback, cor="red")
         self.btn_voltar.grid(row=2, column=2, sticky="w", padx=10, pady=10)
     def buscar_sessoes(self):
         pass

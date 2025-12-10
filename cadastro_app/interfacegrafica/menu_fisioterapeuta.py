@@ -12,8 +12,12 @@ class MenuFisioterapeuta(BaseFrame):
         self.abrir_agenda = abrir_agenda
         self.widgets = BaseWidgets()
 
-        self.btn_agenda = self.widgets.button(self.container, texto="Agenda", comando=self.abrir_agenda, cor="blue")
-        self.btn_agenda.grid(row=1, column=0, sticky="e", padx=10, pady=10)
+        #configurando o frame
+        self.grid_rowconfigure((1,2,3), weight=0)
+        self.grid_columnconfigure((0,1,2,3), weight=1)
 
-        self.btn_voltar = self.widgets.button(self.container, texto="Sair", comando=self.voltar_callback, cor="red")
-        self.btn_voltar.grid(row=2, column=0, sticky="e", padx=10, pady=10)
+        self.btn_agenda = self.widgets.button(self, texto="Agenda", comando=self.abrir_agenda, cor="blue")
+        self.btn_agenda.grid(row=1, column=1, sticky="e", padx=(20,10), pady=(10,20))
+
+        self.btn_voltar = self.widgets.button(self, texto="Sair", comando=self.voltar_callback, cor="red")
+        self.btn_voltar.grid(row=2, column=1, sticky="e", padx=(20,10), pady=(10,20))

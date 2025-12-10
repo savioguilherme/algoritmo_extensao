@@ -15,7 +15,7 @@ from interfacegrafica.restricoes_pessoa import RestricoesPessoa
 
 class App(customtkinter.CTk):
 
-    """Classe que controla todo o aplicativo enviando e recebendo as funções e parâmetros"""
+    """Classe que é a janela principal e controla todo o aplicativo enviando e recebendo as funções e parâmetros"""
 
     # aparencia padrao
     customtkinter.set_default_color_theme("dark-blue")
@@ -23,14 +23,17 @@ class App(customtkinter.CTk):
     def __init__(self):
         super().__init__()
         self.title("Cadastro de Pessoas")
+
         # Compatibilidade Linux e Windows para janela maximizada
         try:
             self.state("zoomed")
         except TclError:
             self.attributes("-zoomed", True)
+
         #configuração da Janela
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
+
         # Inicia o login
         self.abrir_login()
 

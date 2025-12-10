@@ -14,10 +14,10 @@ class ListarFisioterapeutas(BaseFrame):
         self.guardar = Armazenamento()
         self.texto_fisioterapeutas = self.exibir_fisioterapeutas()
 
-        self.label_id = customtkinter.CTkLabel(self.container, text=self.texto_fisioterapeutas, font=("Arial", 20, "bold"))
+        self.label_id = customtkinter.CTkLabel(self, text=self.texto_fisioterapeutas, font=("Arial", 20, "bold"))
         self.label_id.grid(row=1, column=0, sticky="e", padx=10, pady=10)
 
-        self.btn_voltar = customtkinter.CTkButton(self.container, text="Voltar", command=self.voltar_callback, font=("Arial", 20, "bold"), fg_color="red")
+        self.btn_voltar = customtkinter.CTkButton(self, text="Voltar", command=self.voltar_callback, font=("Arial", 20, "bold"), fg_color="red")
         self.btn_voltar.grid(row=3, column=1, padx=20, pady=20)
 
     def exibir_fisioterapeutas(self):
