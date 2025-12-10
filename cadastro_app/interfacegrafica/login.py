@@ -17,22 +17,22 @@ class Login(BaseFrame):
         self.widgets = BaseWidgets()
 
         self.label_login = self.widgets.label(self.container, texto="Usuário:", cor="transparent")
-        self.label_login.grid(row=1, column=0, sticky="e", padx=20, pady=10)
+        self.label_login.grid(row=1, column=0, sticky="e", padx=(20,0), pady=(20,10))
 
         self.entry_login = self.widgets.entry(self.container, None)
-        self.entry_login.grid(row=1, column=1, sticky="w", padx=10, pady=10)
+        self.entry_login.grid(row=1, column=1, sticky="w", padx=(0,20), pady=(20,10))
 
         self.label_senha = self.widgets.label(self.container, texto="Senha:", cor="transparent")
-        self.label_senha.grid(row=2, column=0, sticky="e", padx=20, pady=10)
+        self.label_senha.grid(row=2, column=0, sticky="e", padx=(20,0), pady=(10,20))
         
         self.entry_senha = self.widgets.entry(self.container, "*")
-        self.entry_senha.grid(row=2, column=1, sticky="w", padx=10, pady=10)
+        self.entry_senha.grid(row=2, column=1, sticky="w", padx=(0,20), pady=(10,20))
 
         bnt_entrar = self.widgets.button(self.container, texto="Entrar", comando=self.verificar_login, cor="blue")
-        bnt_entrar.grid(row=3, column=0, padx=20, pady=20)
+        bnt_entrar.grid(row=3, column=0, padx=(20,10), pady=(10,20))
 
         bnt_encerrar = self.widgets.button(self.container, texto="Encerrar", comando=self.encerrar, cor="red")
-        bnt_encerrar.grid(row=3, column=1, padx=20, pady=20)
+        bnt_encerrar.grid(row=3, column=1, padx=(10,20), pady=(10,20))
 
     def verificar_login(self):
         usuario = self.entry_login.get()

@@ -8,8 +8,8 @@ class BaseWidgets():
         return ctk.CTkLabel(
             master=janela,
             text=texto,
-            width=100,
-            height=25,
+            width=200,
+            height=50,
             corner_radius=10,
             fg_color=cor,
             text_color="black",
