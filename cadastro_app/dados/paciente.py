@@ -21,6 +21,12 @@ class Paciente(Pessoa):
             for cod in self.CODIGOS_SESSOES
         ]
         self.agenda = Agenda()
+        self.horarios_restricao = []
+        self.dias_restricao = []
 
+    def restricao_paciente(self, horarios, dias):
+        self.horarios_restricao.append(horarios)
+        self.dias_restricao.append(dias)
+        
     def __repr__(self):
         return f"Paciente(id={self.id_pessoa}, nome='{self.nome}')"
