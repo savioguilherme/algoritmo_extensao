@@ -4,9 +4,6 @@ class BaseWidgets():
 
     '''Classe que fornece uma padrão para todos os widgets a serem utilizados a fim de evitar redundancias no codigo'''
 
-    def __init__(self):
-        pass
-
     def label(self, janela, texto, cor):
         return ctk.CTkLabel(
             master=janela,
@@ -66,4 +63,15 @@ class BaseWidgets():
         )
     
     def frame(self, janela):
-        return ctk.CTkFrame(master=janela, fg_color="transparent")
+        return ctk.CTkFrame(
+            master=janela, 
+            fg_color="transparent"
+        )
+    
+    def option_menu(self, janela,): 
+        return ctk.CTkOptionMenu(
+            master=janela, 
+            values=[], 
+            command=None, 
+            variable=None
+        )
