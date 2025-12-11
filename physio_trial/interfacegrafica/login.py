@@ -55,4 +55,8 @@ class Login(BaseFrame):
             if resultado['tipo'] == "administradores":
                 self.abrir_menu_administrador()
         else:
-            CTkMessagebox(title="Erro", message="Usuário ou senha incorretos.", icon="cancel")
+            msqe = CTkMessagebox(title="Erro", message="Usuário ou senha incorretos.", icon="cancel")
+            msqe.get()
+            self.entry_login.delete(0, "end")
+            self.entry_senha.delete(0, "end")
+

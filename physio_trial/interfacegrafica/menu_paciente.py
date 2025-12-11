@@ -10,6 +10,10 @@ class MenuPaciente(BaseFrame):
 
         self.voltar_callback = voltar_callback
         self.widgets = BaseWidgets()
+
+        #configurando o frame
+        self.grid_rowconfigure((1,2,3), weight=0)
+        self.grid_columnconfigure(2, weight=1)
         
         #self.btn_fisioterapeuta = self.widgets.button(self, texto="Cadastrar Fisioterapeuta", comando=self.cadastro_fisioterapeuta, cor="blue")
         #self.btn_fisioterapeuta.grid(row=1, column=0, sticky="w", padx=10, pady=10)
@@ -24,4 +28,4 @@ class MenuPaciente(BaseFrame):
         #self.btn_listar_pesquisadores.grid(row=1, column=3, sticky="w", padx=10, pady=10)
 
         self.btn_voltar = self.widgets.button(self, texto="Voltar", comando=self.voltar_callback, cor="red")
-        self.btn_voltar.grid(row=2, column=1, sticky="e", padx=10, pady=10)
+        self.btn_voltar.grid(row=2, column=1, sticky="e", padx=20, pady=20)

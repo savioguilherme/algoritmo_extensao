@@ -11,6 +11,10 @@ class RestricoesPessoa(BaseFrame):
         self.voltar_callback = voltar_callback
         self.widgets = BaseWidgets()
 
+        #configurando o frame
+        self.grid_rowconfigure((1,2,3), weight=0)
+        self.grid_columnconfigure((0,1,2,3), weight=1)
+
         self.label_dia = self.widgets.label(self, "Escolha o dia da semana: ", cor="transparent")
         self.label_dia.grid(row=1, column=0, sticky="w", padx=10, pady=10)
         

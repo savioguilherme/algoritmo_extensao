@@ -14,6 +14,10 @@ class ListarFisioterapeutas(BaseFrame):
         self.guardar = Armazenamento()
         self.texto_fisioterapeutas = self.exibir_fisioterapeutas()
 
+        #configurando o frame
+        self.grid_rowconfigure((1,2,3), weight=0)
+        self.grid_columnconfigure((0,1,2,3), weight=1)
+
         self.label_id = customtkinter.CTkLabel(self, text=self.texto_fisioterapeutas, font=("Arial", 20, "bold"))
         self.label_id.grid(row=1, column=0, sticky="e", padx=10, pady=10)
 

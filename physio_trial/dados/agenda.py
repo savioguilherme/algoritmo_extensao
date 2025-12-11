@@ -1,6 +1,4 @@
-from dados.paciente import Paciente
 from datetime import date, time
-
 
 class Agenda():
 

@@ -15,6 +15,10 @@ class CadastroPesquisador(BaseFrame):
         self.storage = Armazenamento()  
         self.widgets = BaseWidgets()
 
+        #configurando o frame
+        self.grid_rowconfigure((1,2,3), weight=0)
+        self.grid_columnconfigure((0,1,2,3), weight=1)
+        
         self.label_id = self.widgets.label(self, texto="ID Pesquisador:", cor="transparent")
         self.label_id.grid(row=1, column=0, sticky="e", padx=10, pady=10)
 
