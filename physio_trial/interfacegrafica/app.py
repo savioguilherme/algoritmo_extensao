@@ -22,7 +22,7 @@ class App(customtkinter.CTk):
 
     def __init__(self):
         super().__init__()
-        self.title("Cadastro de Pessoas")
+        self.title("PhysioTrial")
 
         # Compatibilidade Linux e Windows para janela maximizada
         try:
