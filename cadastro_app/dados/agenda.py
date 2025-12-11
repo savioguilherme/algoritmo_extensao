@@ -1,10 +1,22 @@
+from dados.paciente import Paciente
 from datetime import date, time
+
 
 class Agenda():
 
     '''Representa disponibilidade'''
 
     def __init__(self):
+        self.pacientes_ativos = []
+        self.sessoes_agendadas = []
+    
+    def busca_pacientes_ativos(self):
+        pass
+    
+    def agendar_sessao(self):
+        pass
+    
+    '''def __init__(self):
         self.disponibilidade_semanal = [set() for _ in range(7)]
         self.restricoes = set()
     
@@ -32,4 +44,4 @@ class Agenda():
         return list(self.restricoes)
     
     def get_horarios(self):
-        return set.union(*[horarios for horarios in self.disponibilidade_semanal])
+        return set.union(*[horarios for horarios in self.disponibilidade_semanal])'''

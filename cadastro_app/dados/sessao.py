@@ -10,3 +10,4 @@ class Sessao:
     dia: date | None = None
     horario: time | None = None
     status: bool = False
+    conclusao: bool = False
