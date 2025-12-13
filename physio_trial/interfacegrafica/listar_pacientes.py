@@ -1,48 +1,34 @@
 from interfacegrafica.base_frame import BaseFrame
 from interfacegrafica.base_widgets import BaseWidgets
-from armazenamento.armazenamento import Armazenamento
-from tkinter import messagebox
 
 class ListarPacientes(BaseFrame):
     '''Lista todos os pacientes cadastrados'''
 
-    def __init__(self, master, voltar_callback):
+    def __init__(self, master, pacientes, voltar_callback, abrir_menu_paciente):
         super().__init__(master, "Lista de Pacientes")
 
+        self.pacientes = pacientes
         self.voltar_callback = voltar_callback
-        self.guardar = Armazenamento()
-        self.texto_pacientes = self.exibir_pacientes()
+        self.abrir_menu_paciente = abrir_menu_paciente
         self.widgets = BaseWidgets()
 
-        #configurando o frame
-        self.grid_rowconfigure((1,2,3), weight=0)
-        self.grid_columnconfigure((0,1,2,3), weight=1)
+        self._configurar_layout()
+        self._criar_lista_pacientes()
+        self._criar_botao_voltar()
 
-        self.label_nome = self.widgets.label(self, texto=self.texto_pacientes, cor="transparent")
-        self.label_nome.grid(row=1, column=1, sticky="e", padx=(20,20), pady=(20,10))
+    def _configurar_layout(self):
+        self.grid_columnconfigure((1,2), weight=1)
 
-        self.btn_paciente = self.widgets.button(self, texto="Mario", comando=self.voltar_callback, cor="transparent")
-        self.btn_paciente.grid(row=2, column=1, sticky="e", padx=(20,20), pady=(10,10))
+    def _criar_lista_pacientes(self):
+        if not self.pacientes:
+            label = self.widgets.label(self, texto="Nenhum paciente cadastrado.", cor="transparent")
+            label.grid(row=1, column=1, columnspan=3, pady=20)
+            return
 
-        self.btn_voltar = self.widgets.button(self, texto="Voltar", comando=self.voltar_callback, cor="red")
-        self.btn_voltar.grid(row=3, column=1, sticky="e", padx=(20,20), pady=(10,20))
+        for i, paciente in enumerate(self.pacientes):
+            btn = self.widgets.button(self, texto=paciente.nome, comando=lambda p=paciente: self.abrir_menu_paciente(p), cor="blue")
+            btn.grid(row=i+1, column=2, sticky="ew", pady=5, padx=20)
 
-    def exibir_pacientes(self):
-        """Carrega e retorna o texto formatado com os pacientes cadastrados."""
-
-        try:
-            df = self.guardar.carregar("pacientes")
-
-            if df.empty:
-                return "Nenhum paciente cadastrado."
-
-            texto = "Pacientes cadastrados:\n\n"
-            for i, row in df.iterrows():
-                nome = row.get("Nome", "—")
-                texto += f"• {nome} \n"
-
-            return texto.strip()
-
-        except Exception as e:
-            messagebox.showerror("Erro", f"Erro ao carregar Pacientes:\n{e}")
-            return "Erro ao carregar dados."
+    def _criar_botao_voltar(self):
+        btn_voltar = self.widgets.button(self, texto="Voltar", comando=self.voltar_callback, cor="red")
+        btn_voltar.grid(row=99, column=1, pady=20)
