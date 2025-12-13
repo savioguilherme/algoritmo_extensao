@@ -5,7 +5,6 @@ from armazenamento.armazenamento import Armazenamento
 from dados.paciente import Paciente
 
 class CadastroPaciente(BaseFrame):
-
     '''Classe que cria a tela de cadastro para inserir pacientes no sistema'''
 
     def __init__(self, master, voltar_callback, abrir_restricoes):
@@ -17,8 +16,8 @@ class CadastroPaciente(BaseFrame):
         self.widgets = BaseWidgets()
 
         #configurando o frame
-        self.grid_rowconfigure((0,1,2,3,4,5), weight=0)
-        self.grid_columnconfigure((0,1,2,3), weight=1)
+        self.grid_rowconfigure((1,2,3,4,5), weight=0)
+        self.grid_columnconfigure((1,2,3,4,5), weight=1)
 
         self.label_nome = self.widgets.label(self, texto="Nome:", cor="transparent")
         self.label_nome.grid(row=1, column=1, sticky="e", padx=(20,10), pady=(20,10))
@@ -39,7 +38,7 @@ class CadastroPaciente(BaseFrame):
         self.optionmenu_fisioterapeuta.grid(row=3, column=2, sticky="w", padx=(10,20), pady=(10,10))
 
         self.btn_restricao_paciente = self.widgets.button(self, texto="Cadastrar restrição", comando=self.abrir_restricoes, cor="blue")
-        self.btn_restricao_paciente.grid(row=4, column=1, sticky="e", padx=(20,20), pady=(10,10))
+        self.btn_restricao_paciente.grid(row=4, column=1, sticky="e", padx=(10,10), pady=(10,10))
 
         self.btn_salvar = self.widgets.button(self, texto="Salvar", comando=self.salvar_paciente, cor="blue")
         self.btn_salvar.grid(row=5, column=1, sticky="e", padx=(20,10), pady=(10,20))
@@ -47,10 +46,10 @@ class CadastroPaciente(BaseFrame):
         self.btn_voltar = self.widgets.button(self, texto="Voltar", comando=self.voltar_callback, cor="red")
         self.btn_voltar.grid(row=5, column=2, sticky="w", padx=(10,20), pady=(10,20))
 
-    def buscar_pesquisador(self):
+    def buscar_pesquisadores_ativos(self):
         pass
 
-    def buscar_fisioterapeuta(self):
+    def buscar_fisioterapeuta_ativos(self):
         pass
 
     def salvar_paciente(self):
