@@ -35,6 +35,7 @@ class App(customtkinter.CTk):
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
 
+        #self.paciente_repo = PacienteBancoRepositorio() 
         # Inicia o login
         self.abrir_login()
 
@@ -99,7 +100,12 @@ class App(customtkinter.CTk):
     
     def listar_pacientes(self): 
         self.limpar_tela()
-        self.tela_listar_pacientes = ListarPacientes(self, self.abrir_menu_pesquisador)
+        self.tela_listar_pacientes = ListarPacientes(
+            self,
+            #pacientes, #esperando banco
+            self.abrir_menu_pesquisador,
+            self.abrir_menu_paciente
+        )
 
     def listar_pesquisadores(self): 
         self.limpar_tela()
