@@ -1,14 +1,14 @@
-from datetime import date, time
+from collections import deque
 
 class Agenda():
 
-    '''Representa disponibilidade'''
+    ''''''
 
     def __init__(self):
-        self.pacientes_ativos = []
-        self.sessoes_agendadas = []
+        self.sessoes_pacientes_ativos_nao_agendadas = deque([])
+        self.sessoes_agendadas = deque([])
     
-    def busca_pacientes_ativos(self):
+    def buscar_sessoes_pacientes_ativos(self):
         pass
     
     def agendar_sessao(self):

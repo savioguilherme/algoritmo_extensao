@@ -23,20 +23,20 @@ class CadastroPaciente(BaseFrame):
         self.label_nome = self.widgets.label(self, texto="Nome:", cor="transparent")
         self.label_nome.grid(row=1, column=1, sticky="e", padx=(20,10), pady=(20,10))
 
-        self.entry_nome = self.widgets.entry(self, None)
+        self.entry_nome = self.widgets.entry(self, None, None)
         self.entry_nome.grid(row=1, column=2, sticky="w", padx=(10,20), pady=(20,10))
 
         self.label_pesquisador = self.widgets.label(self, "Escolha um pesquisador responsável: ", cor="transparent")
-        self.label_pesquisador.grid(row=2, column=1, sticky="e", padx=(20,10), pady=10)
+        self.label_pesquisador.grid(row=2, column=1, sticky="e", padx=(20,10), pady=(10,10))
         
         self.optionmenu_pesquisador = self.widgets.option_menu(self, ["Joana"], None)
-        self.optionmenu_pesquisador.grid(row=2, column=2, sticky="w", padx=(10,20), pady=10)
+        self.optionmenu_pesquisador.grid(row=2, column=2, sticky="w", padx=(10,20), pady=(10,10))
 
         self.label_fisioterapeuta = self.widgets.label(self, "Escolha um fisioterapeuta responsável: ", cor="transparent")
-        self.label_fisioterapeuta.grid(row=3, column=1, sticky="e", padx=(20,10), pady=10)
+        self.label_fisioterapeuta.grid(row=3, column=1, sticky="e", padx=(20,10), pady=(10,10))
         
         self.optionmenu_fisioterapeuta = self.widgets.option_menu(self, ["Maria"], None)
-        self.optionmenu_fisioterapeuta.grid(row=3, column=2, sticky="w", padx=(10,20), pady=10)
+        self.optionmenu_fisioterapeuta.grid(row=3, column=2, sticky="w", padx=(10,20), pady=(10,10))
 
         self.btn_restricao_paciente = self.widgets.button(self, texto="Cadastrar restrição", comando=self.abrir_restricoes, cor="blue")
         self.btn_restricao_paciente.grid(row=4, column=1, sticky="e", padx=(20,20), pady=(10,10))
@@ -46,6 +46,12 @@ class CadastroPaciente(BaseFrame):
 
         self.btn_voltar = self.widgets.button(self, texto="Voltar", comando=self.voltar_callback, cor="red")
         self.btn_voltar.grid(row=5, column=2, sticky="w", padx=(10,20), pady=(10,20))
+
+    def buscar_pesquisador(self):
+        pass
+
+    def buscar_fisioterapeuta(self):
+        pass
 
     def salvar_paciente(self):
         id_paciente = self.entry_id.get().strip()

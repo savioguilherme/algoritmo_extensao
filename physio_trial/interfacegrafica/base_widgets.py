@@ -18,7 +18,7 @@ class BaseWidgets():
             pady=1,
         )
     
-    def entry(self, janela, simbolo):
+    def entry(self, janela, simbolo, placeholder):
         return ctk.CTkEntry(
             master=janela,
             width=200,
@@ -28,6 +28,7 @@ class BaseWidgets():
             font=("Arial", 20, "bold"),
             state="normal",
             show=simbolo,
+            placeholder_text=placeholder
         )
     
     def button(self, janela, texto, comando, cor):

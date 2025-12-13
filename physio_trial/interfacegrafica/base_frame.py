@@ -14,4 +14,4 @@ class BaseFrame(customtkinter.CTkFrame):
        
         if titulo:
             self.label_titulo = customtkinter.CTkLabel(self, text=titulo, width=200, height=50, font=("Arial", 45, "bold"))
-            self.label_titulo.grid(row=0, column=0, sticky="nsew", columnspan=4, padx=20, pady=20)
+            self.label_titulo.grid(row=0, column=0, sticky="nsew", columnspan=5, padx=20, pady=20)

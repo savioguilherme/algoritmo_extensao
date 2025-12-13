@@ -9,5 +9,5 @@ class Sessao:
     codigo: str
     dia: date | None = None
     horario: time | None = None
-    status: bool = False
+    status_agendamento: bool = False
     conclusao: bool = False
