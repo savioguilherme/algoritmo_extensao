@@ -31,6 +31,12 @@ class Paciente(Pessoa):
     
     def verifica_conclusao(self):
         pass
+    
+    def verifica_abandono(self):
+        pass
+    
+    def desabilita_paciente(self): 
+        pass
 
     def __repr__(self):
         return f"Paciente(id={self.id_pessoa}, nome='{self.nome}')"
