@@ -20,12 +20,12 @@ class ListarPacientes(BaseFrame):
     def _criar_lista_pacientes(self):
         if not self.pacientes:
             label = self.widgets.label(self, texto="Nenhum paciente cadastrado.", cor="transparent")
-            label.grid(row=1, column=1, columnspan=3, pady=20)
+            label.grid(row=1, column=1, columnspan=4, padx=(20,20), pady=(20,20))
             return self._criar_botao_voltar(2)
 
         for i, paciente in enumerate(self.pacientes):
             btn = self.widgets.button(self, texto=paciente.nome, comando=lambda p=paciente: self.abrir_menu_paciente(p), cor="blue")
-            btn.grid(row=i, column=1, sticky="e", columnspan=3, padx=20, pady=5)
+            btn.grid(row=i, column=1, sticky="e", columnspan=4, padx=20, pady=20)
 
         return self._criar_botao_voltar(i)
     
