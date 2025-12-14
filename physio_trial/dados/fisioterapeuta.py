@@ -11,7 +11,6 @@ class Fisioterapeuta(Pessoa):
         self.senha = senha
         self.horarios_restricao = []
         self.dias_restricao = []
-        self.agenda = Agenda()
 
     def restricao_fisioterapeuta(self, horarios, dias):
         self.horarios_restricao.append(horarios)

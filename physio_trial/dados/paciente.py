@@ -23,7 +23,6 @@ class Paciente(Pessoa):
         ]
         self.horarios_restricao = []
         self.dias_restricao = []
-        self.agenda = Agenda()
 
     def restricao_paciente(self, horarios, dias):
         self.horarios_restricao.append(horarios)
