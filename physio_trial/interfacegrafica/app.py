@@ -103,6 +103,7 @@ class App(customtkinter.CTk):
         self.tela_listar_pacientes = ListarPacientes(
             self,
             #pacientes, #esperando banco
+            None,
             self.abrir_menu_pesquisador,
             self.abrir_menu_paciente
         )
