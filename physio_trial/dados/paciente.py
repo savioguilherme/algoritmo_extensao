@@ -1,5 +1,6 @@
 from dados.pessoa import Pessoa
 from dados.sessao import Sessao
+from dados.restricoes_dias_horarios import RestricoesDiasHorarios
 
 class Paciente(Pessoa):
     '''Classe que representa um paciente'''
@@ -11,10 +12,11 @@ class Paciente(Pessoa):
     ]
 
     def __init__(self, id_paciente, nome_paciente, pesquisador, fisioterapeuta, status_paciente, tipo = "paciente"):
-        super().__init__(id_paciente, nome_paciente, tipo, status_paciente)
+        super().__init__(id_paciente, nome_paciente, tipo, status_paciente)\
 
         self.pesquisador_responsavel = pesquisador
         self.fisioterapeuta_responsavel = fisioterapeuta
+        self.restricoes_paciente = RestricoesDiasHorarios()
 
         self.sessoes_paciente = [
             Sessao(None,cod, None, None, False, False)  #List Comprehension Python 
@@ -27,9 +29,9 @@ class Paciente(Pessoa):
         self.conclusao = False
         self.abandono = False
 
-    def restricao_paciente(self, horarios, dias):
+    '''def restricao_paciente(self, horarios, dias):
         self.horarios_restricao.append(horarios)
-        self.dias_restricao.append(dias)
+        self.dias_restricao.append(dias)'''
     
     def verificar_conclusao_pesquisa(self):
         for i in self.sessoes_paciente:
