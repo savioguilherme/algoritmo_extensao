@@ -3,9 +3,9 @@ from datetime import date, time
 
 @dataclass
 class Sessao:
-
     '''Classe que representa uma das 11 sessoes'''
-
+    
+    id_sessao: str | None = None
     codigo: str
     dia: date | None = None
     horario: time | None = None
