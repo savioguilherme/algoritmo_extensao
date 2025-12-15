@@ -1,7 +1,6 @@
 from dados.pessoa import Pessoa
 
 class Administrador(Pessoa):
-
     '''Classe que representa um administrador do sistema'''
 
     def __init__(self, id_administrador, nome_administrador, login, senha, status_administrador, tipo="administrador"):

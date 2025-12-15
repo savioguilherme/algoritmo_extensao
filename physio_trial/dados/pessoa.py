@@ -1,6 +1,5 @@
 
 class Pessoa():
-
     '''Classe base para representar uma pessoa'''
 
     def __init__(self, id_pessoa, nome, tipo, status_pessoa):
