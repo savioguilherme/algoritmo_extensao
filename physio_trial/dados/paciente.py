@@ -14,15 +14,23 @@ class Paciente(Pessoa):
     ]
 
     def __init__(self, id_paciente, nome_paciente, pesquisador, fisioterapeuta, status_paciente, tipo = "paciente"):
-        super().__init__(id_paciente, nome_paciente, tipo, status_paciente)\
+        super().__init__(id_paciente, nome_paciente, tipo, status_paciente)
 
         self.pesquisador_responsavel = pesquisador
         self.fisioterapeuta_responsavel = fisioterapeuta
         self.restricoes_paciente = RestricoesDiasHorarios()
 
         self.sessoes_paciente = [
-            Sessao(None,cod, None, None, False, False)  #List Comprehension Python 
-            for cod in self.CODIGOS_SESSOES
+            Sessao(
+                id_sessao=None,
+                codigo=cod,
+                paciente=self,
+                dia=None,
+                horario=None,
+                status_agendamento=False,
+                conclusao=False
+            )  
+            for cod in self.CODIGOS_SESSOES #List Comprehension Python 
         ]
         self.conclusao = False
         self.abandono = False
