@@ -6,7 +6,7 @@ class Sessao:
     '''Classe que representa uma das 11 sessoes'''
     
     id_sessao: str | None = None
-    codigo: str
+    codigo: str | None = None
     dia: date | None = None
     horario: time | None = None
     status_agendamento: bool = False
