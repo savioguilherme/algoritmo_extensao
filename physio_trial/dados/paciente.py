@@ -10,7 +10,7 @@ class Paciente(Pessoa):
     CODIGOS_SESSOES = [
         "fisio1", "fisio2", "fisio3", "fisio4", "fisio5",
         "fisio6", "fisio7", "fisio8", "exfinal",
-        "retorno1", "retorno2"
+        "retorno1", "retorno2" # sessoes devem começar com S e retornos F. Formato S00 E F00
     ]
 
     def __init__(self, id_paciente, nome_paciente, pesquisador: Pesquisador, fisioterapeuta: Fisioterapeuta, status_paciente, tipo = "paciente"):
