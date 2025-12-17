@@ -9,16 +9,19 @@ class Agenda():
     '''Classe que recebe todas as sessoes dos pacientes ativos e se relaciona com a heuristica para criar os agendamentos'''
 
     def __init__(self, pacientes: List[Paciente]):
-        self.pacientes: List[Paciente] = pacientes
+
+        self.pacientes_ativos: List[Paciente] = pacientes # aqui se obtém os as restrições
+
         self.sessoes_pacientes_ativos: Deque[Sessao] = deque()  # fila com todas as sessoes dos pacientes ativos, menos sessoes agendadas
         self.sessoes_agendadas: Deque[Sessao] = deque() # fila com todas as sessoes dos pacientes ativos agendadas e aguardando
-        self.fisioterapeutas_ativos: List[Fisioterapeuta] = []
-        self.pesquisadores_ativos: List[Pesquisador] = []
-    
-    def buscar_pacientes_ativos(self): #essa função pode ser removida caso a classe agenda já receba do banco os pacientes ativos
-        return [p for p in self.pacientes if p.status_pessoa == True]
 
-    def buscar_sessoes_pacientes_ativos(self): #vai na lista pacientes e busca as sessoes
+        self.fisioterapeutas_ativos: List[Fisioterapeuta] = [] # aqui se obtém os as restrições
+        self.pesquisadores_ativos: List[Pesquisador] = [] # aqui se obtém os as restrições
+    
+    def buscar_pacientes_ativos(self): # essa função pode ser removida caso a classe agenda já receba do banco os pacientes ativos
+        return [p for p in self.pacientes_ativos if p.status_pessoa == True]
+
+    def buscar_sessoes_pacientes_ativos(self): # vai na lista pacientes e busca as sessoes de todos
         for paciente in self.buscar_pacientes_ativos():
             for sessao in paciente.sessoes_paciente:
                 if not sessao.status_agendamento and not sessao.conclusao:
@@ -39,6 +42,9 @@ class Agenda():
                 sessao.status_agendamento = False
                 self.sessoes_pacientes_ativos.append(sessao)
                 self.sessoes_agendadas.remove(sessao)
+
+    def retornar_sessao_pessoa(self): # esse método retorna as informações de sessoes já concluídas para salvar
+        pass
 
     def buscar_fisioterapeutas_ativos(self):
         pass
