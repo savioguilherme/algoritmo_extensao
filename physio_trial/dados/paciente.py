@@ -13,7 +13,7 @@ class Paciente(Pessoa):
         "retorno1", "retorno2"
     ]
 
-    def __init__(self, id_paciente, nome_paciente, pesquisador, fisioterapeuta, status_paciente, tipo = "paciente"):
+    def __init__(self, id_paciente, nome_paciente, pesquisador: Pesquisador, fisioterapeuta: Fisioterapeuta, status_paciente, tipo = "paciente"):
         super().__init__(id_paciente, nome_paciente, tipo, status_paciente)
 
         self.pesquisador_responsavel = pesquisador
@@ -32,8 +32,8 @@ class Paciente(Pessoa):
             )  
             for cod in self.CODIGOS_SESSOES #List Comprehension Python 
         ]
-        self.conclusao = False
-        self.abandono = False
+        self.conclusao_pesquisa = False
+        self.abandono_pesquisa = False
     
     def restricao_paciente(self, horarios, dias):
         pass
@@ -51,10 +51,10 @@ class Paciente(Pessoa):
     def desabilitar_paciente(self): 
         self.status_pessoa = False
 
-    def alterar_pesquisador(self, pesquisador): 
+    def alterar_pesquisador(self, pesquisador: Pesquisador): 
         self.pesquisador_responsavel = pesquisador
 
-    def alterar_fisioterapeuta(self, fisioterapeuta): 
+    def alterar_fisioterapeuta(self, fisioterapeuta: Fisioterapeuta): 
         self.fisioterapeuta_responsavel= fisioterapeuta
 
     def __repr__(self):
