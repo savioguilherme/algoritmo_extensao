@@ -1,0 +1,46 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: pg-physio-usp
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: physio_trial
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgusp_data:/var/lib/postgresql/data
+    networks:
+      - physio_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin-physio-usp
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@usp.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    networks:
+      - physio_net
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+networks:
+  physio_net:
+    driver: bridge
+
+volumes:
+  pgusp_data:
+  pgadmin_data:
