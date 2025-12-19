@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Any, Dict
+from typing import Any, Dict, List, Union
 
 from sqlalchemy import Engine
+
+ResultType = Union[Dict[str, Any], List[Dict[str, Any]]]
 
 class DataAccessLayer(ABC):
     """
@@ -17,29 +19,31 @@ class DataAccessLayer(ABC):
         self._engine = engine
 
     @abstractmethod
-    def call_function(self, function_name: str, **kwargs: Any) -> Dict[str, Any]:
+    def call_function(self, functional_context: str, **kwargs: Any) -> Dict[str, Any]:
         """
-        Executa uma FUNCTION no banco.
+        Executa uma FUNCTION no banco ou algum script de consulta (query).
 
         Args:
-            function_name: nome da function (ex.: 'fn_meu_metodo').
+            functional_context: nome da function ou script sql funcional de query
+                (ex.: 'fn_meu_metodo' ou 'SELECT * FROM paciente').
             **kwargs: argumentos nomeados esperados pela function.
 
         Returns:
-            dict com o resultado retornado pela function.
+            dict com o resultado retornado pela function ou query.
         """
         raise NotImplementedError
 
     @abstractmethod
-    def call_procedure(self, procedure_name: str, **kwargs: Any) -> Dict[str, Any]:
+    def call_procedure(self, procedural_context: str, **kwargs: Any) -> Dict[str, Any]:
         """
-        Executa uma PROCEDURE no banco.
+        Executa uma PROCEDURE no banco ou algum script envolvendo operações DML.
 
         Args:
-            procedure_name: nome da procedure (ex.: 'pr_meu_metodo').
+            procedural_context: nome da procedure ou sql script de DML
+                (ex.: 'pr_meu_metodo' ou 'INSERT INTO ...').
             **kwargs: argumentos nomeados esperados pela procedure.
 
         Returns:
-            dict com os OUT params retornados pela procedure.
+            dict com os OUT params retornados pela procedure ou statement.
         """
         raise NotImplementedError
