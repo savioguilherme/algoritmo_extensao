@@ -1,6 +1,5 @@
 from interfacegrafica.base_frame import BaseFrame
 from interfacegrafica.base_widgets import BaseWidgets
-from armazenamento.autenticacao import Autenticacao
 from CTkMessagebox import CTkMessagebox
 
 class Login(BaseFrame):

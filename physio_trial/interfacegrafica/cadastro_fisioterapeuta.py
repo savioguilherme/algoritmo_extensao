@@ -1,9 +1,7 @@
 from interfacegrafica.base_frame import BaseFrame
 from interfacegrafica.base_widgets import BaseWidgets
 from CTkMessagebox import CTkMessagebox
-from armazenamento.armazenamento import Armazenamento
 from dados.fisioterapeuta import Fisioterapeuta
-from CTkMessagebox import CTkMessagebox
 
 class CadastroFisioterapeuta(BaseFrame):
 
@@ -13,7 +11,6 @@ class CadastroFisioterapeuta(BaseFrame):
         super().__init__(master, "Cadastro de Fisioterapeutas")
 
         self.voltar_callback = voltar_callback
-        self.storage = Armazenamento()
         self.widgets = BaseWidgets()
 
         #configurando o frame
@@ -49,36 +46,3 @@ class CadastroFisioterapeuta(BaseFrame):
 
         self.btn_voltar = self.widgets.button(self, texto="Voltar", comando=self.voltar_callback, cor="red")
         self.btn_voltar.grid(row=3, column=2, sticky="w", padx=(10,20), pady=(10,20))
-
-    def salvar_fisioterapeuta(self):
-        id_fisio = self.entry_id.get().strip()
-        nome = self.entry_nome.get().strip()
-        login = self.entry_login.get().strip()
-        senha = self.entry_senha.get().strip()
-
-        if not (id_fisio and nome and login and senha):
-            CTkMessagebox(title="Erro", message="Preencha todos os campos antes de salvar!", icon="cancel")
-            return
-
-        # Criar o objeto Fisioterapeuta
-        fisioterapeuta = Fisioterapeuta(id_fisio, nome, login, senha)
-
-        # Converter para dicionário simplificado para salvar no Excel
-        dados = {
-            "ID": fisioterapeuta.id_pessoa,
-            "Nome": fisioterapeuta.nome,
-            "Login": fisioterapeuta.login,
-            "Senha": fisioterapeuta.senha
-        }
-
-        try:
-            self.storage.salvar("fisioterapeutas", dados)
-            CTkMessagebox(title="Sucesso", message=f"Fisioterapeuta, '{nome}' cadastrado com sucesso", icon="check")
-            # Limpar campos
-            self.entry_id.delete(0, "end")
-            self.entry_nome.delete(0, "end")
-            self.entry_login.delete(0, "end")
-            self.entry_senha.delete(0, "end")
-
-        except Exception as e:
-            CTkMessagebox(title="Erro", message=f"Falha ao salvar os dados: {e}", icon="cancel")
