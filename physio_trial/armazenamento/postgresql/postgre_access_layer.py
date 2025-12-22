@@ -8,6 +8,7 @@ from sqlalchemy.engine import RowMapping
 from sqlalchemy.exc import SQLAlchemyError
 
 from armazenamento.dal.data_access_layer import DataAccessLayer, ResultType
+from armazenamento.context.app_context import set_audited_user_id
 
 _IDENTIFIER_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*(\.[A-Za-z_][A-Za-z0-9_]*)*$")
 
@@ -72,6 +73,7 @@ class PostgreAccessLayer(DataAccessLayer):
         # CALL pode retornar 1 linha com OUT params (quando a procedure tem OUT params).
         try:
             with self._engine.begin() as conn:
+                set_audited_user_id(conn)
                 result = conn.execute(sql, kwargs)
 
                 row: Optional[RowMapping] = result.mappings().first() if result.returns_rows else None
