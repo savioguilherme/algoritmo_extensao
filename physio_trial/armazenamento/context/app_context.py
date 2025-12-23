@@ -3,9 +3,6 @@ from contextvars import ContextVar
 from sqlalchemy import text
 from sqlalchemy.engine import Connection
 
-# SET_AUDIT_USER_SQL = text("SET LOCAL app.user_id = :uid")
-SET_AUDIT_USER_SQL = text("SET LOCAL app.user_id = 1")
-
 current_user_id: ContextVar[int | None] = ContextVar("current_user_id", default=None)
 
 def require_logged_user() -> int:
@@ -28,5 +25,4 @@ def set_audited_user_id(conn: Connection) -> None:
     """
     user_id = require_logged_user()
 
-    # conn.execute(SET_AUDIT_USER_SQL, {"uid": user_id})
-    conn.execute(SET_AUDIT_USER_SQL)
+    conn.execute(text(f"SET LOCAL app.user_id = {user_id}"))

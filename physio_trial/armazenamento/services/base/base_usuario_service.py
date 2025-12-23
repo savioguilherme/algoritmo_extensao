@@ -12,6 +12,14 @@ class BaseUsuarioService(ABC):
     """
     def __init__(self, dal: DataAccessLayer):
         self._dal = dal
+    
+    @abstractmethod
+    def login(self, username: str, password: str) -> int | None:
+        pass
+
+    @abstractmethod
+    def logout(self) -> None:
+        pass
 
     @abstractmethod
     def listar_usuarios(self, lista_tipos: list[int]) -> list[Administrador | Fisioterapeuta | Pesquisador]:

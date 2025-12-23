@@ -1,6 +1,10 @@
-import inject
+import bcrypt
 
+from inject import autoparams
+
+from armazenamento.context.app_context import current_user_id
 from armazenamento.services.base.base_usuario_service import BaseUsuarioService
+from armazenamento.dal.data_access_layer import DataAccessLayer
 
 from dados.administrador import Administrador
 from dados.fisioterapeuta import Fisioterapeuta
@@ -8,9 +12,30 @@ from dados.pesquisador import Pesquisador
 
 class UsuarioService(BaseUsuarioService):
 
-    @inject.autoparams()
-    def __init__(self, dal):
+    @autoparams()
+    def __init__(self, dal: DataAccessLayer):
         super().__init__(dal)
+
+    def login(self, username: str, password: str) -> int | None:
+        byted_password = b'' + password.encode('utf-8')
+
+        user_data: Administrador | Fisioterapeuta | Pesquisador | None = self._dal.call_function(
+            "ufn_usuario_consultar_senha_criptografada",
+            p_login=username
+        )
+
+        hashed_password = user_data['senha_criptografada'] if user_data is not None else None
+
+        if hashed_password is None:
+            return None
+
+        elif bcrypt.checkpw(byted_password, hashed_password.encode('utf-8')):
+            user_id = user_data['id_usuario']
+            current_user_id.set(user_id)
+            return user_id
+
+    def logout(self) -> None:
+        current_user_id.set(None)
 
     def listar_usuarios(self, lista_tipos: list[int]) -> list[Administrador | Fisioterapeuta | Pesquisador]:
         return self._dal.usuario_dal.listar_usuarios(lista_tipos)
