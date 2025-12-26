@@ -9,7 +9,7 @@ if TYPE_CHECKING: #evita import circular
 class Sessao:
     id_sessao: str | None = None
     codigo: str | None = None
-    paciente: "Paciente" | None = None
+    paciente: str | None = None
     dia: date | None = None
     horario: time | None = None
     status_agendamento: bool = False

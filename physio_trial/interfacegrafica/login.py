@@ -1,6 +1,7 @@
 from interfacegrafica.base_frame import BaseFrame
 from interfacegrafica.base_widgets import BaseWidgets
 from CTkMessagebox import CTkMessagebox
+from armazenamento.services.usuario_service import UsuarioService
 
 class Login(BaseFrame):
 
@@ -31,31 +32,35 @@ class Login(BaseFrame):
         self.entry_senha = self.widgets.entry(self, "*", None)
         self.entry_senha.grid(row=2, column=2, sticky="w", padx=(10,20), pady=(10,20))
 
-        bnt_entrar = self.widgets.button(self, texto="Entrar", comando=self.verificar_login, cor="blue")
+        bnt_entrar = self.widgets.button(self, texto="Entrar", comando=self.realizar_login, cor="blue")
         bnt_entrar.grid(row=3, column=1, sticky="e", padx=(20,10), pady=(10,20))
 
         bnt_encerrar = self.widgets.button(self, texto="Encerrar", comando=self.encerrar, cor="red")
         bnt_encerrar.grid(row=3, column=2, sticky="w", padx=(10,20), pady=(10,20))
 
-    def verificar_login(self):
+    def realizar_login(self):
         usuario = self.entry_login.get()
         senha = self.entry_senha.get()
 
-        auth = Autenticacao(usuario, senha)
-        resultado = auth.verificar()
+        if not usuario or not senha: 
+            CTkMessagebox (title="Erro", message="Informe usuário e senha.", icon="cancel").get()
+            return
 
-        if resultado["autenticado"]:
-            msg = CTkMessagebox(title="Bem-vindo", message=f"Acesso permitido, {resultado['nome']}!", icon="check")
-            msg.get()
-            if resultado['tipo'] == "pesquisadores":
+        servico = UsuarioService()
+        id_usuario = servico.login(usuario, senha)
+
+        if id_usuario is not None:
+            # Obtém o tipo do usuário (exemplo)
+            tipo = servico.obter_tipo_usuario(id_usuario)
+
+            CTkMessagebox(title="Bem-vindo", message="Acesso permitido!", icon="check").get()
+            if tipo == "pesquisadores":
                 self.abrir_menu_pesquisador()
-            if resultado['tipo'] == "fisioterapeutas":
+            elif tipo == "fisioterapeutas":
                 self.abrir_menu_fisioterapeuta()
-            if resultado['tipo'] == "administradores":
+            elif tipo == "administradores":
                 self.abrir_menu_administrador()
         else:
-            msqe = CTkMessagebox(title="Erro", message="Usuário ou senha incorretos.", icon="cancel")
-            msqe.get()
+            CTkMessagebox(title="Erro", message="Usuário ou senha incorretos.", icon="cancel").get()
             self.entry_login.delete(0, "end")
             self.entry_senha.delete(0, "end")
-
