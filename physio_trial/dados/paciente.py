@@ -4,7 +4,7 @@ from dados.sessao import Sessao
 from dados.restricoes_dias_horarios import RestricoesDiasHorarios
 from dados.fisioterapeuta import Fisioterapeuta
 from dados.pesquisador import Pesquisador
-from armazenamento.services.base.base_paciente_service import BasePacienteService
+# from armazenamento.services.base.base_paciente_service import BasePacienteService
 # from armazenamento.services.base.base_codigo_sessao_service import BaseCodigoSessaoService
 
 class Paciente(Pessoa):
@@ -14,6 +14,8 @@ class Paciente(Pessoa):
         self,
         id_paciente,
         nome_paciente,
+        email,
+        data_nascimento,
         pesquisador: Pesquisador,
         fisioterapeuta: Fisioterapeuta,
         status_paciente,
@@ -21,7 +23,7 @@ class Paciente(Pessoa):
         codigos_sessoes: list[str] = None,
         tipo = "paciente"
     ):
-        super().__init__(id_paciente, nome_paciente, tipo, status_paciente)
+        super().__init__(id_paciente, nome_paciente, email, data_nascimento, tipo, status_paciente)
 
         self.pesquisador_responsavel = pesquisador
         self.fisioterapeuta_responsavel = fisioterapeuta
