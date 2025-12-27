@@ -1,35 +1,30 @@
-from dados.fisioterapeuta import Fisioterapeuta
-from dados.paciente import Paciente
-from dados.pesquisador import Pesquisador
-from greedy.wrapper import wrapper
-
+import inject
 import datetime
 
-from dados.agenda import Agenda
+import armazenamento
+from armazenamento.services.base.base_paciente_service import BasePacienteService
 
-def test():
-    fisioterapeuta = Fisioterapeuta(1, None, None, None)
-    pesquisador = Pesquisador(2, None, None, None)
-    paciente = Paciente(3, None, None, None, None, None)
+from greedy.wrapper import wrapper
 
-    segunda = 0
-    quarta = 2
-    manha = datetime.time(10)
+@inject.autoparams
+def teste_wrapper(paciente_service: BasePacienteService):
 
-    fisioterapeuta.agenda.adicionar_disponibilidade(segunda,manha)
-    fisioterapeuta.agenda.adicionar_disponibilidade(quarta,manha)
-    fisioterapeuta.agenda.adicionar_restricao(datetime.datetime(2025,12,24,10))
-    pesquisador.agenda.adicionar_disponibilidade(segunda,manha)
-    pesquisador.agenda.adicionar_disponibilidade(quarta,manha)
-    paciente.agenda.adicionar_disponibilidade(segunda,manha)
-    paciente.agenda.adicionar_disponibilidade(quarta,manha)
+    sucesso = wrapper()
 
-    sucesso = wrapper([fisioterapeuta],[pesquisador],[paciente],datetime.date(2025,11,25))
+    if sucesso:
+        print("Heurística funcionou")
+        pacientes = paciente_service.listar_pacientes()
+        for paciente in pacientes:
+            print("Paciente {}".format(paciente.nome))
+            print("Fisioterapeuta: {}".format(paciente.fisioterapeuta_responsavel.nome))
+            print("Pesquisador: {}".format(paciente.pesquisador_responsavel.nome))
+            for sessao in paciente.sessoes_paciente:
+                dia_horario = datetime.datetime.combine(sessao.dia, sessao.horario)
+                paciente_disp = "disponível" if paciente.restricoes_paciente.esta_disponivel(dia_horario) else "ocupado"
+                fisio_disp = "disponível" if paciente.fisioterapeuta_responsavel.restricoes_fisioterapeuta.esta_disponivel(dia_horario) else "ocupado"
+                pesquisador_disp = "disponível" if paciente.pesquisador_responsavel.restricoes_pesquisador.esta_disponivel(dia_horario) else "ocupado"
+                print("Sessão {}: {} paciente:{} fisio:{} pesquisador:{}".format(sessao.codigo, dia_horario.strftime("%d/%m/%Y %H:%M"), paciente_disp, fisio_disp, pesquisador_disp))
+    else:
+        print("Heurística falhou")
 
-    print("\nheurística funcionou" if sucesso else "heurística falhou")
-    if(sucesso):
-        print("fisioterapeuta:", paciente.fisioterapeuta.id_pessoa)
-        print("pesquisador:", paciente.pesquisador.id_pessoa)
-        print("secoes:")
-        for codigo in paciente.sessoes:
-            print("{}: {}".format(codigo,paciente.sessoes[codigo].horario))
+teste_wrapper()

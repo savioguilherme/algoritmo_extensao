@@ -9,6 +9,9 @@ class PacienteService(BasePacienteService):
     def __init__(self, dal: DataAccessLayer):
         super().__init__(dal)
 
+    def listar_pacientes(self) -> list[Paciente]:
+        pass
+
     def cadastrar_abandono_pesquisa(self, paciente_id: int) -> Dict[str, Any] | None:
         """
         Implementação do método para cadastrar o abandono de pesquisa para um paciente.

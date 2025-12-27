@@ -1,7 +1,10 @@
 from abc import ABC, abstractmethod
-from typing import Any, Dict
+from typing import Any, Dict, TYPE_CHECKING
 
 from armazenamento.dal.data_access_layer import DataAccessLayer
+
+if TYPE_CHECKING:
+    from dados.paciente import Paciente
 
 class BasePacienteService(ABC):
     """
@@ -12,33 +15,42 @@ class BasePacienteService(ABC):
 
     # Métodos abstratos para operações específicas podem ser definidos aqui
     @abstractmethod
-    def cadastrar_abandono_pesquisa(self, paciente_id: int) -> Dict[str, Any] | None:
+    def listar_pacientes(self) -> list[Paciente]:
         """
-        Cadastra o abandono de pesquisa para um paciente.
+        Lista todos os pacientes cadastrados
 
         Args:
-            paciente_id: ID do paciente.
         """
         pass
 
     @abstractmethod
-    def alterar_pesquisador(self, paciente_id: int, novo_pesquisador_id: int) -> Dict[str, Any] | None:
+    def cadastrar_abandono_pesquisa(self, id_paciente: int) -> Dict[str, Any] | None:
+        """
+        Cadastra o abandono de pesquisa para um paciente.
+
+        Args:
+            id_paciente: ID do paciente.
+        """
+        pass
+
+    @abstractmethod
+    def alterar_pesquisador(self, id_paciente: int, novo_pesquisador_id: int) -> Dict[str, Any] | None:
         """
         Altera o pesquisador responsável por um paciente.
 
         Args:
-            paciente_id: ID do paciente.
+            id_paciente: ID do paciente.
             novo_pesquisador_id: ID do novo pesquisador.
         """
         pass
 
     @abstractmethod
-    def alterar_fisioterapeuta(self, paciente_id: int, novo_fisioterapeuta_id: int) -> Dict[str, Any] | None:
+    def alterar_fisioterapeuta(self, id_paciente: int, novo_fisioterapeuta_id: int) -> Dict[str, Any] | None:
         """
         Altera o fisioterapeuta responsável por um paciente.
 
         Args:
-            paciente_id: ID do paciente.
+            id_paciente: ID do paciente.
             novo_fisioterapeuta_id: ID do novo fisioterapeuta.
         """
         pass
