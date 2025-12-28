@@ -317,7 +317,7 @@ CREATE TABLE public.usuario (
     id_usuario integer NOT NULL,
     tipo integer NOT NULL,
     login character varying(29) NOT NULL,
-    senha character varying(29) NOT NULL,
+    senha character varying(290) NOT NULL,
     inserido_em timestamp without time zone NOT NULL,
     atualizado_em timestamp without time zone,
     ativo boolean

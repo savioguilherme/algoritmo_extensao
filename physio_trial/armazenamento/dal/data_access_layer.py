@@ -19,7 +19,7 @@ class DataAccessLayer(ABC):
         self._engine = engine
 
     @abstractmethod
-    def call_function(self, functional_context: str, **kwargs: Any) -> Dict[str, Any]:
+    def call_function(self, functional_context: str, **kwargs: Any) -> ResultType:
         """
         Executa uma FUNCTION no banco ou algum script de consulta (query).
 

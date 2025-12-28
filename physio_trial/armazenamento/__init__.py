@@ -10,14 +10,13 @@ from armazenamento.services.base.base_codigo_sessao_service import BaseCodigoSes
 from armazenamento.services.base.base_usuario_service import BaseUsuarioService
 from armazenamento.services.base.base_paciente_service import BasePacienteService
 from armazenamento.services.base.base_sessao_service import BaseSessaoService
+from armazenamento.services.base.base_usuario_tipo_service import BaseUsuarioTipoService
 
 from armazenamento.services.codigo_sessao_service import CodigoSessaoService
-from armazenamento.services.mock.usuario_service_mock import UsuarioServiceMock
-from armazenamento.services.mock.paciente_service_mock import PacienteServiceMock
-from armazenamento.services.mock.sessao_service_mock import SessaoServiceMock
-from armazenamento.services.mock.gerar_massa_mock import gerar_massa_mock
-
-# inicialização do armazenamento
+from armazenamento.services.paciente_service import PacienteService
+from armazenamento.services.sessao_service import SessaoService
+from armazenamento.services.usuario_service import UsuarioService
+from armazenamento.services.usuario_tipo_service import UsuarioTipoService
 
 load_dotenv()
 
@@ -29,15 +28,15 @@ engine = create_engine(
     future=True
 )
 
-dal = PostgreAccessLayer(engine)
+dal: DataAccessLayer = PostgreAccessLayer(engine)
+user_type_service: BaseUsuarioTipoService = UsuarioTipoService(dal)
 
 def ioc_config(binder):
-    codigo_sessao_service = CodigoSessaoService(dal)
-    admins, fisios, pesquisadores, pacientes, sessoes = gerar_massa_mock(codigo_sessao_service)
     binder.bind(DataAccessLayer, dal)
-    binder.bind(BaseCodigoSessaoService, codigo_sessao_service)
-    binder.bind(BaseUsuarioService, UsuarioServiceMock(dal,admins,fisios,pesquisadores))
-    binder.bind(BasePacienteService, PacienteServiceMock(dal,codigo_sessao_service,pacientes,fisios,pesquisadores))
-    binder.bind(BaseSessaoService, SessaoServiceMock(dal,sessoes))
+    binder.bind(BaseCodigoSessaoService, CodigoSessaoService(dal))
+    binder.bind(BaseUsuarioTipoService, user_type_service)
+    binder.bind(BaseUsuarioService, UsuarioService(dal, user_type_service))
+    binder.bind(BasePacienteService, PacienteService(dal))
+    binder.bind(BaseSessaoService, SessaoService(dal))
 
 inject.configure(ioc_config)

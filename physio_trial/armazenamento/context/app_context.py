@@ -5,6 +5,7 @@ from sqlalchemy.engine import Connection
 
 current_user_id: ContextVar[int | None] = ContextVar("current_user_id", default=None)
 current_user_type: ContextVar[int | None] = ContextVar("current_user_type", default=None)
+current_user_types_list: ContextVar[list[int] | None] = ContextVar("current_user_types_list", default=None)
 
 def require_logged_user() -> int:
     """

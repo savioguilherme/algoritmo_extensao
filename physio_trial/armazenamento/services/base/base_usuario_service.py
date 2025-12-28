@@ -26,7 +26,7 @@ class BaseUsuarioService(ABC):
         pass
 
     @abstractmethod
-    def consultar_adm(self, id_adm: int) -> Administrador:
+    def consultar(self, id: int) -> Administrador | Fisioterapeuta | Pesquisador | None:
         pass
 
     @abstractmethod
@@ -38,19 +38,11 @@ class BaseUsuarioService(ABC):
         pass
 
     @abstractmethod
-    def consultar_fisioterapeuta(self, id_fisio: int) -> Fisioterapeuta:
-        pass
-
-    @abstractmethod
     def inserir_fisioterapeuta(self, fisio: Fisioterapeuta) -> int:
         pass
 
     @abstractmethod
     def atualizar_fisioterapeuta(self, fisio: Fisioterapeuta) -> None:
-        pass
-
-    @abstractmethod
-    def consultar_pesquisador(self, id_pesq: int) -> Pesquisador:
         pass
 
     @abstractmethod

@@ -1,13 +1,16 @@
+from inject import autoparams
 from interfacegrafica.base_frame import BaseFrame
 from interfacegrafica.base_widgets import BaseWidgets
 from CTkMessagebox import CTkMessagebox
-from armazenamento.services.usuario_service import UsuarioService
+from armazenamento.services.base.base_usuario_service import BaseUsuarioService
+from armazenamento.context.app_context import current_user_type
 
 class Login(BaseFrame):
 
     """Classe que gera a tela de login"""
 
-    def __init__(self, master, abrir_menu_administrador, abrir_menu_fisioterapeuta, abrir_menu_pesquisador, encerrar):
+    @autoparams()
+    def __init__(self, master, abrir_menu_administrador, abrir_menu_fisioterapeuta, abrir_menu_pesquisador, encerrar, usuario_service: BaseUsuarioService):
         super().__init__(master, "Login")
 
         self.abrir_menu_administrador = abrir_menu_administrador
@@ -15,6 +18,7 @@ class Login(BaseFrame):
         self.abrir_menu_pesquisador = abrir_menu_pesquisador
         self.encerrar = encerrar
         self.widgets = BaseWidgets()
+        self.usuario_service = usuario_service
 
         #configurando o frame
         self.grid_rowconfigure((1,2,3), weight=0)
@@ -46,12 +50,11 @@ class Login(BaseFrame):
             CTkMessagebox (title="Erro", message="Informe usuário e senha.", icon="cancel").get()
             return
 
-        servico = UsuarioService()
-        id_usuario = servico.login(usuario, senha)
+        id_usuario = self.usuario_service.login(usuario, senha)
 
         if id_usuario is not None:
             # Obtém o tipo do usuário (exemplo)
-            tipo = servico.obter_tipo_usuario(id_usuario)
+            tipo = current_user_type.get()
 
             CTkMessagebox(title="Bem-vindo", message="Acesso permitido!", icon="check").get()
             if tipo == "pesquisadores":
