@@ -3,7 +3,7 @@ from interfacegrafica.base_frame import BaseFrame
 from interfacegrafica.base_widgets import BaseWidgets
 from CTkMessagebox import CTkMessagebox
 from armazenamento.services.base.base_usuario_service import BaseUsuarioService
-from armazenamento.context.app_context import current_user_type
+from armazenamento.context.app_context import current_user_type, current_user_types_list
 
 class Login(BaseFrame):
 
@@ -55,13 +55,14 @@ class Login(BaseFrame):
         if id_usuario is not None:
             # Obtém o tipo do usuário (exemplo)
             tipo = current_user_type.get()
+            user_types_list = current_user_types_list.get() or []
 
             CTkMessagebox(title="Bem-vindo", message="Acesso permitido!", icon="check").get()
-            if tipo == "pesquisadores":
+            if tipo == user_types_list[2]:
                 self.abrir_menu_pesquisador()
-            elif tipo == "fisioterapeutas":
+            elif tipo == user_types_list[1]:
                 self.abrir_menu_fisioterapeuta()
-            elif tipo == "administradores":
+            elif tipo == user_types_list[0]:
                 self.abrir_menu_administrador()
         else:
             CTkMessagebox(title="Erro", message="Usuário ou senha incorretos.", icon="cancel").get()
