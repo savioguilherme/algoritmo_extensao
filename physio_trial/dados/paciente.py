@@ -27,10 +27,9 @@ class Paciente(Pessoa):
         self.restricoes_paciente = RestricoesDiasHorarios()
         #self.servico_paciente = servico_paciente
 
-        self.sessoes_paciente = []
+        self.sessoes_paciente: list[Sessao] = []
         self.conclusao_pesquisa = False
         self.abandono_pesquisa = False
-        self.restricoes_paciente = RestricoesDiasHorarios()
 
     def restricao_paciente(self, horarios, dias):
         pass

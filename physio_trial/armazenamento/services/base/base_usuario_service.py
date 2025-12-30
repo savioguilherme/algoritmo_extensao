@@ -22,7 +22,7 @@ class BaseUsuarioService(ABC):
         pass
 
     @abstractmethod
-    def listar_usuarios(self, lista_tipos: list[int]) -> list[Administrador | Fisioterapeuta | Pesquisador]:
+    def listar_usuarios(self, lista_tipos: list[int], apenas_ativos: bool) -> list[Administrador | Fisioterapeuta | Pesquisador]:
         pass
 
     @abstractmethod

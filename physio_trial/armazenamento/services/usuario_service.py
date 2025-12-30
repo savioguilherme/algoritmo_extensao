@@ -1,12 +1,12 @@
 import bcrypt
 
 from inject import autoparams
+from datetime import datetime, time
 
-from armazenamento.context.app_context import current_user_id
-from armazenamento.context.app_context import current_user_type
-from armazenamento.context.app_context import current_user_types_list
+from armazenamento.context.app_context import current_user_id, current_user_type, current_user_types_list, current_session_codes_list
 from armazenamento.services.base.base_usuario_service import BaseUsuarioService
 from armazenamento.services.base.base_usuario_tipo_service import BaseUsuarioTipoService
+from armazenamento.services.base.base_codigo_sessao_service import BaseCodigoSessaoService
 from armazenamento.dal.data_access_layer import DataAccessLayer
 from armazenamento.decorators.auth_method import auth_method
 
@@ -17,9 +17,15 @@ from dados.pesquisador import Pesquisador
 class UsuarioService(BaseUsuarioService):
 
     @autoparams()
-    def __init__(self, dal: DataAccessLayer, user_type_service: BaseUsuarioTipoService):
+    def __init__(
+        self,
+        dal: DataAccessLayer,
+        user_type_service: BaseUsuarioTipoService, 
+        codigo_sessao_service: BaseCodigoSessaoService
+    ):
         super().__init__(dal)
         self._user_type_service = user_type_service
+        self._codigo_sessao_service = codigo_sessao_service
 
     def login(self, username: str, password: str) -> int | None:
         byted_password = b'' + password.encode('utf-8')
@@ -39,19 +45,23 @@ class UsuarioService(BaseUsuarioService):
             current_user_id.set(user_id)
             current_user_type.set(user_data['tipo'])
             current_user_types_list.set(self._user_type_service.listar_tipos())
+            current_session_codes_list.set(self._codigo_sessao_service.listar_codigos_sessoes())
             return user_id
 
         raise PermissionError("Senha inválida.")
 
+    @auth_method
     def logout(self) -> None:
         current_user_type.set(None)
         current_user_id.set(None)
         current_user_types_list.set(None)
+        current_session_codes_list.set(None)
 
     @auth_method
-    def listar_usuarios(self, lista_tipos: list[int]) -> list[Administrador | Fisioterapeuta | Pesquisador]:
+    def listar_usuarios(self, lista_tipos: list[int], apenas_ativos: bool) -> list[Administrador | Fisioterapeuta | Pesquisador]:
         result = self._dal.call_function(
             "ufn_usuario_listar",
+            p_apenas_ativos=apenas_ativos,
             p_tipos=lista_tipos
         )
 
@@ -82,31 +92,59 @@ class UsuarioService(BaseUsuarioService):
                     )
                 )
             elif row_type == user_types_list[1]:
-                final_list.append(
-                    Fisioterapeuta(
-                        id_fisioterapeuta=row['id_usuario'],
-                        nome_fisioterapeuta=row['nome'],
-                        email=row['email'],
-                        data_nascimento=row['data_nascimento'],
-                        tipo=user_types_list[1],
-                        login=row['login'],
-                        senha=row['senha'],
-                        status_fisioterapeuta=row['ativo']
-                    )
+                fisio: Fisioterapeuta = Fisioterapeuta(
+                    id_fisioterapeuta=row['id_usuario'],
+                    nome_fisioterapeuta=row['nome'],
+                    email=row['email'],
+                    data_nascimento=row['data_nascimento'],
+                    tipo=user_types_list[1],
+                    login=row['login'],
+                    senha=row['senha'],
+                    status_fisioterapeuta=row['ativo']
                 )
+
+                fisio.restricoes_fisioterapeuta.disponibilidade_semanal = [set() for _ in range(7)]
+
+                for disp in row["disponibilidades"] or []:
+                    dia: int = disp["dia"]           # 0..6
+                    horarios = disp["horarios"]      # list[str]
+
+                    fisio.restricoes_fisioterapeuta.disponibilidade_semanal[dia] = {
+                        time.fromisoformat(h) for h in horarios
+                    }
+
+                restricoes: set[datetime] = set(row['restricoes'] or [])
+
+                fisio.restricoes_fisioterapeuta.restricoes = restricoes
+
+                final_list.append(fisio)
             elif row_type == user_types_list[2]:
-                final_list.append(
-                    Pesquisador(
-                        id_pesquisador=row['id_usuario'],
-                        nome_pesquisador=row['nome'],
-                        email=row['email'],
-                        data_nascimento=row['data_nascimento'],
-                        tipo=user_types_list[2],
-                        login=row['login'],
-                        senha=row['senha'],
-                        status_pesquisador=row['ativo']
-                    )
+                pesq: Pesquisador = Pesquisador(
+                    id_pesquisador=row['id_usuario'],
+                    nome_pesquisador=row['nome'],
+                    email=row['email'],
+                    data_nascimento=row['data_nascimento'],
+                    tipo=user_types_list[2],
+                    login=row['login'],
+                    senha=row['senha'],
+                    status_pesquisador=row['ativo']
                 )
+
+                pesq.restricoes_pesquisador.disponibilidade_semanal = [set() for _ in range(7)]
+
+                for disp in row["disponibilidades"] or []:
+                    dia: int = disp["dia"]           # 0..6
+                    horarios = disp["horarios"]      # list[str]
+
+                    pesq.restricoes_pesquisador.disponibilidade_semanal[dia] = {
+                        time.fromisoformat(h) for h in horarios
+                    }
+
+                restricoes: set[datetime] = set(row['restricoes'] or [])
+
+                pesq.restricoes_pesquisador.restricoes = restricoes
+
+                final_list.append(pesq)
             else:
                 raise Warning(f"Tipo de usuário desconhecido: {row_type}")
 
@@ -124,6 +162,18 @@ class UsuarioService(BaseUsuarioService):
 
         if len(user_types_list) == 0:
             return None
+        
+        disponibilidade_semanal: list[set[time]] = [set() for _ in range(7)] if result['tipo'] in (user_types_list[1], user_types_list[2]) else []
+
+        for disp in result["disponibilidades"] or []:
+            dia: int = disp["dia"]           # 0..6
+            horarios = disp["horarios"]      # list[str]
+
+            disponibilidade_semanal[dia] = {
+                time.fromisoformat(h) for h in horarios
+            }
+
+        restricoes: set[datetime] = set(result['restricoes'] or [])
 
         return Administrador(
             id_administrador=result['id_usuario'],
@@ -135,7 +185,8 @@ class UsuarioService(BaseUsuarioService):
             senha=result['senha'],
             status_administrador=result['ativo']
         ) if result['tipo'] == user_types_list[0] else (
-            Fisioterapeuta(
+            self._definir_restricoes_usuario(
+            self._definir_disponibilidade_semanal_usuario(Fisioterapeuta(
                 id_fisioterapeuta=result['id_usuario'],
                 nome_fisioterapeuta=result['nome'],
                 email=result['email'],
@@ -144,8 +195,10 @@ class UsuarioService(BaseUsuarioService):
                 login=result['login'],
                 senha=result['senha'],
                 status_fisioterapeuta=result['ativo']
-            ) if result['tipo'] == user_types_list[1] else (
-                Pesquisador(
+            ), disponibilidade_semanal=disponibilidade_semanal), restricoes=restricoes)
+            if result['tipo'] == user_types_list[1] else (
+                self._definir_restricoes_usuario(
+                self._definir_disponibilidade_semanal_usuario(Pesquisador(
                     id_pesquisador=result['id_usuario'],
                     nome_pesquisador=result['nome'],
                     email=result['email'],
@@ -154,7 +207,8 @@ class UsuarioService(BaseUsuarioService):
                     login=result['login'],
                     senha=result['senha'],
                     status_pesquisador=result['ativo']
-                ) if result['tipo'] == user_types_list[2] else None
+                ), disponibilidade_semanal=disponibilidade_semanal), restricoes=restricoes)
+                if result['tipo'] == user_types_list[2] else None
             )
         )
 
@@ -186,7 +240,7 @@ class UsuarioService(BaseUsuarioService):
             p_nome=adm.nome,
             p_data_nascimento=adm.data_nascimento,
             p_login=adm.login,
-            p_senha=adm.senha,
+            p_senha=bcrypt.hashpw(adm.senha.encode('utf-8'), bcrypt.gensalt()).decode('utf-8'),
             p_ativo=adm.status_pessoa
         )
 
@@ -218,7 +272,7 @@ class UsuarioService(BaseUsuarioService):
             p_nome=fisio.nome,
             p_data_nascimento=fisio.data_nascimento,
             p_login=fisio.login,
-            p_senha=fisio.senha,
+            p_senha=bcrypt.hashpw(fisio.senha.encode('utf-8'), bcrypt.gensalt()).decode('utf-8'),
             p_ativo=fisio.status_pessoa
         )
 
@@ -250,7 +304,7 @@ class UsuarioService(BaseUsuarioService):
             p_nome=pesq.nome,
             p_data_nascimento=pesq.data_nascimento,
             p_login=pesq.login,
-            p_senha=pesq.senha,
+            p_senha=bcrypt.hashpw(pesq.senha.encode('utf-8'), bcrypt.gensalt()).decode('utf-8'),
             p_ativo=pesq.status_pessoa
         )
 
@@ -260,3 +314,23 @@ class UsuarioService(BaseUsuarioService):
             "usp_usuario_deletar",
             p_id_usuario_desativado=id_usuario_desativado
         )
+    
+    def _definir_restricoes_usuario(self, usuario: Fisioterapeuta | Pesquisador, restricoes: set[datetime]) -> Fisioterapeuta | Pesquisador:
+        if isinstance(usuario, Fisioterapeuta):
+            usuario.restricoes_fisioterapeuta.restricoes = restricoes
+        elif isinstance(usuario, Pesquisador):
+            usuario.restricoes_pesquisador.restricoes = restricoes
+        else:
+            raise TypeError("Tipo de usuário inválido para definir restrições.")
+
+        return usuario
+
+    def _definir_disponibilidade_semanal_usuario(self, usuario: Fisioterapeuta | Pesquisador, disponibilidade_semanal: list[set[time]]) -> Fisioterapeuta | Pesquisador:
+        if isinstance(usuario, Fisioterapeuta):
+            usuario.restricoes_fisioterapeuta.disponibilidade_semanal = disponibilidade_semanal
+        elif isinstance(usuario, Pesquisador):
+            usuario.restricoes_pesquisador.disponibilidade_semanal = disponibilidade_semanal
+        else:
+            raise TypeError("Tipo de usuário inválido para definir disponibilidade semanal.")
+
+        return usuario

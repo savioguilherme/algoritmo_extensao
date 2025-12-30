@@ -1,34 +1,34 @@
 from dados.fisioterapeuta import Fisioterapeuta
-from dados.paciente import Paciente
 from dados.pesquisador import Pesquisador
-from dados.sessao import Sessao
 from greedy.greedy import greedy
 
+from armazenamento.context.app_context import current_user_types_list
 from armazenamento.services.base.base_usuario_service import BaseUsuarioService
-from armazenamento.services.base.base_codigo_sessao_service import BaseCodigoSessaoService
 from armazenamento.services.base.base_paciente_service import BasePacienteService
 from armazenamento.services.base.base_sessao_service import BaseSessaoService
+from armazenamento.decorators.auth_method import auth_method
 
 from inject import autoparams
 import datetime
-import itertools
 
+@auth_method
 @autoparams
 def wrapper(
-    codigo_sessao_service: BaseCodigoSessaoService,
     usuario_service: BaseUsuarioService,
     paciente_service: BasePacienteService,
     sessao_service: BaseSessaoService,
     dia_inicial = datetime.date.today(),
     intervalo = 500,
 ):
+    usuario_tipos: list[int] = current_user_types_list.get() or []
+    if not usuario_tipos or usuario_tipos is None:
+        raise PermissionError("Tipos de usuário não encontrados no contexto da aplicação.")
 
     # recupera dados do bd
-
-    fisios = usuario_service.listar_usuarios([1])
-    pesquisadores = usuario_service.listar_usuarios([2])
-    pacientes_bruto = paciente_service.listar_pacientes()
-    pacientes = [paciente for paciente in pacientes_bruto if paciente.status_pessoa and not paciente.conclusao_pesquisa and not paciente.abandono_pesquisa]
+    usuarios = usuario_service.listar_usuarios(lista_tipos=[usuario_tipos[1], usuario_tipos[2]], apenas_ativos=True)
+    fisios = [usuario for usuario in usuarios if isinstance(usuario, Fisioterapeuta) and usuario.tipo == usuario_tipos[1]]
+    pesquisadores = [usuario for usuario in usuarios if isinstance(usuario, Pesquisador) and usuario.tipo == usuario_tipos[2]]
+    pacientes = paciente_service.listar_pacientes(apenas_ativos=True)
 
     # constroi staff e patients
 
@@ -85,7 +85,7 @@ def wrapper(
                 if sessao.conclusao or sessao.dia < dia_inicial:
                     schedule_paciente[codigo_dia] = dia
                     schedule_paciente[codigo_horario] = slot
-                elif fisioterapeuta.restricoes_fisioterapeuta.esta_disponivel(dia_horario) and pesquisador.restricoes_pesquisador.esta_disponivel(dia_horario) and paciente.restricoes_paciente.esta_disponivel(dia_horario):
+                elif fisio.restricoes_fisioterapeuta.esta_disponivel(dia_horario) and pesquisador.restricoes_pesquisador.esta_disponivel(dia_horario) and paciente.restricoes_paciente.esta_disponivel(dia_horario):
                     N_i[paciente.id_pessoa][dia][slot] = False
                     N_pf[fisio.id_pessoa][dia][slot] = False
                     N_pf[pesquisador.id_pessoa][dia][slot] = False
@@ -99,27 +99,37 @@ def wrapper(
         return False
 
     # atualiza pacientes com base nos resultados da heurística
+    acompanhamentos: list[dict[str, int]] = [
+        {
+            'id_paciente': paciente.id_pessoa,
+            'id_fisioterapeuta': patients[paciente.id_pessoa]['physio'],
+            'id_pesquisador': patients[paciente.id_pessoa]['researcher']
+        }
+        for paciente in pacientes
+    ]
+
+    if not paciente_service.atualizar_acompanhamentos(lista_acompanhamentos=acompanhamentos):
+        return False
+    
+    sessoes_atualizadas: list[dict[str, int | datetime.datetime]] = []
 
     for paciente in pacientes:
-        patient_id = paciente.id_pessoa
-        physio_id = patients[patient_id]["physio"]
-        researcher_id = patients[patient_id]["researcher"]
-        # como a heurística foi bem sucedida, physio_id e researcher_id não são Null
-        paciente_service.alterar_fisioterapeuta(patient_id,physio_id)
-        paciente_service.alterar_pesquisador(patient_id,researcher_id)
         for sessao in paciente.sessoes_paciente:
             if sessao.conclusao:
                 continue
             codigo = sessao.codigo
             codigo_dia = codigo[0:1] + "D" + codigo[1:]
             codigo_horario = codigo[0:1] + "H" + codigo[1:]
-            patient_schedule = schedule[patient_id]
+            patient_schedule = schedule[paciente.id_pessoa]
             dia = patient_schedule[codigo_dia]
             horario = patient_schedule[codigo_horario]
             dia_horario = datetime.datetime.combine(dia,horario)
-            sessao_service.agendar_dia_horario(sessao.id_sessao,dia_horario)
+            sessoes_atualizadas.append({
+                'id_sessao': sessao.id_sessao,
+                'dia_horario': dia_horario.isoformat()
+            })
 
-    return True
+    return sessao_service.atualizar_sessoes_agendadas(sessoes_atualizadas=sessoes_atualizadas)
 
 def calcular_disponibilidade(dias, horarios, restricoes):
     disponibilidade = {}

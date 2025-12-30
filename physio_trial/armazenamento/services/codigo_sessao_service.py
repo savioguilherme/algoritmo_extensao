@@ -2,12 +2,14 @@ import inject
 
 from armazenamento.services.base.base_codigo_sessao_service import BaseCodigoSessaoService
 from armazenamento.dal.data_access_layer import DataAccessLayer
+from armazenamento.decorators.auth_method import auth_method
 
 class CodigoSessaoService(BaseCodigoSessaoService):
     @inject.autoparams()
     def __init__(self, dal: DataAccessLayer):
         super().__init__(dal)
 
+    @auth_method
     def listar_codigos_sessoes(self) -> list[str]:
         """
         Lista todos os códigos de sessão disponíveis.

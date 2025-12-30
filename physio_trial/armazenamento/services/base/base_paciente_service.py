@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
-from typing import Any, Dict, TYPE_CHECKING
+from typing import Any, Dict, List, TYPE_CHECKING
 
 from armazenamento.dal.data_access_layer import DataAccessLayer
 
@@ -15,11 +17,31 @@ class BasePacienteService(ABC):
 
     # Métodos abstratos para operações específicas podem ser definidos aqui
     @abstractmethod
-    def listar_pacientes(self) -> list[Paciente]:
+    def consultar(self, id: int) -> Paciente:
+        """
+        Consulta um paciente pelo ID.
+
+        Args:
+            id: ID do paciente.
+        """
+        pass
+
+    @abstractmethod
+    def listar_pacientes(self, apenas_ativos: bool) -> list[Paciente]:
         """
         Lista todos os pacientes cadastrados
 
         Args:
+        """
+        pass
+
+    @abstractmethod
+    def atualizar_acompanhamentos(self, lista_acompanhamentos: List[Dict[str, int]]) -> bool:
+        """
+        Atualiza os acompanhamentos (pesquisador e fisioterapeuta) de múltiplos pacientes.
+
+        Args:
+            acompanhamentos: Lista de dicionários contendo 'id_paciente', 'id_pesquisador' e 'id_fisioterapeuta'.
         """
         pass
 

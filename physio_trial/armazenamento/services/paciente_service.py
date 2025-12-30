@@ -1,16 +1,179 @@
-from typing import Any, Dict
+from psycopg.types.json import Jsonb
+from datetime import datetime, time
+from typing import Any, Dict, List
 import inject
 
 from armazenamento.dal.data_access_layer import DataAccessLayer
 from armazenamento.services.base.base_paciente_service import BasePacienteService
+from armazenamento.decorators.auth_class import auth_class
+from armazenamento.context.app_context import current_user_types_list
 
+from dados.paciente import Paciente
+from dados.fisioterapeuta import Fisioterapeuta
+from dados.pesquisador import Pesquisador
+from dados.sessao import Sessao
+
+@auth_class
 class PacienteService(BasePacienteService):
     @inject.autoparams()
     def __init__(self, dal: DataAccessLayer):
         super().__init__(dal)
 
-    def listar_pacientes(self) -> list[Paciente]:
-        pass
+    def consultar(self, id: int) -> Paciente:
+        row = self._dal.call_function("ufn_paciente_consultar", p_id_paciente=id)
+
+        if row is None:
+            return None
+
+        fisio_result = row['fisioterapeuta']
+        pesq_result = row['pesquisador']
+
+        fisio: Fisioterapeuta | None = None if fisio_result is None else Fisioterapeuta(
+            id_fisioterapeuta=fisio_result['id_usuario'],
+            nome_fisioterapeuta=fisio_result['nome'],
+            email=fisio_result['email'],
+            data_nascimento=fisio_result['data_nascimento'],
+            login=fisio_result['login'],
+            senha=None,
+            tipo=current_user_types_list.get()[1], # Tipo de Fisioterapeuta
+            status_fisioterapeuta=fisio_result['ativo']
+        )
+
+        pesq: Pesquisador | None = None if pesq_result is None else Pesquisador(
+            id_pesquisador=pesq_result['id_usuario'],
+            nome_pesquisador=pesq_result['nome'],
+            email=pesq_result['email'],
+            data_nascimento=pesq_result['data_nascimento'],
+            login=pesq_result['login'],
+            senha=None,
+            tipo=current_user_types_list.get()[2], # Tipo de Pesquisador
+            status_pesquisador=pesq_result['ativo']
+        )
+
+        paciente = Paciente(
+            id_paciente=row['id_paciente'],
+            nome_paciente=row['nome'],
+            email=row['email'],
+            data_nascimento=row['data_nascimento'],
+            pesquisador=pesq,
+            fisioterapeuta=fisio,
+            status_paciente=True
+        )
+
+        paciente.conclusao_pesquisa = row['status_conclusao']
+        paciente.abandono_pesquisa = row['status_abandono']
+
+        if paciente.abandono_pesquisa or paciente.conclusao_pesquisa:
+            paciente.desabilitar_paciente()
+
+        paciente.restricoes_paciente.disponibilidade_semanal = [set() for _ in range(7)]
+
+        for disp in row["disponibilidades"] or []:
+            dia: int = disp["dia"]           # 0..6
+            horarios = disp["horarios"]      # list[str]
+
+            paciente.restricoes_paciente.disponibilidade_semanal[dia] = {
+                time.fromisoformat(h) for h in horarios
+            }
+        
+        restricoes: set[datetime] = set(row['restricoes'] or [])
+        paciente.restricoes_paciente.restricoes = restricoes
+        
+        for sessao_row in row['sessoes'] or []:
+            sessao = Sessao(
+                id_sessao=sessao_row['id_sessao'],
+                codigo=sessao_row['cod_sigla'],
+                dia=sessao_row['dia'],
+                horario=sessao_row['horario'],
+                conclusao=sessao_row['conclusao'],
+                paciente=paciente,
+                status_agendamento=sessao_row['status_agendamento']
+            )
+
+            paciente.sessoes_paciente.append(sessao)
+
+        return paciente
+
+    def listar_pacientes(self, apenas_ativos: bool) -> list[Paciente]:
+        results = self._dal.call_function("ufn_paciente_listar", p_apenas_ativos=apenas_ativos)
+
+        if results is None:
+            return []
+
+        final_list: list[Paciente] = []
+        
+        for row in results:
+            fisio_result = row['fisioterapeuta']
+            pesq_result = row['pesquisador']
+
+            fisio: Fisioterapeuta | None = None if fisio_result is None else Fisioterapeuta(
+                id_fisioterapeuta=fisio_result['id_usuario'],
+                nome_fisioterapeuta=fisio_result['nome'],
+                email=fisio_result['email'],
+                data_nascimento=fisio_result['data_nascimento'],
+                login=fisio_result['login'],
+                senha=None,
+                tipo=current_user_types_list.get()[1], # Tipo de Fisioterapeuta
+                status_fisioterapeuta=fisio_result['ativo']
+            )
+
+            pesq: Pesquisador | None = None if pesq_result is None else Pesquisador(
+                id_pesquisador=pesq_result['id_usuario'],
+                nome_pesquisador=pesq_result['nome'],
+                email=pesq_result['email'],
+                data_nascimento=pesq_result['data_nascimento'],
+                login=pesq_result['login'],
+                senha=None,
+                tipo=current_user_types_list.get()[2], # Tipo de Pesquisador
+                status_pesquisador=pesq_result['ativo']
+            )
+
+            paciente = Paciente(
+                id_paciente=row['id_paciente'],
+                nome_paciente=row['nome'],
+                email=row['email'],
+                data_nascimento=row['data_nascimento'],
+                pesquisador=pesq,
+                fisioterapeuta=fisio,
+                status_paciente=True
+            )
+
+            paciente.conclusao_pesquisa = row['status_conclusao']
+            paciente.abandono_pesquisa = row['status_abandono']
+
+            if paciente.abandono_pesquisa or paciente.conclusao_pesquisa:
+                paciente.desabilitar_paciente()
+
+            paciente.restricoes_paciente.disponibilidade_semanal = [set() for _ in range(7)]
+
+            for disp in row["disponibilidades"] or []:
+                dia: int = disp["dia"]           # 0..6
+                horarios = disp["horarios"]      # list[str]
+
+                paciente.restricoes_paciente.disponibilidade_semanal[dia] = {
+                    time.fromisoformat(h) for h in horarios
+                }
+
+            restricoes: set[datetime] = set(row['restricoes'] or [])
+
+            paciente.restricoes_paciente.restricoes = restricoes
+
+            for sessao_row in row['sessoes'] or []:
+                sessao = Sessao(
+                    id_sessao=sessao_row['id_sessao'],
+                    codigo=sessao_row['cod_sigla'],
+                    dia=sessao_row['dia'],
+                    horario=sessao_row['horario'],
+                    conclusao=sessao_row['conclusao'],
+                    paciente=paciente,
+                    status_agendamento=sessao_row['status_agendamento']
+                )
+
+                paciente.sessoes_paciente.append(sessao)
+
+            final_list.append(paciente)
+
+        return final_list
 
     def cadastrar_abandono_pesquisa(self, paciente_id: int) -> Dict[str, Any] | None:
         """
@@ -55,3 +218,11 @@ class PacienteService(BasePacienteService):
             paciente_id=paciente_id,
             novo_fisioterapeuta_id=novo_fisioterapeuta_id
         ) is None else {}
+
+    def atualizar_acompanhamentos(self, lista_acompanhamentos: List[Dict[str, int]]) -> bool:
+        _ = self._dal.call_procedure(
+            "usp_paciente_alterar_acompanhamentos",
+            p_lista_acompanhamentos=Jsonb(lista_acompanhamentos)
+        )
+
+        return True

@@ -30,12 +30,13 @@ engine = create_engine(
 
 dal: DataAccessLayer = PostgreAccessLayer(engine)
 user_type_service: BaseUsuarioTipoService = UsuarioTipoService(dal)
+session_code_service: BaseCodigoSessaoService = CodigoSessaoService(dal)
 
 def ioc_config(binder):
     binder.bind(DataAccessLayer, dal)
-    binder.bind(BaseCodigoSessaoService, CodigoSessaoService(dal))
+    binder.bind(BaseCodigoSessaoService, session_code_service)
     binder.bind(BaseUsuarioTipoService, user_type_service)
-    binder.bind(BaseUsuarioService, UsuarioService(dal, user_type_service))
+    binder.bind(BaseUsuarioService, UsuarioService(dal, user_type_service, session_code_service))
     binder.bind(BasePacienteService, PacienteService(dal))
     binder.bind(BaseSessaoService, SessaoService(dal))
 
