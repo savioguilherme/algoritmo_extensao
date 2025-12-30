@@ -219,3 +219,6 @@ __marimo__/
 # Vim
 .swp
 .swo
+bin/
+pyvenv.cfg
+lib64
