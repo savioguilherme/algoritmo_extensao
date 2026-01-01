@@ -56,6 +56,16 @@ class BasePacienteService(ABC):
         pass
 
     @abstractmethod
+    def cadastrar_paciente(self, paciente: Paciente) -> int | None:
+        """
+        Cadastra um novo paciente no sistema.
+
+        Args:
+            paciente: Objeto Paciente a ser cadastrado.
+        """
+        pass
+
+    @abstractmethod
     def alterar_pesquisador(self, id_paciente: int, novo_pesquisador_id: int) -> Dict[str, Any] | None:
         """
         Altera o pesquisador responsável por um paciente.
