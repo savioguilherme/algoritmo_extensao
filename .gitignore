@@ -222,3 +222,4 @@ __marimo__/
 bin/
 pyvenv.cfg
 lib64
+.gitignore
