@@ -1,5 +1,6 @@
 import bcrypt
 
+from psycopg.types.json import Jsonb
 from inject import autoparams
 from datetime import datetime, time
 
@@ -223,6 +224,8 @@ class UsuarioService(BaseUsuarioService):
             p_login=adm.login,
             p_senha=bcrypt.hashpw(adm.senha.encode('utf-8'), bcrypt.gensalt()).decode('utf-8'),
             p_ativo=adm.status_pessoa,
+            p_disponibilidades=None,
+            p_restricoes=None,
             p_id_usuario=None
         )
 
@@ -241,6 +244,8 @@ class UsuarioService(BaseUsuarioService):
             p_data_nascimento=adm.data_nascimento,
             p_login=adm.login,
             p_senha=bcrypt.hashpw(adm.senha.encode('utf-8'), bcrypt.gensalt()).decode('utf-8'),
+            p_disponibilidades=None,
+            p_restricoes=None,
             p_ativo=adm.status_pessoa
         )
 
@@ -255,6 +260,13 @@ class UsuarioService(BaseUsuarioService):
             p_login=fisio.login,
             p_senha=bcrypt.hashpw(fisio.senha.encode('utf-8'), bcrypt.gensalt()).decode('utf-8'),
             p_ativo=fisio.status_pessoa,
+            p_disponibilidades=Jsonb(
+                [
+                    {"dia": dia, "horarios": [h.isoformat() for h in horarios]}
+                    for dia, horarios in enumerate(fisio.restricoes_fisioterapeuta.disponibilidade_semanal)
+                ]
+            ),
+            p_restricoes=Jsonb([dt.isoformat() for dt in fisio.restricoes_fisioterapeuta.restricoes]),
             p_id_usuario=None
         )
 
@@ -273,7 +285,14 @@ class UsuarioService(BaseUsuarioService):
             p_data_nascimento=fisio.data_nascimento,
             p_login=fisio.login,
             p_senha=bcrypt.hashpw(fisio.senha.encode('utf-8'), bcrypt.gensalt()).decode('utf-8'),
-            p_ativo=fisio.status_pessoa
+            p_ativo=fisio.status_pessoa,
+            p_disponibilidades=Jsonb(
+                [
+                    {"dia": dia, "horarios": [h.isoformat() for h in horarios]}
+                    for dia, horarios in enumerate(fisio.restricoes_fisioterapeuta.disponibilidade_semanal)
+                ]
+            ),
+            p_restricoes=Jsonb([dt.isoformat() for dt in fisio.restricoes_fisioterapeuta.restricoes])
         )
 
     @auth_method
@@ -287,6 +306,13 @@ class UsuarioService(BaseUsuarioService):
             p_login=pesq.login,
             p_senha=bcrypt.hashpw(pesq.senha.encode('utf-8'), bcrypt.gensalt()).decode('utf-8'),
             p_ativo=pesq.status_pessoa,
+            p_disponibilidades=Jsonb(
+                [
+                    {"dia": dia, "horarios": [h.isoformat() for h in horarios]}
+                    for dia, horarios in enumerate(pesq.restricoes_pesquisador.disponibilidade_semanal)
+                ]
+            ),
+            p_restricoes=Jsonb([dt.isoformat() for dt in pesq.restricoes_pesquisador.restricoes]),
             p_id_usuario=None
         )
 
@@ -305,7 +331,14 @@ class UsuarioService(BaseUsuarioService):
             p_data_nascimento=pesq.data_nascimento,
             p_login=pesq.login,
             p_senha=bcrypt.hashpw(pesq.senha.encode('utf-8'), bcrypt.gensalt()).decode('utf-8'),
-            p_ativo=pesq.status_pessoa
+            p_ativo=pesq.status_pessoa,
+            p_disponibilidades=Jsonb(
+                [
+                    {"dia": dia, "horarios": [h.isoformat() for h in horarios]}
+                    for dia, horarios in enumerate(pesq.restricoes_pesquisador.disponibilidade_semanal)
+                ]
+            ),
+            p_restricoes=Jsonb([dt.isoformat() for dt in pesq.restricoes_pesquisador.restricoes])
         )
 
     @auth_method

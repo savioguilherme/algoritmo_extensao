@@ -47,6 +47,18 @@ class BasePacienteService(ABC):
         pass
 
     @abstractmethod
+    def atualizar_paciente(self, paciente: Paciente, status_abandono: bool, status_conclusao: bool) -> bool:
+        """
+        Atualiza paciente
+        
+        Args:
+            paciente: Paciente a ser atualizado
+            status_abandono: Status de abandono do paciente com relação ao programa
+            status_conclusao: Status de conclusão do paciente com relação ao programa
+        """
+        pass
+
+    @abstractmethod
     def atualizar_acompanhamentos(self, lista_acompanhamentos: List[Dict[str, int]]) -> bool:
         """
         Atualiza os acompanhamentos (pesquisador e fisioterapeuta) de múltiplos pacientes.

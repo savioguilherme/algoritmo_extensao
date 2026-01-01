@@ -5,9 +5,8 @@ import inject
 
 from armazenamento.dal.data_access_layer import DataAccessLayer
 from armazenamento.services.base.base_paciente_service import BasePacienteService
-from armazenamento.services.base.base_sessao_service import BaseSessaoService
 from armazenamento.decorators.auth_class import auth_class
-from armazenamento.context.app_context import current_user_types_list
+from armazenamento.context.app_context import current_user_types_list, current_session_codes_list
 
 from dados.paciente import Paciente
 from dados.fisioterapeuta import Fisioterapeuta
@@ -29,6 +28,49 @@ class PacienteService(BasePacienteService):
         )
 
         return True
+    
+    def atualizar_paciente(self, paciente: Paciente, status_abandono: bool, status_conclusao: bool) -> bool:
+        """
+        Implementação do método para atualizar um paciente no sistema.
+
+        Args:
+            paciente: Objeto Paciente a ser atualizado.
+            status_abandono: Status de abandono do paciente com relação ao programa
+            status_conclusao: Status de conclusão do paciente com relação ao programa
+        """
+
+        _ = self._dal.call_procedure(
+            "usp_paciente_alterar",
+            p_id_paciente=paciente.id_pessoa,
+            p_nome=paciente.nome,
+            p_email=paciente.email,
+            p_data_nascimento=paciente.data_nascimento,
+            p_status_abandono=status_abandono,
+            p_status_conclusao=status_conclusao,
+            p_id_pesquisador=paciente.pesquisador_responsavel.id_pessoa if paciente.pesquisador_responsavel else None,
+            p_id_fisioterapeuta=paciente.fisioterapeuta_responsavel.id_pessoa if paciente.fisioterapeuta_responsavel else None,
+            p_disponibilidades=Jsonb(
+                [
+                    {"dia": dia, "horarios": [h.isoformat() for h in horarios]}
+                    for dia, horarios in enumerate(paciente.restricoes_paciente.disponibilidade_semanal)
+                ]
+            ),
+            p_restricoes=Jsonb([dt.isoformat() for dt in paciente.restricoes_paciente.restricoes]),
+            p_sessoes=Jsonb([
+                {
+                    'id_sessao': sessao.id_sessao,
+                    'codigo': current_session_codes_list.get().index(sessao.codigo) + 1,
+                    'dia': sessao.dia.isoformat(),
+                    'horario': sessao.horario,
+                    'agendada': sessao.status_agendamento,
+                    'conclusao': sessao.conclusao
+                }
+                for sessao in paciente.sessoes_paciente
+            ])
+        )
+
+        # perguntar sobre o wrapper.invoke e sobre as condições de contorno da chamada e definição das sessão no inserir.paciente
+        return True # if wrapper() else None
 
     def cadastrar_paciente(self, paciente: Paciente) -> int | None:
         """
