@@ -5,6 +5,7 @@ import inject
 
 from armazenamento.dal.data_access_layer import DataAccessLayer
 from armazenamento.services.base.base_paciente_service import BasePacienteService
+from armazenamento.services.base.base_sessao_service import BaseSessaoService
 from armazenamento.decorators.auth_class import auth_class
 from armazenamento.context.app_context import current_user_types_list
 
@@ -19,6 +20,15 @@ class PacienteService(BasePacienteService):
     @inject.autoparams()
     def __init__(self, dal: DataAccessLayer):
         super().__init__(dal)
+    
+    def atualizar_acompanhamentos_com_sessoes(self, lista_acompanhamentos: List[Dict[str, int]], sessoes_atualizadas: list[dict[str, int | datetime]]) -> bool:
+        _ = self._dal.call_procedure(
+            "usp_paciente_alterar_acompanhamentos_com_sessoes",
+            p_lista_acompanhamentos=Jsonb(lista_acompanhamentos),
+            p_sessoes_atualizadas=Jsonb(sessoes_atualizadas)
+        )
+
+        return True
 
     def cadastrar_paciente(self, paciente: Paciente) -> int | None:
         """

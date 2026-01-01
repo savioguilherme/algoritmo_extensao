@@ -5,7 +5,6 @@ from greedy.greedy import greedy
 from armazenamento.context.app_context import current_user_types_list
 from armazenamento.services.base.base_usuario_service import BaseUsuarioService
 from armazenamento.services.base.base_paciente_service import BasePacienteService
-from armazenamento.services.base.base_sessao_service import BaseSessaoService
 from armazenamento.decorators.auth_method import auth_method
 
 from inject import autoparams
@@ -16,7 +15,6 @@ import datetime
 def wrapper(
     usuario_service: BaseUsuarioService,
     paciente_service: BasePacienteService,
-    sessao_service: BaseSessaoService,
     dia_inicial = datetime.date.today(),
     intervalo = 500,
 ):
@@ -107,9 +105,6 @@ def wrapper(
         }
         for paciente in pacientes
     ]
-
-    if not paciente_service.atualizar_acompanhamentos(lista_acompanhamentos=acompanhamentos):
-        return False
     
     sessoes_atualizadas: list[dict[str, int | datetime.datetime]] = []
 
@@ -129,7 +124,10 @@ def wrapper(
                 'dia_horario': dia_horario.isoformat()
             })
 
-    return sessao_service.atualizar_sessoes_agendadas(sessoes_atualizadas=sessoes_atualizadas)
+    return paciente_service.atualizar_acompanhamentos_com_sessoes(
+        lista_acompanhamentos=acompanhamentos,
+        sessoes_atualizadas=sessoes_atualizadas
+    )
 
 def calcular_disponibilidade(dias, horarios, restricoes):
     disponibilidade = {}

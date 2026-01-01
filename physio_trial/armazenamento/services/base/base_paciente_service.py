@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from typing import Any, Dict, List, TYPE_CHECKING
+from datetime import datetime
 
 from armazenamento.dal.data_access_layer import DataAccessLayer
 
@@ -32,6 +33,16 @@ class BasePacienteService(ABC):
         Lista todos os pacientes cadastrados
 
         Args:
+        """
+        pass
+    
+    @abstractmethod
+    def atualizar_acompanhamentos_com_sessoes(self, lista_acompanhamentos: List[Dict[str, int]], sessoes_atualizadas: list[dict[str, int | datetime]]) -> bool:
+        """
+        Atualiza os acompanhamentos (pesquisador e fisioterapeuta) de múltiplos pacientes e as sessões agendadas.
+        Args:
+            acompanhamentos: Lista de dicionários contendo 'id_paciente', 'id_pesquisador' e 'id_fisioterapeuta'.
+            sessoes_atualizadas: Lista de dicionários contendo 'id_sessao' e 'dia_horario'.
         """
         pass
 
