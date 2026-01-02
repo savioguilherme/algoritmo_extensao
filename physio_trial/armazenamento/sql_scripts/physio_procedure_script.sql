@@ -429,6 +429,16 @@ BEGIN
             DO UPDATE SET ativa = EXCLUDED.ativa;
         END LOOP;
     END IF;
+
+	-- sessões
+	INSERT INTO public.sessao(id_paciente, status_agendamento, conclusao, codigo, inserido_em)
+	SELECT
+		p_id_paciente,
+		false,
+		false,
+		cs.id_codigo,
+		now()
+	FROM public.codigo_sessao cs;
 END;
 $BODY$;
 ALTER PROCEDURE public.usp_paciente_inserir(character varying, character varying, date, integer, integer, jsonb, jsonb)

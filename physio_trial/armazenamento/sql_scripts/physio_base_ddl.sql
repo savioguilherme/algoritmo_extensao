@@ -87,7 +87,8 @@ CREATE TABLE public.disponibilidade_semanal (
     fim time without time zone NOT NULL,
     inserido_em timestamp without time zone NOT NULL,
     atualizado_em timestamp without time zone,
-    CONSTRAINT ck_ds_intervalo CHECK ((inicio < fim))
+    CONSTRAINT ck_ds_intervalo CHECK ((inicio < fim)),
+    CONSTRAINT uq_dia_inicio UNIQUE(dia_semana, inicio)
 );
 
 
@@ -224,7 +225,8 @@ CREATE TABLE public.restricao_agendamento (
     motivo text,
     inserido_em timestamp without time zone NOT NULL,
     atualizado_em timestamp without time zone,
-    CONSTRAINT ck_ra_intervalo CHECK ((inicio < fim))
+    CONSTRAINT ck_ra_intervalo CHECK ((inicio < fim)),
+    CONSTRAINT uq_inicio UNIQUE(inicio)
 );
 
 
@@ -281,13 +283,14 @@ ALTER TABLE public.restricao_agendamento_usuario OWNER TO postgres;
 CREATE TABLE public.sessao (
     id_sessao integer NOT NULL,
     id_paciente integer NOT NULL,
-    dia date NOT NULL,
-    horario time without time zone NOT NULL,
+    dia date,
+    horario time without time zone,
     status_agendamento boolean,
     conclusao boolean NOT NULL,
     inserido_em timestamp without time zone NOT NULL,
     atualizado_em timestamp without time zone,
-    codigo integer
+    codigo integer,
+    CONSTRAINT uq_codigo_paciente UNIQUE(codigo, id_paciente)
 );
 
 
