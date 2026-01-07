@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, date, time
 import os
 
 from dotenv import load_dotenv
@@ -17,6 +17,7 @@ from armazenamento.services.sessao_service import SessaoService
 from dados.administrador import Administrador
 from dados.fisioterapeuta import Fisioterapeuta
 from dados.pesquisador import Pesquisador
+from dados.paciente import Paciente
 
 load_dotenv()
 
@@ -45,7 +46,7 @@ print("Usuário deletado com sucesso.")
 # current_user_id.set(None)
 
 # new_id = servico_usuario.inserir_adm(
-#     Administrador(id_administrador=None, nome_administrador="Administrador Teste 04", email="test04@usp.br", data_nascimento="2000-09-22", tipo=2, login="test04", senha="senha123", status_administrador=True)
+#     Administrador(id_administrador=None, nome_administrador="Administrador Teste Novo 29", email="test.novo29@usp.br", data_nascimento="2000-09-22", tipo=current_user_types_list.get()[0], login="test.novo29", senha="senha29test", status_administrador=True)
 # )
 
 # print(f"Administrador inserido com ID: {new_id}")
@@ -77,8 +78,19 @@ print("Usuário deletado com sucesso.")
 # print(f"Pesquisador modificado: {modifyied_user}")
 
 # servico_usuario.atualizar_adm(
-#     Administrador(id_administrador=11, nome_administrador="Adm Modificado Again Teste 03", email="adm.test03@usp.br", data_nascimento="2000-09-22", tipo=2, login="adm.test03", senha="senha1234567", status_administrador=True)
+#     Administrador(id_administrador=1, nome_administrador="Adm Teste 2", email="admin.02@usp.br", data_nascimento="2000-09-22", tipo=2, login="adm.02", senha="admin123", status_administrador=True)
 # )
+
+data_array: list[int] = [int(data) for data in "14/05/2000".split("/")]
+
+novo_fisio: Fisioterapeuta = Fisioterapeuta(id_fisioterapeuta=1, nome_fisioterapeuta='Fisio.04', email="fisio.04@usp.br", data_nascimento=date(data_array[2], data_array[1], data_array[0]), login="fisio.04", senha="fisio123", status_fisioterapeuta=True, tipo=current_user_types_list.get()[1])
+
+# novo_fisio.restricoes_fisioterapeuta.disponibilidade_semanal = []
+# novo_fisio.restricoes_fisioterapeuta.restricoes = set()
+
+fisio_id = servico_usuario.inserir_fisioterapeuta(fisio=novo_fisio)
+
+print(f"Novo fisio: {fisio_id}")
 
 # modifyied_user = servico_usuario.consultar(11)
 # print(f"Adm modificado: {modifyied_user}")
@@ -169,5 +181,100 @@ sessoes_atualizadas: list[dict[str, int | datetime]] = [
 session_service = SessaoService(dal=dal)
 
 session_service.atualizar_sessoes_agendadas(sessoes_atualizadas=sessoes_atualizadas)
+
+paciente_service = PacienteService(dal=dal)
+
+# ------------------------------------------------------
+# Dados de teste
+# ------------------------------------------------------
+fisio = Fisioterapeuta(
+    id_fisioterapeuta=3,
+    nome_fisioterapeuta="Fisio 2",
+    email="fisio2@usp.br",
+    data_nascimento=date(1990, 1, 1),
+    tipo=3,
+    login="fisio2",
+    senha="x",
+    status_fisioterapeuta=True
+)
+
+pesq = Pesquisador(
+    id_pesquisador=5,
+    nome_pesquisador="Pesquisador 2",
+    email="pesq2@usp.br",
+    data_nascimento=date(1985, 5, 5),
+    tipo=4,
+    login="pesq2",
+    senha="x",
+    status_pesquisador=True
+)
+
+# Disponibilidades: dia da semana -> horários
+disponibilidades = [
+    {"dia": 0, "horarios": ["08:00", "09:00"]},  # segunda
+    {"dia": 2, "horarios": ["14:00"]},           # quarta
+]
+
+# Restrições (timestamps)
+restricoes = [
+    "2025-12-22T10:00:00",
+    "2025-12-29T15:00:00"
+]
+
+paciente = Paciente(
+    id_paciente=None,
+    nome_paciente="Paciente Teste Proc",
+    email="paciente07@usp.br",
+    data_nascimento=date(2001, 6, 15).isoformat(),
+    pesquisador=pesq,
+    fisioterapeuta=fisio
+)
+
+paciente.restricoes_paciente.disponibilidade_semanal = [
+    {time(8, 0), time(9, 0)},  # seg
+    set(),                     # ter
+    {time(14, 0)},             # qua
+    set(),
+    set(),
+    set(),
+    set()
+]
+
+paciente.restricoes_paciente.restricoes = {
+    datetime.fromisoformat(r) for r in restricoes
+}
+
+# ------------------------------------------------------
+# Execução da procedure
+# ------------------------------------------------------
+# novo_id = paciente_service.cadastrar_paciente(paciente=paciente)
+paciente.id_pessoa = 18
+_ = paciente_service.atualizar_paciente(paciente=paciente, status_abandono=False, status_conclusao=False)
+
+# print(f"Paciente inserido com ID: {novo_id}")
+
+# ------------------------------------------------------
+# Validação pós-inserção
+# ------------------------------------------------------
+paciente_db = paciente_service.consultar(paciente.id_pessoa)
+
+print("Paciente retornado:")
+print(paciente_db)
+
+print("Pesquisador responsável:", paciente_db.pesquisador_responsavel)
+print("Fisioterapeuta responsável:", paciente_db.fisioterapeuta_responsavel)
+
+print("Disponibilidades semanais:")
+for i, dia in enumerate(paciente_db.restricoes_paciente.disponibilidade_semanal):
+    print(f"Dia {i}: {dia}")
+
+print("Restrições:")
+for r in paciente_db.restricoes_paciente.restricoes:
+    print(r)
+
+paciente_service.atualizar_acompanhamentos_com_sessoes(
+    lista_acompanhamentos=acompanhamentos,
+    sessoes_atualizadas=sessoes_atualizadas
+)
 
 servico_usuario.logout()
