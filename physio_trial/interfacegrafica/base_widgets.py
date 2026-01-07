@@ -28,7 +28,7 @@ class BaseWidgets():
             font=("Arial", 20, "bold"),
             state="normal",
             show=simbolo,
-            placeholder_text=placeholder
+            placeholder_text=placeholder,
         )
     
     def button(self, janela, texto, comando, cor):
