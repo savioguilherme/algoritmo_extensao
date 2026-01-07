@@ -13,17 +13,21 @@ from interfacegrafica.listar_pacientes import ListarPacientes
 from interfacegrafica.listar_fisioterapeutas import ListarFisioterapeutas
 from interfacegrafica.cadastro_pesquisador import CadastroPesquisador
 from interfacegrafica.restricoes_pessoa import RestricoesPessoa
+from interfacegrafica.menu_atualiza_usuario import MenuAtualizaUsuario
 
 class App(customtkinter.CTk):
 
     """Classe que é a janela principal e controla todo o aplicativo enviando e recebendo as funções e parâmetros"""
 
-    # aparencia padrao
+    # Aparencia padrao
     customtkinter.set_default_color_theme("dark-blue")
 
     def __init__(self):
         super().__init__()
         self.title("PhysioTrial")
+
+        self.user_id = None
+        self.user_type = None
 
         # Compatibilidade Linux e Windows para janela maximizada
         try:
@@ -34,48 +38,103 @@ class App(customtkinter.CTk):
         #configuração da Janela
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
-
-        #self.paciente_repo = PacienteBancoRepositorio() 
+ 
         # Inicia o login
         self.abrir_login()
 
     # Menus em geral
     def abrir_login(self):
-        self.tela_login = Login(self, self.abrir_menu_administrador, self.abrir_menu_fisioterapeuta, self.abrir_menu_pesquisador, self.encerrar)
+        self.user_id = None
+        self.user_type = None
+        self.tela_login = Login(
+            self, 
+            self.abrir_menu_administrador, 
+            self.abrir_menu_fisioterapeuta, 
+            self.abrir_menu_pesquisador, 
+            self.encerrar
+        )
 
-    def abrir_menu_administrador(self):
+    def abrir_menu_administrador(self, user_id, user_type):
         self.limpar_tela()
-        self.tela_menu_administrador = MenuAdministrador(self, self.abrir_login, self.cadastro_fisioterapeuta, self.cadastro_pesquisador, self.listar_fisioterapeutas, self.listar_pesquisadores)
+        self.user_id = user_id
+        self.user_type = user_type
+        self.tela_menu_administrador = MenuAdministrador(
+            self,
+            self.user_id,
+            self.abrir_login,
+            self.abrir_menu_senha,
+            self.cadastro_fisioterapeuta, 
+            self.cadastro_pesquisador,  
+            self.listar_fisioterapeutas,  
+            self.listar_pesquisadores
+        )
+        
+    def abrir_menu_fisioterapeuta(self, user_id, user_type):
+        self.limpar_tela()
+        self.user_id = user_id
+        self.user_type = user_type
+        self.tela_menu_fisio = MenuFisioterapeuta(
+            self, 
+            self.abrir_login,
+            lambda: self.abrir_agenda(user_id, self.abrir_menu_fisioterapeuta(user_id))
+        )
 
-    def abrir_menu_fisioterapeuta(self):
+    def abrir_menu_pesquisador(self, user_id, user_type):
         self.limpar_tela()
-        self.tela_menu_fisio = MenuFisioterapeuta(self, self.abrir_login, lambda: self.abrir_agenda(self.abrir_menu_fisioterapeuta, "fisioterapeuta"))
-
-    def abrir_menu_pesquisador(self):
-        self.limpar_tela()
+        self.user_id = user_id
+        self.user_type = user_type
         self.tela_menu_pesquisador = MenuPesquisador(
             self, 
             self.abrir_login, 
-            self.cadastro_paciente, 
-            lambda: self.abrir_agenda(self.abrir_menu_pesquisador, "pesquisador"), 
+            lambda: self.cadastro_paciente(user_id),
+            lambda: self.abrir_agenda(self.abrir_menu_pesquisador), 
             lambda: self.cadastro_restricoes(self.abrir_menu_pesquisador),
-            self.listar_pacientes)
+            lambda: self.listar_pacientes(user_id)
+        )
 
     def abrir_menu_paciente(self):
         self.limpar_tela()
-        self.tela_menu_paciente = MenuPaciente(self, self.abrir_menu_pesquisador)
+        self.tela_menu_paciente = MenuPaciente(
+            self, 
+            self.abrir_menu_pesquisador
+        )
 
-    def abrir_agenda(self, retornar, pessoa):
+    def abrir_agenda(self):
         self.limpar_tela()
-        self.agenda = AgendaPessoa(self, retornar, pessoa)
+        if self.user_type == 1:
+            retornar = lambda: self.abrir_menu_fisioterapeuta(self.user_id, self.user_type)
+        elif self.user_type == 2:
+            retornar = lambda: self.abrir_menu_pesquisador(self.user_id, self.user_type)
+        else:
+            retornar = self.abrir_login
+        self.agenda = AgendaPessoa(
+            self, 
+            retornar
+        )
+    
+    def abrir_menu_senha(self):
+        self.limpar_tela()
+        if self.user_type == 0: 
+            retornar = lambda: self.abrir_menu_administrador(self.user_id, self.user_type)
+        elif self.user_type == 1:
+            retornar = lambda: self.abrir_menu_fisioterapeuta(self.user_id, self.user_type)
+        elif self.user_type == 2:
+            retornar = lambda: self.abrir_menu_pesquisador(self.user_id, self.user_type)
+        else:
+            retornar = self.abrir_login
+        self.tela_senha = MenuAtualizaUsuario(
+            self,
+            retornar,
+            self.user_id
+        )
 
     # Cadastros de Objetos em geral
     def cadastro_fisioterapeuta(self):
         self.limpar_tela()
         self.tela_cadastro_fisio = CadastroFisioterapeuta(
             self, 
-            self.abrir_menu_administrador
-            )
+            lambda: self.abrir_menu_administrador(self.user_id, self.user_type)
+        )
 
     def cadastro_paciente(self):
         self.limpar_tela()
@@ -83,20 +142,29 @@ class App(customtkinter.CTk):
             self, 
             self.abrir_menu_pesquisador, 
             lambda: self.cadastro_restricoes(self.cadastro_paciente)
-            )
+        )
 
     def cadastro_pesquisador(self):
         self.limpar_tela()
-        self.tela_cadastro_pesquisador = CadastroPesquisador(self, self.abrir_menu_administrador)
+        self.tela_cadastro_pesquisador = CadastroPesquisador(
+            self, 
+            lambda: self.abrir_menu_administrador(self.user_id, self.user_type)
+        )
 
     def cadastro_restricoes(self, retornar):
         self.limpar_tela()
-        self.tela_cadastro_restricoes = RestricoesPessoa(self, retornar)
+        self.tela_cadastro_restricoes = RestricoesPessoa(
+            self, 
+            retornar
+        )
 
     # Telas de listagem de objetos salvos
     def listar_fisioterapeutas(self): 
         self.limpar_tela()
-        self.tela_listar_fisioterapeutas = ListarFisioterapeutas(self, self.abrir_menu_administrador)
+        self.tela_listar_fisioterapeutas = ListarFisioterapeutas(
+            self, 
+            lambda: self.abrir_menu_administrador(self.user_id, self.user_type)
+        )
     
     def listar_pacientes(self): 
         self.limpar_tela()
@@ -110,7 +178,10 @@ class App(customtkinter.CTk):
 
     def listar_pesquisadores(self): 
         self.limpar_tela()
-        self.tela_listar_pesquisadores = ListarPesquisadores(self, self.abrir_menu_administrador)
+        self.tela_listar_pesquisadores = ListarPesquisadores(
+            self, 
+            lambda: self.abrir_menu_administrador(self.user_id, self.user_type)
+        )
 
     # Encerra a aplicacao
     def encerrar(self): 
