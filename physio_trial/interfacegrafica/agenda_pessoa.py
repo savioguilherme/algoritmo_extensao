@@ -4,11 +4,10 @@ from interfacegrafica.base_widgets import BaseWidgets
 class AgendaPessoa(BaseFrame):
     """Agenda constando todas as sessões de uma determinada pessoa"""
 
-    def __init__(self, master, voltar_callback, pessoa):
-        super().__init__(master, titulo="Agenda" + " " + pessoa)
+    def __init__(self, master, voltar_callback):
+        super().__init__(master, titulo="Agenda")
 
         self.voltar_callback = voltar_callback
-        self.pessoa = pessoa
         self.widgets = BaseWidgets()
 
         #configurando o frame
