@@ -4,6 +4,7 @@ from interfacegrafica.base_frame import BaseFrame
 from interfacegrafica.base_widgets import BaseWidgets
 from CTkMessagebox import CTkMessagebox
 from dados.fisioterapeuta import Fisioterapeuta
+from datetime import date
 
 @autoparams()
 class CadastroFisioterapeuta(BaseFrame):
@@ -83,7 +84,11 @@ class CadastroFisioterapeuta(BaseFrame):
             CTkMessagebox (title="Erro", message="As senhas não correspondem!", icon="cancel").get()
             return
         
-        fisioterapeuta = self.usuario_service.inserir_fisioterapeuta(Fisioterapeuta(id_fisioterapeuta=1, nome_fisioterapeuta=nome, email=email, data_nascimento=data_nascimento, login=login, senha=senha, status_fisioterapeuta=True))
+        data_array: list[int] = [int(data) for data in data_nascimento.split("/")]
+
+        novo_fisio: Fisioterapeuta = Fisioterapeuta(id_fisioterapeuta=1, nome_fisioterapeuta=nome, email=email, data_nascimento=date(data_array[2], data_array[1], data_array[0]), login=login, senha=senha, status_fisioterapeuta=True)
+        
+        fisioterapeuta = self.usuario_service.inserir_fisioterapeuta(fisio=novo_fisio)
 
         if fisioterapeuta is not None: 
             CTkMessagebox(title="Cadastrado", message="Fisioterapeuta Cadastrado com Sucesso!", icon="check").get()

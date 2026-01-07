@@ -61,4 +61,15 @@ class MenuAtualizaUsuario(BaseFrame):
             CTkMessagebox(title="Erro", message="A senha deve ter pelo menos 6 caracteres!", icon="cancel").get()
             return
         
-        self.usuario_service.atualizar_adm(Administrador(self.usuario_logado.id_pessoa, self.usuario_logado.nome, self.usuario_logado.email, self.usuario_logado.data_nascimento, self.usuario_logado.login, senha, self.usuario_logado.status_pessoa, self.usuario_logado.tipo))
+        self.usuario_service.atualizar_adm(
+            Administrador(
+                id_administrador=self.usuario_logado.id_pessoa,
+                nome_administrador=self.usuario_logado.nome,
+                email=self.usuario_logado.email,
+                data_nascimento=self.usuario_logado.data_nascimento,
+                login=self.usuario_logado.login,
+                senha=senha,
+                status_administrador=self.usuario_logado.status_pessoa,
+                tipo=self.usuario_logado.tipo
+            )
+        )

@@ -15,6 +15,8 @@ from dados.administrador import Administrador
 from dados.fisioterapeuta import Fisioterapeuta
 from dados.pesquisador import Pesquisador
 
+from greedy.wrapper import wrapper
+
 class UsuarioService(BaseUsuarioService):
 
     @autoparams()
@@ -219,8 +221,8 @@ class UsuarioService(BaseUsuarioService):
             "usp_usuario_inserir",
             p_email=adm.email,
             p_nome=adm.nome,
-            p_data_nascimento=adm.data_nascimento,
-            p_tipo=adm.tipo,
+            p_data_nascimento=adm.data_nascimento.isoformat(),
+            p_tipo=current_user_types_list.get()[0],
             p_login=adm.login,
             p_senha=bcrypt.hashpw(adm.senha.encode('utf-8'), bcrypt.gensalt()).decode('utf-8'),
             p_ativo=adm.status_pessoa,
@@ -241,12 +243,12 @@ class UsuarioService(BaseUsuarioService):
             p_id_usuario=adm.id_pessoa,
             p_email=adm.email,
             p_nome=adm.nome,
-            p_data_nascimento=adm.data_nascimento,
+            p_data_nascimento=adm.data_nascimento.isoformat(),
             p_login=adm.login,
             p_senha=bcrypt.hashpw(adm.senha.encode('utf-8'), bcrypt.gensalt()).decode('utf-8'),
+            p_ativo=adm.status_pessoa,
             p_disponibilidades=None,
-            p_restricoes=None,
-            p_ativo=adm.status_pessoa
+            p_restricoes=None
         )
 
     @auth_method
@@ -255,8 +257,8 @@ class UsuarioService(BaseUsuarioService):
             "usp_usuario_inserir",
             p_email=fisio.email,
             p_nome=fisio.nome,
-            p_data_nascimento=fisio.data_nascimento,
-            p_tipo=fisio.tipo,
+            p_data_nascimento=fisio.data_nascimento.isoformat(),
+            p_tipo=current_user_types_list.get()[1],
             p_login=fisio.login,
             p_senha=bcrypt.hashpw(fisio.senha.encode('utf-8'), bcrypt.gensalt()).decode('utf-8'),
             p_ativo=fisio.status_pessoa,
@@ -282,7 +284,7 @@ class UsuarioService(BaseUsuarioService):
             p_id_usuario=fisio.id_pessoa,
             p_email=fisio.email,
             p_nome=fisio.nome,
-            p_data_nascimento=fisio.data_nascimento,
+            p_data_nascimento=fisio.data_nascimento.isoformat(),
             p_login=fisio.login,
             p_senha=bcrypt.hashpw(fisio.senha.encode('utf-8'), bcrypt.gensalt()).decode('utf-8'),
             p_ativo=fisio.status_pessoa,
@@ -295,14 +297,16 @@ class UsuarioService(BaseUsuarioService):
             p_restricoes=Jsonb([dt.isoformat() for dt in fisio.restricoes_fisioterapeuta.restricoes])
         )
 
+        _ = wrapper()
+
     @auth_method
     def inserir_pesquisador(self, pesq: Pesquisador) -> int:
         result = self._dal.call_procedure(
             "usp_usuario_inserir",
             p_email=pesq.email,
             p_nome=pesq.nome,
-            p_data_nascimento=pesq.data_nascimento,
-            p_tipo=pesq.tipo,
+            p_data_nascimento=pesq.data_nascimento.isoformat(),
+            p_tipo=current_user_types_list.get()[2],
             p_login=pesq.login,
             p_senha=bcrypt.hashpw(pesq.senha.encode('utf-8'), bcrypt.gensalt()).decode('utf-8'),
             p_ativo=pesq.status_pessoa,
@@ -328,7 +332,7 @@ class UsuarioService(BaseUsuarioService):
             p_id_usuario=pesq.id_pessoa,
             p_email=pesq.email,
             p_nome=pesq.nome,
-            p_data_nascimento=pesq.data_nascimento,
+            p_data_nascimento=pesq.data_nascimento.isoformat(),
             p_login=pesq.login,
             p_senha=bcrypt.hashpw(pesq.senha.encode('utf-8'), bcrypt.gensalt()).decode('utf-8'),
             p_ativo=pesq.status_pessoa,
@@ -340,6 +344,8 @@ class UsuarioService(BaseUsuarioService):
             ),
             p_restricoes=Jsonb([dt.isoformat() for dt in pesq.restricoes_pesquisador.restricoes])
         )
+
+        _ = wrapper()
 
     @auth_method
     def deletar_usuario(self, id_usuario_desativado: int) -> None:

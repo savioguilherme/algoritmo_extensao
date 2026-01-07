@@ -1,8 +1,9 @@
+from datetime import date
 
 class Pessoa():
     '''Classe base para representar uma pessoa'''
 
-    def __init__(self, id_pessoa, nome, email, data_nascimento, tipo, status_pessoa):
+    def __init__(self, id_pessoa: int, nome: str, email: str, data_nascimento: date, tipo: int, status_pessoa: bool):
         self.id_pessoa = id_pessoa
         self.nome = nome
         self.email = email

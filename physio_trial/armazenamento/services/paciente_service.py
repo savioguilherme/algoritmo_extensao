@@ -69,8 +69,7 @@ class PacienteService(BasePacienteService):
             ])
         )
 
-        # perguntar sobre o wrapper.invoke e sobre as condições de contorno da chamada e definição das sessão no inserir.paciente
-        return True # if wrapper() else None
+        return wrapper()
 
     def cadastrar_paciente(self, paciente: Paciente) -> int | None:
         """
