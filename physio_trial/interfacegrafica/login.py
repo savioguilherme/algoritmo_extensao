@@ -22,9 +22,9 @@ class Login(BaseFrame):
 
         #configurando o frame
         self.grid_rowconfigure((1,2,3), weight=0)
-        self.grid_columnconfigure((0,1,2,3), weight=1)
+        self.grid_columnconfigure((1,2,3), weight=1)
 
-        self.label_login = self.widgets.label(self, texto="Usuário:", cor="transparent")
+        self.label_login = self.widgets.label(self, texto="Login:", cor="transparent")
         self.label_login.grid(row=1, column=1, sticky="e", padx=(20,10), pady=(20,10))
 
         self.entry_login = self.widgets.entry(self, None, None)
@@ -36,34 +36,33 @@ class Login(BaseFrame):
         self.entry_senha = self.widgets.entry(self, "*", None)
         self.entry_senha.grid(row=2, column=2, sticky="w", padx=(10,20), pady=(10,20))
 
-        bnt_entrar = self.widgets.button(self, texto="Entrar", comando=self.realizar_login, cor="blue")
-        bnt_entrar.grid(row=3, column=1, sticky="e", padx=(20,10), pady=(10,20))
+        self.bnt_entrar = self.widgets.button(self, texto="Entrar", comando=self.realizar_login, cor="blue")
+        self.bnt_entrar.grid(row=3, column=1, sticky="e", padx=(20,10), pady=(10,20))
 
-        bnt_encerrar = self.widgets.button(self, texto="Encerrar", comando=self.encerrar, cor="red")
-        bnt_encerrar.grid(row=3, column=2, sticky="w", padx=(10,20), pady=(10,20))
+        self.bnt_encerrar = self.widgets.button(self, texto="Encerrar", comando=self.encerrar, cor="red")
+        self.bnt_encerrar.grid(row=3, column=2, sticky="w", padx=(10,20), pady=(10,20))
 
     def realizar_login(self):
-        usuario = self.entry_login.get()
+        login = self.entry_login.get()
         senha = self.entry_senha.get()
 
-        if not usuario or not senha: 
+        if not login or not senha: 
             CTkMessagebox (title="Erro", message="Informe usuário e senha.", icon="cancel").get()
             return
 
-        id_usuario = self.usuario_service.login(usuario, senha)
+        id_usuario = self.usuario_service.login(login, senha)
 
         if id_usuario is not None:
-            # Obtém o tipo do usuário (exemplo)
             tipo = current_user_type.get()
             user_types_list = current_user_types_list.get() or []
 
             CTkMessagebox(title="Bem-vindo", message="Acesso permitido!", icon="check").get()
-            if tipo == user_types_list[2]:
-                self.abrir_menu_pesquisador()
+            if tipo == user_types_list[0]:
+                self.abrir_menu_administrador(id_usuario, 0)
             elif tipo == user_types_list[1]:
-                self.abrir_menu_fisioterapeuta()
-            elif tipo == user_types_list[0]:
-                self.abrir_menu_administrador()
+                self.abrir_menu_fisioterapeuta(id_usuario, 1)
+            elif tipo == user_types_list[2]:
+                self.abrir_menu_pesquisador(id_usuario, 2)
         else:
             CTkMessagebox(title="Erro", message="Usuário ou senha incorretos.", icon="cancel").get()
             self.entry_login.delete(0, "end")
