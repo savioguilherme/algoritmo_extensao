@@ -2,7 +2,7 @@ import bcrypt
 
 from psycopg.types.json import Jsonb
 from inject import autoparams
-from datetime import datetime, time
+from datetime import datetime, date, time
 
 from armazenamento.context.app_context import current_user_id, current_user_type, current_user_types_list, current_session_codes_list
 from armazenamento.services.base.base_usuario_service import BaseUsuarioService
@@ -297,7 +297,9 @@ class UsuarioService(BaseUsuarioService):
             p_restricoes=Jsonb([dt.isoformat() for dt in fisio.restricoes_fisioterapeuta.restricoes])
         )
 
-        _ = wrapper()
+        today: date = date.today()
+
+        _ = wrapper(dia_inicial=today)
 
     @auth_method
     def inserir_pesquisador(self, pesq: Pesquisador) -> int:
@@ -345,7 +347,9 @@ class UsuarioService(BaseUsuarioService):
             p_restricoes=Jsonb([dt.isoformat() for dt in pesq.restricoes_pesquisador.restricoes])
         )
 
-        _ = wrapper()
+        today: date = date.today()
+
+        _ = wrapper(dia_inicial=today)
 
     @auth_method
     def deletar_usuario(self, id_usuario_desativado: int) -> None:

@@ -15,9 +15,9 @@ import datetime
 def wrapper(
     usuario_service: BaseUsuarioService,
     paciente_service: BasePacienteService,
-    dia_inicial = datetime.date.today(),
-    intervalo = 500,
-):
+    dia_inicial: datetime.date = datetime.date.today(),
+    intervalo: int = 500,
+) -> bool:
     usuario_tipos: list[int] = current_user_types_list.get() or []
     if not usuario_tipos or usuario_tipos is None:
         raise PermissionError("Tipos de usuário não encontrados no contexto da aplicação.")
@@ -26,7 +26,7 @@ def wrapper(
     usuarios = usuario_service.listar_usuarios(lista_tipos=[usuario_tipos[1], usuario_tipos[2]], apenas_ativos=True)
     fisios = [usuario for usuario in usuarios if isinstance(usuario, Fisioterapeuta) and usuario.tipo == usuario_tipos[1]]
     pesquisadores = [usuario for usuario in usuarios if isinstance(usuario, Pesquisador) and usuario.tipo == usuario_tipos[2]]
-    pacientes = paciente_service.listar_pacientes(apenas_ativos=True)
+    pacientes = [paciente for paciente in paciente_service.listar_pacientes(apenas_ativos=True) if paciente.sessoes_paciente is not None and len(paciente.sessoes_paciente) == 12]
 
     # constroi staff e patients
 
@@ -38,8 +38,9 @@ def wrapper(
     patients = {}
     for paciente in pacientes:
         patients[paciente.id_pessoa] = {
-            "researcher": paciente.pesquisador_responsavel.id_pessoa if paciente.pesquisador_responsavel else None, 
-            "physio": paciente.fisioterapeuta_responsavel.id_pessoa if paciente.fisioterapeuta_responsavel else None, 
+            "Name": paciente.nome,
+            "researcher": paciente.pesquisador_responsavel.id_pessoa if paciente.pesquisador_responsavel else None,
+            "physio": paciente.fisioterapeuta_responsavel.id_pessoa if paciente.fisioterapeuta_responsavel else None
         }
 
     planningHorizon = [dia_inicial + datetime.timedelta(days=delta) for delta in range(intervalo)]
@@ -77,10 +78,10 @@ def wrapper(
             schedule_paciente[codigo_dia] = None
             schedule_paciente[codigo_horario] = None
             if sessao.status_agendamento:
-                dia_horario = datetime.datetime.combine(sessao.dia, sessao.horario)
-                dia = sessao.dia
-                slot = sessao.horario
-                if sessao.conclusao or sessao.dia < dia_inicial:
+                dia = as_date(sessao.dia)
+                slot = as_time(sessao.horario)
+                dia_horario = datetime.datetime.combine(dia, slot)
+                if sessao.conclusao or dia < dia_inicial:
                     schedule_paciente[codigo_dia] = dia
                     schedule_paciente[codigo_horario] = slot
                 elif fisio.restricoes_fisioterapeuta.esta_disponivel(dia_horario) and pesquisador.restricoes_pesquisador.esta_disponivel(dia_horario) and paciente.restricoes_paciente.esta_disponivel(dia_horario):
@@ -118,6 +119,10 @@ def wrapper(
             patient_schedule = schedule[paciente.id_pessoa]
             dia = patient_schedule[codigo_dia]
             horario = patient_schedule[codigo_horario]
+            if dia is None or horario is None:
+                continue
+            dia = as_date(dia)
+            horario = as_time(horario)
             dia_horario = datetime.datetime.combine(dia,horario)
             sessoes_atualizadas.append({
                 'id_sessao': sessao.id_sessao,
@@ -138,3 +143,27 @@ def calcular_disponibilidade(dias, horarios, restricoes):
             disponibilidade_dia[horario] = esta_disponivel
         disponibilidade[dia] = disponibilidade_dia
     return disponibilidade
+
+def as_date(v) -> datetime.date:
+    if v is None:
+        return None
+    if isinstance(v, datetime.date) and not isinstance(v, datetime.datetime):
+        return v
+    if isinstance(v, datetime.datetime):
+        return v.date()
+    if isinstance(v, str):
+        # aceita "YYYY-MM-DD" e "YYYY-MM-DDTHH:MM:SS"
+        return datetime.date.fromisoformat(v.split("T")[0])
+    raise TypeError(f"Tipo inválido para dia: {type(v)} => {v}")
+
+def as_time(v) -> datetime.time:
+    if v is None:
+        return None
+    if isinstance(v, datetime.time):
+        return v
+    if isinstance(v, datetime.datetime):
+        return v.time()
+    if isinstance(v, str):
+        # aceita "HH:MM" ou "HH:MM:SS"
+        return datetime.time.fromisoformat(v)
+    raise TypeError(f"Tipo inválido para horario: {type(v)} => {v}")

@@ -1,10 +1,10 @@
 from dados.pessoa import Pessoa
 from dados.restricoes_dias_horarios import RestricoesDiasHorarios
-
+from datetime import date
 class Fisioterapeuta(Pessoa):
     '''Classe que representa um fisioterapeuta'''
 
-    def __init__(self, id_fisioterapeuta, nome_fisioterapeuta, email, data_nascimento, login, senha, status_fisioterapeuta, tipo = "fisioterapeuta"):
+    def __init__(self, id_fisioterapeuta: int, nome_fisioterapeuta: str, email: str, data_nascimento: date, login: str, senha: str, status_fisioterapeuta, tipo = "fisioterapeuta"):
         super().__init__(id_fisioterapeuta, nome_fisioterapeuta, email, data_nascimento, tipo, status_fisioterapeuta)
         self.login = login 
         self.senha = senha

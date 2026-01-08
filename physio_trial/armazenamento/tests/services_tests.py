@@ -63,9 +63,9 @@ print("Usuário deletado com sucesso.")
 
 # print(f"Pesquisador inserido com ID: {new_id}")
 
-# servico_usuario.atualizar_fisioterapeuta(
-#     Fisioterapeuta(id_fisioterapeuta=13, nome_fisioterapeuta="Fisioterapeuta Modificado Again Teste 03", email="fisio.test03@usp.br", data_nascimento="2000-09-22", tipo=3, login="fisio.test03", senha="senha12345", status_fisioterapeuta=True)
-# )
+servico_usuario.atualizar_fisioterapeuta(
+    Fisioterapeuta(id_fisioterapeuta=2, nome_fisioterapeuta="Fisioterapeuta Modificado Again Teste 001", email="fisio.test01@usp.br", data_nascimento=date(2000, 8, 14), tipo=current_user_types_list.get()[1], login="fisio.test001", senha="senha12345", status_fisioterapeuta=True)
+)
 
 # modifyied_user = servico_usuario.consultar(13)
 # print(f"Fisioterapeuta modificado: {modifyied_user}")
@@ -83,14 +83,11 @@ print("Usuário deletado com sucesso.")
 
 data_array: list[int] = [int(data) for data in "14/05/2000".split("/")]
 
-novo_fisio: Fisioterapeuta = Fisioterapeuta(id_fisioterapeuta=1, nome_fisioterapeuta='Fisio.04', email="fisio.04@usp.br", data_nascimento=date(data_array[2], data_array[1], data_array[0]), login="fisio.04", senha="fisio123", status_fisioterapeuta=True, tipo=current_user_types_list.get()[1])
+# novo_fisio: Fisioterapeuta = Fisioterapeuta(id_fisioterapeuta=1, nome_fisioterapeuta='Fisio.04', email="fisio.04@usp.br", data_nascimento=date(data_array[2], data_array[1], data_array[0]), login="fisio.04", senha="fisio123", status_fisioterapeuta=True, tipo=current_user_types_list.get()[1])
 
-# novo_fisio.restricoes_fisioterapeuta.disponibilidade_semanal = []
-# novo_fisio.restricoes_fisioterapeuta.restricoes = set()
+# fisio_id = servico_usuario.inserir_fisioterapeuta(fisio=novo_fisio)
 
-fisio_id = servico_usuario.inserir_fisioterapeuta(fisio=novo_fisio)
-
-print(f"Novo fisio: {fisio_id}")
+# print(f"Novo fisio: {fisio_id}")
 
 # modifyied_user = servico_usuario.consultar(11)
 # print(f"Adm modificado: {modifyied_user}")
@@ -223,9 +220,9 @@ restricoes = [
 
 paciente = Paciente(
     id_paciente=None,
-    nome_paciente="Paciente Teste Proc",
-    email="paciente07@usp.br",
-    data_nascimento=date(2001, 6, 15).isoformat(),
+    nome_paciente="Paciente Teste Proc 09",
+    email="paciente.09@usp.br",
+    data_nascimento=date(2001, 6, 15),
     pesquisador=pesq,
     fisioterapeuta=fisio
 )
@@ -248,10 +245,11 @@ paciente.restricoes_paciente.restricoes = {
 # Execução da procedure
 # ------------------------------------------------------
 # novo_id = paciente_service.cadastrar_paciente(paciente=paciente)
-paciente.id_pessoa = 18
+paciente.id_pessoa = 31
 _ = paciente_service.atualizar_paciente(paciente=paciente, status_abandono=False, status_conclusao=False)
 
 # print(f"Paciente inserido com ID: {novo_id}")
+print(f"Paciente atualizado com ID: {paciente.id_pessoa}")
 
 # ------------------------------------------------------
 # Validação pós-inserção

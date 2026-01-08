@@ -1,5 +1,5 @@
 from psycopg.types.json import Jsonb
-from datetime import datetime, time
+from datetime import datetime, date, time
 from typing import Any, Dict, List
 import inject
 
@@ -44,7 +44,7 @@ class PacienteService(BasePacienteService):
             p_id_paciente=paciente.id_pessoa,
             p_nome=paciente.nome,
             p_email=paciente.email,
-            p_data_nascimento=paciente.data_nascimento,
+            p_data_nascimento=paciente.data_nascimento.isoformat(),
             p_status_abandono=status_abandono,
             p_status_conclusao=status_conclusao,
             p_id_pesquisador=paciente.pesquisador_responsavel.id_pessoa if paciente.pesquisador_responsavel else None,
@@ -69,7 +69,9 @@ class PacienteService(BasePacienteService):
             ])
         )
 
-        return wrapper()
+        today: date = date.today()
+
+        return wrapper(dia_inicial=today)
 
     def cadastrar_paciente(self, paciente: Paciente) -> int | None:
         """
@@ -83,7 +85,7 @@ class PacienteService(BasePacienteService):
             "usp_paciente_inserir",
             p_nome=paciente.nome,
             p_email=paciente.email,
-            p_data_nascimento=paciente.data_nascimento,
+            p_data_nascimento=paciente.data_nascimento.isoformat(),
             p_id_pesquisador=paciente.pesquisador_responsavel.id_pessoa if paciente.pesquisador_responsavel else None,
             p_id_fisioterapeuta=paciente.fisioterapeuta_responsavel.id_pessoa if paciente.fisioterapeuta_responsavel else None,
             p_disponibilidades=Jsonb(
@@ -99,7 +101,9 @@ class PacienteService(BasePacienteService):
         if result is None:
             return None
 
-        return result['p_id_paciente'] if wrapper() else None
+        today: date = date.today()
+
+        return result['p_id_paciente'] if wrapper(dia_inicial=today) else None
 
     def consultar(self, id: int) -> Paciente:
         row = self._dal.call_function("ufn_paciente_consultar", p_id_paciente=id)
@@ -107,8 +111,14 @@ class PacienteService(BasePacienteService):
         if row is None:
             return None
 
-        fisio_result = row['fisioterapeuta']
-        pesq_result = row['pesquisador']
+        fisio_result = None
+        pesq_result = None
+
+        if 'fisioterapeuta' in row.keys():
+            fisio_result = row['fisioterapeuta']
+        
+        if 'pesquisador' in row.keys():
+            pesq_result = row['pesquisador']
 
         fisio: Fisioterapeuta | None = None if fisio_result is None else Fisioterapeuta(
             id_fisioterapeuta=fisio_result['id_usuario'],
