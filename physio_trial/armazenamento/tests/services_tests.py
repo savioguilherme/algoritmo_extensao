@@ -77,9 +77,9 @@ servico_usuario.atualizar_fisioterapeuta(
 # modifyied_user = servico_usuario.consultar(14)
 # print(f"Pesquisador modificado: {modifyied_user}")
 
-# servico_usuario.atualizar_adm(
-#     Administrador(id_administrador=1, nome_administrador="Adm Teste 2", email="admin.02@usp.br", data_nascimento="2000-09-22", tipo=2, login="adm.02", senha="admin123", status_administrador=True)
-# )
+servico_usuario.atualizar_adm(
+    Administrador(id_administrador=1, nome_administrador="Adm Teste 2", email="admin.02@usp.br", data_nascimento=date(2000, 9, 22), tipo=current_user_types_list.get()[0], login="adm.002", senha="admin123", status_administrador=False)
+)
 
 data_array: list[int] = [int(data) for data in "14/05/2000".split("/")]
 
