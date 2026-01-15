@@ -86,12 +86,20 @@ class CadastroFisioterapeuta(BaseFrame):
         
         data_array: list[int] = [int(data) for data in data_nascimento.split("/")]
 
-        novo_fisio: Fisioterapeuta = Fisioterapeuta(id_fisioterapeuta=1, nome_fisioterapeuta=nome, email=email, data_nascimento=date(data_array[2], data_array[1], data_array[0]), login=login, senha=senha, status_fisioterapeuta=True)
+        novo_fisio: Fisioterapeuta = Fisioterapeuta(
+            id_fisioterapeuta=1, 
+            nome_fisioterapeuta=nome, 
+            email=email, 
+            data_nascimento=date(data_array[2], data_array[1], data_array[0]), 
+            login=login, 
+            senha=senha, 
+            status_fisioterapeuta=True)
         
         fisioterapeuta = self.usuario_service.inserir_fisioterapeuta(fisio=novo_fisio)
 
         if fisioterapeuta is not None: 
             CTkMessagebox(title="Cadastrado", message="Fisioterapeuta Cadastrado com Sucesso!", icon="check").get()
+            return self.voltar_callback
         else: 
             CTkMessagebox (title="Erro no Cadastro", message="Não foi possível cadastrar o usuário!", icon="cancel").get()
             return
