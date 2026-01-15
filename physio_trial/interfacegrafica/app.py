@@ -13,7 +13,7 @@ from interfacegrafica.listar_pacientes import ListarPacientes
 from interfacegrafica.listar_fisioterapeutas import ListarFisioterapeutas
 from interfacegrafica.cadastro_pesquisador import CadastroPesquisador
 from interfacegrafica.restricoes_pessoa import RestricoesPessoa
-from interfacegrafica.menu_atualiza_usuario import MenuAtualizaUsuario
+from interfacegrafica.menu_atualiza_dados_usuario import MenuAtualizaDadosUsuario
 
 class App(customtkinter.CTk):
 
@@ -38,7 +38,7 @@ class App(customtkinter.CTk):
         #configuração da Janela
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
- 
+
         # Inicia o login
         self.abrir_login()
 
@@ -62,7 +62,7 @@ class App(customtkinter.CTk):
             self,
             self.user_id,
             self.abrir_login,
-            self.abrir_menu_senha,
+            self.abrir_menu_atualiza_dados,
             self.cadastro_fisioterapeuta, 
             self.cadastro_pesquisador,  
             self.listar_fisioterapeutas,  
@@ -74,8 +74,10 @@ class App(customtkinter.CTk):
         self.user_id = user_id
         self.user_type = user_type
         self.tela_menu_fisio = MenuFisioterapeuta(
-            self, 
+            self,
+            self.user_id,
             self.abrir_login,
+            self.abrir_menu_atualiza_dados,
             lambda: self.abrir_agenda(user_id, self.abrir_menu_fisioterapeuta(user_id))
         )
 
@@ -84,12 +86,13 @@ class App(customtkinter.CTk):
         self.user_id = user_id
         self.user_type = user_type
         self.tela_menu_pesquisador = MenuPesquisador(
-            self, 
-            self.abrir_login, 
-            lambda: self.cadastro_paciente(user_id),
-            lambda: self.abrir_agenda(self.abrir_menu_pesquisador), 
-            lambda: self.cadastro_restricoes(self.abrir_menu_pesquisador),
-            lambda: self.listar_pacientes(user_id)
+            self,
+            self.user_id,
+            self.abrir_login,
+            self.abrir_menu_atualiza_dados,
+            self.cadastro_paciente,
+            self.abrir_agenda,
+            self.listar_pacientes
         )
 
     def abrir_menu_paciente(self):
@@ -112,7 +115,7 @@ class App(customtkinter.CTk):
             retornar
         )
     
-    def abrir_menu_senha(self):
+    def abrir_menu_atualiza_dados(self):
         self.limpar_tela()
         if self.user_type == 0: 
             retornar = lambda: self.abrir_menu_administrador(self.user_id, self.user_type)
@@ -122,7 +125,7 @@ class App(customtkinter.CTk):
             retornar = lambda: self.abrir_menu_pesquisador(self.user_id, self.user_type)
         else:
             retornar = self.abrir_login
-        self.tela_senha = MenuAtualizaUsuario(
+        self.tela_atualiza_dados = MenuAtualizaDadosUsuario(
             self,
             retornar,
             self.user_id
