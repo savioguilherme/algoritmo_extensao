@@ -1,0 +1,164 @@
+from inject import autoparams
+from interfacegrafica.base_frame import BaseFrame
+from interfacegrafica.base_widgets import BaseWidgets
+from armazenamento.services.base.base_usuario_service import BaseUsuarioService
+from dados.administrador import Administrador
+from CTkMessagebox import CTkMessagebox
+from datetime import date
+
+class MenuAtualizaDadosUsuario(BaseFrame): 
+
+    '''Menu para que usuário altere seus dados pessoais e/ou suas restrições de horários'''
+
+    @autoparams()
+    def __init__(self, master, voltar_callback, user_id, usuario_service: BaseUsuarioService):
+        super().__init__(master, titulo="Alterar Senha")
+
+        self.widgets = BaseWidgets()
+        self.usuario_service = usuario_service
+
+        self.voltar_callback = voltar_callback
+
+        self.user_id = user_id
+        self.usuario_logado = None
+
+        #configurando o frame
+        self.grid_rowconfigure((1,2,3,4,5,6,7), weight=0)
+        self.grid_columnconfigure((1,2,3), weight=1)
+
+        self.label_nome = self.widgets.label(self, texto="Nome:", cor="transparent")
+        self.label_nome.grid(row=1, column=1, sticky="e", padx=(20,10) ,pady=(20,10))
+
+        self.entry_nome = self.widgets.entry(self, None, None)
+        self.entry_nome.grid(row=1, column=2, sticky="w", padx=(10,20), pady=(20,10))
+
+        self.label_email = self.widgets.label(self, texto="Email:", cor="transparent")
+        self.label_email.grid(row=2, column=1, sticky="e",padx=(20,10), pady=(10,10))
+
+        self.entry_email = self.widgets.entry(self, None, None)
+        self.entry_email.grid(row=2, column=2, sticky="w", padx=(10,20), pady=(10,10))
+
+        self.label_data_nascimento = self.widgets.label(self, texto="Data de Nascimento:", cor="transparent")
+        self.label_data_nascimento.grid(row=3, column=1, sticky="e", padx=(20,10), pady=(10,10))
+
+        self.entry_data_nascimento = self.widgets.entry(self, None, None)
+        self.entry_data_nascimento.grid(row=3, column=2, sticky="w", padx=(10,20), pady=(10,10))
+
+        self.label_nova_senha = self.widgets.label(self, "Nova senha:", cor="transparent")
+        self.label_nova_senha.grid(row=4, column=1, sticky="e", padx=(20,10), pady=(20,10))
+
+        self.entry_nova_senha = self.widgets.entry(self, "*", None)
+        self.entry_nova_senha.grid(row=4, column=2, sticky="w", padx=(10,20), pady=(20,10))
+
+        self.label_confirma_nova_senha = self.widgets.label(self, "Confirme a nova senha:", cor="transparent")
+        self.label_confirma_nova_senha.grid(row=5, column=1, sticky="e", padx=(20,10), pady=(10,10))
+
+        self.entry_confirma_nova_senha = self.widgets.entry(self, "*", None)
+        self.entry_confirma_nova_senha.grid(row=5, column=2, sticky="w", padx=(10,20), pady=(10,10))
+
+        self.bnt_restricoes = self.widgets.button(self, texto="Cadastro de Horários", comando=None, cor="blue")
+        self.bnt_restricoes.grid(row=6, column=1, sticky="nsew", columnspan=2, padx=(80,80), pady=(10,10))
+
+        self.btn_salvar = self.widgets.button(self, texto="Salvar", comando=self.atualizar_dados, cor="Green")
+        self.btn_salvar.grid(row=7, column=1, sticky="e", padx=(20,10), pady=(10,20))
+
+        self.btn_voltar = self.widgets.button(self, texto="Voltar", comando=self.voltar_callback, cor="red")
+        self.btn_voltar.grid(row=7, column=2, sticky="w", padx=(10,20), pady=(10,20))
+
+        self.carregar_usuario_logado()
+
+    def carregar_usuario_logado(self):
+        try:
+            self.usuario_logado = self.usuario_service.consultar(self.user_id)
+
+            if self.usuario_logado:
+                # Preencher todos os campos com os dados do usuário
+                self.entry_nome.delete(0, 'end')
+                self.entry_nome.insert(0, self.usuario_logado.nome)
+                
+                self.entry_email.delete(0, 'end')
+                self.entry_email.insert(0, self.usuario_logado.email)
+                
+                # Converter data para formato string se necessário
+                data_nascimento = self.formatar_data(self.usuario_logado.data_nascimento)
+                self.entry_data_nascimento.delete(0, 'end')
+                self.entry_data_nascimento.insert(0, data_nascimento)
+                
+        except Exception as e:
+            CTkMessagebox(
+                title="Erro", 
+                message=f"Erro ao carregar dados do usuário: {str(e)}", 
+                icon="cancel"
+            )
+            return None
+    
+    def formatar_data(self, data):
+        if hasattr(data, 'strftime'):
+            return data.strftime("%d/%m/%Y")
+        return str(data)
+        
+    def atualizar_dados(self):
+        nome = self.entry_nome.get()
+        email = self.entry_email.get()
+        data_nascimento = self.entry_data_nascimento.get()
+        senha = self.entry_nova_senha.get()
+        confirmar_senha = self.entry_confirma_nova_senha.get()
+        
+        # Validar campos básicos
+        if not nome or not email or not data_nascimento:
+            CTkMessagebox(title="Erro", message="Preencha todos os campos!", icon="cancel")
+            return
+        
+        # Validar senha
+        if senha or confirmar_senha:
+            if not senha or not confirmar_senha:
+                CTkMessagebox(title="Erro", message="Preencha ambos os campos de senha!", icon="cancel")
+                return
+            
+            if senha != confirmar_senha:
+                CTkMessagebox(title="Erro", message="As senhas não coincidem!", icon="cancel")
+                return
+            
+            if len(senha) < 6:
+                CTkMessagebox(title="Erro", message="A senha deve ter pelo menos 6 caracteres!", icon="cancel")
+                return
+        
+        # Se não preencheu senha, mantém a senha atual
+        senha_final = senha if senha else self.usuario_logado.senha
+
+        data_array: list[int] = [int(data) for data in data_nascimento.split("/")]
+        
+        try:
+            administrador_atualizado = Administrador(
+                id_administrador=self.usuario_logado.id_pessoa,
+                nome_administrador=nome,
+                email=email,
+                data_nascimento=date(data_array[2], data_array[1], data_array[0]), 
+                login=self.usuario_logado.login,
+                senha=senha_final,  
+                status_administrador=self.usuario_logado.status_pessoa,
+                tipo=self.usuario_logado.tipo
+            )
+            
+            self.usuario_service.atualizar_adm(administrador_atualizado)
+            
+            msg = CTkMessagebox(
+                title="Sucesso", 
+                message="Dados atualizados com sucesso!", 
+                icon="check",
+                option_1="OK"
+            )
+
+            resposta = msg.get()
+
+            # Atualizar o objeto usuário_logado com os novos dados
+            self.usuario_logado = administrador_atualizado
+
+            self.voltar_callback()
+            
+        except Exception as e:
+            CTkMessagebox(
+                title="Erro", 
+                message=f"Erro ao atualizar dados: {str(e)}", 
+                icon="cancel"
+            )
