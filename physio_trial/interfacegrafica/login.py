@@ -13,11 +13,12 @@ class Login(BaseFrame):
     def __init__(self, master, abrir_menu_administrador, abrir_menu_fisioterapeuta, abrir_menu_pesquisador, encerrar, usuario_service: BaseUsuarioService):
         super().__init__(master, "Login")
 
+        self.widgets = BaseWidgets()
         self.abrir_menu_administrador = abrir_menu_administrador
         self.abrir_menu_fisioterapeuta = abrir_menu_fisioterapeuta
         self.abrir_menu_pesquisador = abrir_menu_pesquisador
         self.encerrar = encerrar
-        self.widgets = BaseWidgets()
+        
         self.usuario_service = usuario_service
 
         #configurando o frame
@@ -43,27 +44,43 @@ class Login(BaseFrame):
         self.bnt_encerrar.grid(row=3, column=2, sticky="w", padx=(10,20), pady=(10,20))
 
     def realizar_login(self):
-        login = self.entry_login.get()
-        senha = self.entry_senha.get()
+        try:
+            login = self.entry_login.get()
+            senha = self.entry_senha.get()
 
-        if not login or not senha: 
-            CTkMessagebox (title="Erro", message="Informe usuário e senha.", icon="cancel").get()
-            return
+            if not login or not senha: 
+                CTkMessagebox(
+                    title="Erro", 
+                    message="Informe usuário e senha.", 
+                    icon="cancel"
+                    ).get()
+                return
+            
+            id_usuario = self.usuario_service.login(login, senha)
 
-        id_usuario = self.usuario_service.login(login, senha)
-
-        if id_usuario is not None:
             tipo = current_user_type.get()
             user_types_list = current_user_types_list.get() or []
 
-            CTkMessagebox(title="Bem-vindo", message="Acesso permitido!", icon="check").get()
+            CTkMessagebox(
+                title="Bem-vindo", 
+                message="Acesso permitido!", 
+                icon="check"
+                ).get()
+            
             if tipo == user_types_list[0]:
                 self.abrir_menu_administrador(id_usuario, 0)
             elif tipo == user_types_list[1]:
                 self.abrir_menu_fisioterapeuta(id_usuario, 1)
             elif tipo == user_types_list[2]:
                 self.abrir_menu_pesquisador(id_usuario, 2)
-        else:
-            CTkMessagebox(title="Erro", message="Usuário ou senha incorretos.", icon="cancel").get()
+
+        except Exception as e:
+
+            CTkMessagebox(
+                title="Erro", 
+                message=f"Atenção, erro encontrado: {str(e)}", 
+                icon="cancel"
+                ).get()
             self.entry_login.delete(0, "end")
             self.entry_senha.delete(0, "end")
+            return
