@@ -68,11 +68,11 @@ class Login(BaseFrame):
                 ).get()
             
             if tipo == user_types_list[0]:
-                self.abrir_menu_administrador(id_usuario, 0)
+                self.abrir_menu_administrador(id_usuario)
             elif tipo == user_types_list[1]:
-                self.abrir_menu_fisioterapeuta(id_usuario, 1)
+                self.abrir_menu_fisioterapeuta(id_usuario)
             elif tipo == user_types_list[2]:
-                self.abrir_menu_pesquisador(id_usuario, 2)
+                self.abrir_menu_pesquisador(id_usuario)
 
         except Exception as e:
 
@@ -81,6 +81,6 @@ class Login(BaseFrame):
                 message=f"Atenção, erro encontrado: {str(e)}", 
                 icon="cancel"
                 ).get()
-            self.entry_login.delete(0, "end")
+            #self.entry_login.delete(0, "end")
             self.entry_senha.delete(0, "end")
             return
