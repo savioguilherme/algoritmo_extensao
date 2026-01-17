@@ -1,9 +1,10 @@
 from inject import autoparams
-from armazenamento.services.base.base_usuario_service import BaseUsuarioService
 from interfacegrafica.base_frame import BaseFrame
 from interfacegrafica.base_widgets import BaseWidgets
+from armazenamento.services.base.base_usuario_service import BaseUsuarioService
 from CTkMessagebox import CTkMessagebox
 from dados.pesquisador import Pesquisador
+from datetime import date
 
 @autoparams()
 class CadastroPesquisador(BaseFrame):
@@ -13,8 +14,9 @@ class CadastroPesquisador(BaseFrame):
     def __init__(self, master, voltar_callback, usuario_service: BaseUsuarioService):
         super().__init__(master, "Cadastro de Pesquisadores")
 
-        self.voltar_callback = voltar_callback 
         self.widgets = BaseWidgets()
+        self.voltar_callback = voltar_callback 
+        
         self.usuario_service = usuario_service
 
        #configurando o frame
@@ -54,13 +56,16 @@ class CadastroPesquisador(BaseFrame):
         self.label_confirma_nova_senha = self.widgets.label(self, "Confirme a senha:", cor="transparent")
         self.label_confirma_nova_senha.grid(row=6, column=1, sticky="e", padx=(20,10), pady=(10,10))
 
-        self.entry_confirma_nova_senha = self.widgets.entry(self, None, None)
+        self.entry_confirma_nova_senha = self.widgets.entry(self, "*", None)
         self.entry_confirma_nova_senha.grid(row=6, column=2, sticky="w", padx=(10,20), pady=(10,10))
 
-        self.bnt_restricoes = self.widgets.button(self, texto="Cadastro de Horários", comando=None, cor="blue")
-        self.bnt_restricoes.grid(row=7, column=1, sticky="nsew", columnspan=2, padx=(80,80), pady=(10,10))
+        self.label_cadastro_restricoes = self.widgets.label(self, "Cadastrar Horários:", cor="transparent")
+        self.label_cadastro_restricoes.grid(row=7, column=1, sticky="e", padx=(20,10), pady=(10,10))
 
-        self.btn_salvar = self.widgets.button(self, texto="Salvar", comando=None , cor="green")
+        self.bnt_restricoes = self.widgets.button(self, texto="Cadastro de Horários", comando=None, cor="blue")
+        self.bnt_restricoes.grid(row=7, column=2, sticky="w", columnspan=1, padx=(10,20), pady=(10,10))
+
+        self.btn_salvar = self.widgets.button(self, texto="Salvar", comando=self.realizar_cadastro_pesquisador , cor="green")
         self.btn_salvar.grid(row=8, column=1, sticky="e", padx=(20,10), pady=(10,20))
 
         self.btn_voltar = self.widgets.button(self, texto="Voltar", comando=self.voltar_callback, cor="red")
@@ -75,17 +80,48 @@ class CadastroPesquisador(BaseFrame):
         confirmar_senha = self.entry_confirma_nova_senha.get()
 
         if not login or not senha or not nome or not email or not data_nascimento: 
-            CTkMessagebox (title="Erro", message="Preencha todos os campos!", icon="cancel").get()
+            CTkMessagebox(
+                title="Erro", 
+                message="Preencha todos os campos!", 
+                icon="cancel"
+            ).get()
             return
         
         if senha != confirmar_senha: 
-            CTkMessagebox (title="Erro", message="As senhas não correspondem!", icon="cancel").get()
+            CTkMessagebox(
+                title="Erro", 
+                message="As senhas não correspondem!", 
+                icon="cancel"
+            ).get()
+            self.entry_senha.delete(0, "end")
+            self.entry_confirma_nova_senha.delete(0, "end")
             return
         
-        #fisioterapeuta = self.usuario_service.inserir_fisioterapeuta(Fisioterapeuta(id_fisioterapeuta=1, nome_fisioterapeuta=nome, email=email, data_nascimento=data_nascimento, login=login, senha=senha, status_fisioterapeuta=True))
+        data_array: list[int] = [int(data) for data in data_nascimento.split("/")]
+        
+        novo_pesquisador: Pesquisador = Pesquisador(
+            id_pesquisador=1,
+            nome_pesquisador=nome,
+            email=email,
+            data_nascimento=date(data_array[2], data_array[1], data_array[0]),
+            login=login,
+            senha=senha,
+            status_pesquisador=True
+        )
 
-        '''if fisioterapeuta is not None: 
-            CTkMessagebox(title="Cadastrado", message="Fisioterapeuta Cadastrado com Sucesso!", icon="check").get()
-        else: 
-            CTkMessagebox (title="Erro no Cadastro", message="Não foi possível cadastrar o usuário!", icon="cancel").get()
-            return'''
+        pesquisador = self.usuario_service.inserir_pesquisador(pesq=novo_pesquisador)
+
+        if pesquisador is not None: 
+            CTkMessagebox(
+                title="Cadastrado", 
+                message="Pesquisador Cadastrado com Sucesso!", 
+                icon="check"
+            ).get()
+            self.voltar_callback()
+        else:
+            CTkMessagebox(
+                title="Erro no Cadastro", 
+                message="Não foi possível cadastrar o usuário!", 
+                icon="cancel"
+            ).get()
+            return
