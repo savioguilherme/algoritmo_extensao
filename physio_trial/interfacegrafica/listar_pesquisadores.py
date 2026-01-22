@@ -19,12 +19,21 @@ class ListarPesquisadores(BaseFrame):
         self.usuario_service = usuario_service
         self.abrir_menu_atualiza_dados = abrir_menu_atualiza_dados
 
-        # Dados dos pesquisadores
-        self.pesquisadores: list[Pesquisador] = []
+        # Dicionario para mapear nomes e ids
+        self.pesquisadores_map: dict[str, int] = {}
 
-        #configurando o frame
+        # Configurando o frame
         self.grid_rowconfigure((1,2,3), weight=0)
         self.grid_columnconfigure((1,2,3), weight=1)
+
+        self.option_pesquisadores = self.widgets.option_menu(self, None, self.definir_id_pesquisador_menu_opcao)
+        self.option_pesquisadores.grid(row=1, column=1, columnspan=2, sticky="nsew", padx=(20,20), pady=(20,10))
+
+        btn_abrir = self.widgets.button(self, texto="Abrir", comando=lambda: self.abrir_menu_atualiza_dados(self.id_pesq), cor="green")
+        btn_abrir.grid(row=2, column=1, sticky="e", padx=(20,10), pady=(10,20))
+
+        self.btn_voltar = self.widgets.button(self, texto="Voltar", comando=self.voltar_callback, cor="red")
+        self.btn_voltar.grid(row=2, column=2, sticky="w", padx=(10,20), pady=(10,20))
 
         self.carregar_pesquisadores()
 
@@ -34,21 +43,29 @@ class ListarPesquisadores(BaseFrame):
             
             pesquisador_tipo_id = user_types_list[2] if len(user_types_list) > 1 else 1
                 
-            self.pesquisadores = self.usuario_service.listar_usuarios(lista_tipos=[pesquisador_tipo_id], apenas_ativos=False)
-            
-            for i, pesq in enumerate(self.pesquisadores):
-                label = self.widgets.button(self, texto=pesq.nome, comando=lambda p_id=pesq.id_pessoa: self.abrir_menu_atualiza_dados(p_id), cor="Green")
-                label.grid(row=i+1, column=1, sticky="e", padx=(20,10), pady=(10,20))
-            return self._criar_botao_voltar(i)
+            pesquisadores = self.usuario_service.listar_usuarios(
+                lista_tipos=[pesquisador_tipo_id], 
+                apenas_ativos=False
+            )
+
+            self.pesquisadores_map = {
+                pesq.nome: pesq.id_pessoa for pesq in pesquisadores
+            }
+
+            nome_pesq = list(self.pesquisadores_map.keys())
+
+            self.option_pesquisadores.configure(values=nome_pesq)
+
+            if nome_pesq:
+                self.option_pesquisadores.set("Pesquisadores:")
         
         except Exception as e:
             CTkMessagebox(
-                title="Erro", 
-                message=f"Erro ao carregar dados do usuário: {str(e)}", 
+                title="Erro",
+                message=f"Erro ao carregar dados do usuário: {str(e)}",
                 icon="cancel"
             ).get()
             self.voltar_callback()
     
-    def _criar_botao_voltar(self, i):
-        btn_voltar = self.widgets.button(self, texto="Voltar", comando=self.voltar_callback, cor="red")
-        btn_voltar.grid(row=i+2, column=1, sticky="e", padx=(20,20), pady=(10,20))
+    def definir_id_pesquisador_menu_opcao(self, escolha):
+        self.id_pesq = self.pesquisadores_map.get(escolha)
