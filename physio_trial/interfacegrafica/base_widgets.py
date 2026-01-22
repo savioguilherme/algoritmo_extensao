@@ -49,15 +49,24 @@ class BaseWidgets():
             fg_color="transparent"
         )
     
-    def option_menu(self, janela, opcoes, comando): 
+    def option_menu(self, janela, values, command): 
         return ctk.CTkOptionMenu(
             master=janela, 
-            values=opcoes, 
-            command=comando,
-            width=200,
-            height=50,
+            values=values, 
+            command=command,
+            width=250,
+            height=75,
             text_color="black",
-            font=("Arial", 20, "bold"),
+            font=("Arial", 25, "bold"),
+            fg_color="#f0f0f0",  # Fundo do botão transparente
+            bg_color="transparent",  # Fundo do widget transparente
+            button_color="#e0e0e0",  # Cor do botão
+            button_hover_color="#d0d0d0",  # Cor do botão ao passar mouse
+            dropdown_font=("Arial", 25, "bold"),  # Mesma fonte
+            dropdown_hover_color="#c0c0c0",  # Cor ao passar mouse
+            dropdown_text_color="black",  # Cor do texto
+            dynamic_resizing=True  # Impede redimensionamento automático
+
         )
     
     def switch(self, janela, texto, comando=None):
