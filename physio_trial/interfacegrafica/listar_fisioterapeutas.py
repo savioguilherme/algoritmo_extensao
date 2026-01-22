@@ -5,7 +5,6 @@ from armazenamento.services.base.base_usuario_service import BaseUsuarioService
 from armazenamento.context.app_context import current_user_types_list
 from CTkMessagebox import CTkMessagebox
 from dados.fisioterapeuta import Fisioterapeuta
-from interfacegrafica.menu_atualiza_dados_usuario import MenuAtualizaDadosUsuario
 
 class ListarFisioterapeutas(BaseFrame):
 
@@ -21,12 +20,20 @@ class ListarFisioterapeutas(BaseFrame):
         
         self.usuario_service = usuario_service
 
-        # Dados dos fisioterapeutas
-        self.fisioterapeutas: list[Fisioterapeuta] = []
+        self.fisioterapeutas_map: dict[str, int] = {}
 
         # Configurando o frame
         self.grid_rowconfigure((1,2,3), weight=0)
         self.grid_columnconfigure((1,2,3), weight=1)
+
+        self.option_fisioterapeutas = self.widgets.option_menu(self, None, self.definir_id_fisioterapeuta_menu_opcao)
+        self.option_fisioterapeutas.grid(row=1, column=1, columnspan=2, sticky="nsew", padx=(20,20), pady=(20,10))
+
+        btn_abrir = self.widgets.button(self, texto="Abrir", comando=lambda: self.abrir_menu_atualiza_dados(self.id_fisio), cor="green")
+        btn_abrir.grid(row=2, column=1, sticky="e", padx=(20,10), pady=(10,20))
+
+        self.btn_voltar = self.widgets.button(self, texto="Voltar", comando=self.voltar_callback, cor="red")
+        self.btn_voltar.grid(row=2, column=2, sticky="w", padx=(10,20), pady=(10,20))
 
         self.carregar_fisioterapeutas()
 
@@ -36,12 +43,20 @@ class ListarFisioterapeutas(BaseFrame):
             
             fisioterapeuta_tipo_id = user_types_list[1] if len(user_types_list) > 1 else 1
                 
-            self.fisioterapeutas = self.usuario_service.listar_usuarios(lista_tipos=[fisioterapeuta_tipo_id], apenas_ativos=False)
+            fisioterapeutas = self.usuario_service.listar_usuarios(
+                lista_tipos=[fisioterapeuta_tipo_id], 
+                apenas_ativos=False
+            )
             
-            for i, fisio in enumerate(self.fisioterapeutas):
-                self.bnt_nome = self.widgets.button(self, texto=fisio.nome, comando=lambda f_id=fisio.id_pessoa: self.abrir_menu_atualiza_dados(f_id), cor="Green")
-                self.bnt_nome.grid(row=i+1, column=1, sticky="e", padx=(20,10), pady=(10,20))
-            return self._criar_botao_voltar(i)
+            self.fisioterapeutas_map = {
+                fisio.nome: fisio.id_pessoa for fisio in fisioterapeutas
+            }
+            nome_fisio = list(self.fisioterapeutas_map.keys())
+
+            self.option_fisioterapeutas.configure(values=nome_fisio)
+
+            if nome_fisio:
+               self.option_fisioterapeutas.set("Fisioterapeutas:")
         
         except Exception as e:
             CTkMessagebox(
@@ -51,6 +66,5 @@ class ListarFisioterapeutas(BaseFrame):
             ).get()
             self.voltar_callback()
 
-    def _criar_botao_voltar(self, i):
-        btn_voltar = self.widgets.button(self, texto="Voltar", comando=self.voltar_callback, cor="red")
-        btn_voltar.grid(row=i+2, column=1, sticky="e", padx=(20,20), pady=(10,20))
+    def definir_id_fisioterapeuta_menu_opcao(self, escolha):
+        self.id_fisio = self.fisioterapeutas_map.get(escolha)
