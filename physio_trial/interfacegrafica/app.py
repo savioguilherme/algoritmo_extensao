@@ -89,14 +89,7 @@ class App(customtkinter.CTk):
             lambda: self.abrir_menu_atualiza_dados(self.user_id, self.abrir_menu_pesquisador),
             self.cadastro_paciente,
             self.abrir_agenda,
-            self.listar_pacientes
-        )
-
-    def abrir_menu_paciente(self):
-        self.limpar_tela()
-        self.tela_menu_paciente = MenuPaciente(
-            self, 
-            self.abrir_menu_pesquisador
+            lambda: self.listar_pacientes(self.user_id)
         )
 
     def abrir_agenda(self):
@@ -117,7 +110,15 @@ class App(customtkinter.CTk):
         self.tela_atualiza_dados_usuario = MenuAtualizaDadosUsuario(
             self,
             user_id,
-            lambda: retornar_tela(user_id)
+            lambda: retornar_tela(self.user_id)
+        )
+
+    def abrir_menu_paciente(self, user_id, retornar_tela):
+        self.limpar_tela()
+        self.tela_menu_paciente = MenuPaciente(
+            self,
+            user_id, 
+            lambda: retornar_tela(user_id,)
         )
 
     # Cadastros de Objetos em geral
@@ -162,12 +163,15 @@ class App(customtkinter.CTk):
             )
         )
     
-    def listar_pacientes(self): 
+    def listar_pacientes(self, user_id): 
         self.limpar_tela()
         self.tela_listar_pacientes = ListarPacientes(
             self,
-            lambda:self.abrir_menu_pesquisador(self.user_id),
-            self.abrir_menu_paciente
+            lambda: self.abrir_menu_pesquisador(user_id),
+            lambda user_id: self.abrir_menu_paciente(
+                user_id=user_id,
+                retornar_tela=self.listar_pacientes
+            )
         )
 
     def listar_pesquisadores(self, user_id): 
