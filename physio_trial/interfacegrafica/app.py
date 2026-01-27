@@ -12,7 +12,6 @@ from interfacegrafica.listar_pesquisadores import ListarPesquisadores
 from interfacegrafica.listar_pacientes import ListarPacientes
 from interfacegrafica.listar_fisioterapeutas import ListarFisioterapeutas
 from interfacegrafica.cadastro_pesquisador import CadastroPesquisador
-from interfacegrafica.restricoes_pessoa import RestricoesPessoa
 from interfacegrafica.menu_atualiza_dados_usuario import MenuAtualizaDadosUsuario
 
 class App(customtkinter.CTk):
@@ -134,7 +133,6 @@ class App(customtkinter.CTk):
         self.tela_cadastro_paciente = CadastroPaciente(
             self, 
             lambda: self.abrir_menu_pesquisador(self.user_id), 
-            lambda: self.cadastro_restricoes(self.cadastro_paciente)
         )
 
     def cadastro_pesquisador(self):
@@ -142,13 +140,6 @@ class App(customtkinter.CTk):
         self.tela_cadastro_pesquisador = CadastroPesquisador(
             self, 
             lambda: self.abrir_menu_administrador(self.user_id)
-        )
-
-    def cadastro_restricoes(self, retornar):
-        self.limpar_tela()
-        self.tela_cadastro_restricoes = RestricoesPessoa(
-            self, 
-            retornar
         )
 
     # Telas de listagem de objetos salvos

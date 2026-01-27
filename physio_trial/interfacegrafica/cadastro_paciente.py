@@ -34,16 +34,13 @@ class CadastroPaciente(BaseFrame):
         self.pesquisadores: list[Pesquisador] = []
         self.pesquisadores_map: dict[str, Pesquisador] = {}
 
-        # Configurando o frame principal
-        self.grid_columnconfigure(0, weight=1)
+        self.grid_columnconfigure((0,1), weight=1)
         self.grid_rowconfigure(1, weight=1)
 
-        # Frame rolável para todo o conteúdo
         self.scrollable_frame = ctk.CTkScrollableFrame(self)
-        self.scrollable_frame.grid(row=1, column=0, sticky="nsew", padx=10, pady=10)
+        self.scrollable_frame.grid(row=1, column=0, columnspan=2, sticky="nsew", padx=10, pady=10)
         self.scrollable_frame.grid_columnconfigure(1, weight=1)
 
-        # Widgets de entrada de dados do paciente
         self.label_nome = self.widgets.label(self.scrollable_frame, texto="Nome:", cor="transparent")
         self.label_nome.grid(row=0, column=0, sticky="e", padx=(20, 10), pady=(10, 10))
 
@@ -74,20 +71,16 @@ class CadastroPaciente(BaseFrame):
         self.optionmenu_pesquisador = self.widgets.option_menu(self.scrollable_frame, [], None)
         self.optionmenu_pesquisador.grid(row=4, column=1, sticky="ew", padx=(10,20), pady=(10,10))
 
-        # Widget de Restrições
+        # Restrições
         self.restricoes_widget = RestricoesPessoa(self.scrollable_frame)
         self.restricoes_widget.grid(row=5, column=0, columnspan=2, sticky="ew", padx=10, pady=10)
 
-        # Botões de Ação
-        action_buttons_frame = self.widgets.frame(self)
-        action_buttons_frame.grid(row=2, column=0, sticky="ew", padx=10, pady=10)
-        action_buttons_frame.grid_columnconfigure((0, 1), weight=1)
-
-        self.btn_salvar = self.widgets.button(action_buttons_frame, texto="Salvar", comando=self._realizar_cadastro_paciente, cor="green")
-        self.btn_salvar.grid(row=0, column=0, sticky="e", padx=(0, 10), pady=10)
+        # Ações
+        self.btn_salvar = self.widgets.button(self, texto="Salvar", comando=self._realizar_cadastro_paciente, cor="green")
+        self.btn_salvar.grid(row=2, column=0, sticky="e", padx=(0, 10), pady=10)
         
-        self.btn_voltar = self.widgets.button(action_buttons_frame, texto="Voltar", comando=self.voltar_callback, cor="red")
-        self.btn_voltar.grid(row=0, column=1, sticky="w", padx=(10, 0), pady=10)
+        self.btn_voltar = self.widgets.button(self, texto="Voltar", comando=self.voltar_callback, cor="red")
+        self.btn_voltar.grid(row=2, column=1, sticky="w", padx=(10, 0), pady=10)
 
         self.listar_fisioterapeuta_ativos()
         self.listar_pesquisadores_ativos()
