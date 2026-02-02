@@ -6,7 +6,7 @@ class DisponibilidadeSemanalCard(ctk.CTkFrame):
         super().__init__(parent)
         
         # Estilo
-        self.configure(fg_color=["#EBEBEB", "#2B2B2B"], corner_radius=10)
+        self.configure(fg_color=["#EEEEEE", "#222222"], corner_radius=10)
 
         # Grid
         self.grid_columnconfigure((0, 1, 2, 3), weight=1)
@@ -35,6 +35,8 @@ class DisponibilidadeSemanalCard(ctk.CTkFrame):
         self.delete_button = ctk.CTkButton(self, text="X", width=30, command=self.delete)
         self.delete_button.grid(row=0, column=4, padx=(5, 15), pady=(10, 5))
 
+        self.error_frame = None
+
     def set_delete_callback(self, delete_callback):
         self.delete_callback = delete_callback
 
@@ -49,15 +51,37 @@ class DisponibilidadeSemanalCard(ctk.CTkFrame):
         `time` is a Python time object.
         Returns None if the format is invalid.
         """
+
+        if self.error_frame:
+            self.error_frame.destroy()
+        errors = []
+
+        time_str = self.time_entry.get()
+        time_obj = None
+        weekday = None
+
+        try:
+            time_obj = datetime.strptime(time_str, "%H:%M").time()
+        except ValueError:
+            errors.append("Horário inválido.")
+
+        if time_obj and time_obj >= time(22, 0):
+            errors.append("Horário deve ser anterior às 22:00.")
+            time_obj = None
+
         try:
             weekday = self.days.index(self.weekday_var.get())
-            time_components = [int(x) for x in self.time_entry.get().split(":")]
+        except ValueError:
+            errors.append("Dia da semana inválido.")
 
-            time_obj = time(*time_components)
-            return (weekday, time_obj)
-
-        except (ValueError, TypeError):
+        if errors:
+            self.error_frame = ctk.CTkFrame(self, fg_color="transparent")
+            self.error_frame.grid(row=1, column=0, columnspan=5, sticky="ew", padx=15, pady=(0, 10))
+            for error_text in errors:
+                ctk.CTkLabel(self.error_frame, text=error_text, text_color="red", font=("Arial", 10)).pack(anchor="w")
             return None
+
+        return (weekday, time_obj)
 
 
 
