@@ -55,23 +55,23 @@ class MenuAtualizaDadosUsuario(BaseFrame):
         self.entry_confirma_nova_senha = self.widgets.entry(self, "*", None)
         self.entry_confirma_nova_senha.grid(row=5, column=2, sticky="w", padx=(10,20), pady=(10,10))
 
-        self.label_status_usuario = self.widgets.label(self, "Status Usuário: ", cor="transparent")
-        self.label_status_usuario.grid(row=6, column=1, sticky="e", padx=(20,10), pady=(10,10))
+        #self.label_status_usuario = self.widgets.label(self, "Status Usuário: ", cor="transparent")
+        #self.label_status_usuario.grid(row=6, column=1, sticky="e", padx=(20,10), pady=(10,10))
 
-        self.switch_status_usuario = self.widgets.switch(self, texto="Ativo", comando=None)
-        self.switch_status_usuario.grid(row=6, column=2, sticky="w", columnspan=1, padx=(10,20), pady=(10,10))
+        #self.switch_status_usuario = self.widgets.switch(self, texto="Ativo", comando=None)
+        #self.switch_status_usuario.grid(row=6, column=2, sticky="w", columnspan=1, padx=(10,20), pady=(10,10))
 
         self.label_cadastro_restricoes = self.widgets.label(self, "Cadastrar Horários:", cor="transparent")
-        self.label_cadastro_restricoes.grid(row=7, column=1, sticky="e", padx=(20,10), pady=(10,10))
+        self.label_cadastro_restricoes.grid(row=6, column=1, sticky="e", padx=(20,10), pady=(10,10))
 
         self.bnt_restricoes = self.widgets.button(self, texto="Cadastro de Horários", comando=None, cor="blue")
-        self.bnt_restricoes.grid(row=7, column=2, sticky="w", columnspan=1, padx=(10,20), pady=(10,10))
+        self.bnt_restricoes.grid(row=6, column=2, sticky="w", columnspan=1, padx=(10,20), pady=(10,10))
 
         self.btn_salvar = self.widgets.button(self, texto="Salvar", comando=self.__atualizar_dados, cor="Green")
-        self.btn_salvar.grid(row=8, column=1, sticky="e", padx=(20,10), pady=(10,20))
+        self.btn_salvar.grid(row=7, column=1, sticky="e", padx=(20,10), pady=(10,20))
 
         self.btn_voltar = self.widgets.button(self, texto="Voltar", comando=self.voltar_callback, cor="red")
-        self.btn_voltar.grid(row=8, column=2, sticky="w", padx=(10,20), pady=(10,20))
+        self.btn_voltar.grid(row=7, column=2, sticky="w", padx=(10,20), pady=(10,20))
 
         self.__carregar_usuario()
 
