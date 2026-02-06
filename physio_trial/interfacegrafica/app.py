@@ -22,6 +22,9 @@ class App(customtkinter.CTk):
     # Aparencia padrao
     customtkinter.set_default_color_theme("dark-blue")
 
+    # Sempre no modo claro
+    customtkinter.set_appearance_mode("light")
+
     def __init__(self):
         super().__init__()
         self.title("PhysioTrial")
@@ -94,15 +97,8 @@ class App(customtkinter.CTk):
 
     def abrir_agenda(self):
         self.limpar_tela()
-        if self.user_type == 1:
-            retornar = lambda: self.abrir_menu_fisioterapeuta(self.user_id, self.user_type)
-        elif self.user_type == 2:
-            retornar = lambda: self.abrir_menu_pesquisador(self.user_id, self.user_type)
-        else:
-            retornar = self.abrir_login()
         self.agenda = AgendaPessoa(
-            self, 
-            retornar
+            self
         )
 
     def abrir_menu_atualiza_dados(self, user_id, retornar_tela):
