@@ -1,0 +1,110 @@
+import customtkinter as ctk
+from datetime import date, time, datetime
+from dados.sessao import Sessao
+from copy import copy
+
+class SessaoCard(ctk.CTkFrame):
+    """
+    Card para exibir e editar os detalhes de uma sessão.
+    """
+    def __init__(self, parent, sessao: Sessao):
+        super().__init__(parent)
+        self.sessao = sessao
+
+        # Estilo
+        self.configure(fg_color=["#EEEEEE", "#222222"], corner_radius=10)
+
+        # Configuração do Grid
+        self.grid_columnconfigure((0, 2), weight=0)
+        self.grid_columnconfigure((1, 3), weight=1)
+
+        # Linha 0: Nome do Paciente
+        lbl_paciente = ctk.CTkLabel(self, text=f"Paciente: {sessao.paciente.nome}", font=("Arial", 14, "bold"))
+        lbl_paciente.grid(row=0, column=0, columnspan=4, sticky="ew", padx=10, pady=(10, 5))
+
+        # Linha 1: Dia e Horário
+        lbl_dia = ctk.CTkLabel(self, text="Dia (DD/MM/AAAA):")
+        lbl_dia.grid(row=1, column=0, sticky="w", padx=10, pady=(10, 5))
+        self.dia_entry = ctk.CTkEntry(self, placeholder_text="DD/MM/AAAA")
+        if sessao.dia:
+            self.dia_entry.insert(0, sessao.dia.strftime("%d/%m/%Y"))
+        self.dia_entry.grid(row=1, column=1, sticky="ew", padx=10, pady=(10, 5))
+
+        lbl_horario = ctk.CTkLabel(self, text="Horário (HH:MM):")
+        lbl_horario.grid(row=1, column=2, sticky="w", padx=10, pady=(10, 5))
+        self.horario_entry = ctk.CTkEntry(self, placeholder_text="HH:MM")
+        if sessao.horario:
+            self.horario_entry.insert(0, sessao.horario.strftime("%H:%M"))
+        self.horario_entry.grid(row=1, column=3, sticky="ew", padx=10, pady=(10, 5))
+
+        # Linha 2: Agendamento e Conclusão
+        lbl_agendamento = ctk.CTkLabel(self, text="Agendar automaticamente:")
+        lbl_agendamento.grid(row=2, column=0, sticky="w", padx=10, pady=(5, 10))
+        self.agendamento_var = ctk.BooleanVar(value=not sessao.status_agendamento)
+        agendamento_toggle = ctk.CTkSwitch(self, text="", variable=self.agendamento_var)
+        agendamento_toggle.grid(row=2, column=1, sticky="w", padx=10, pady=(5, 10))
+
+        lbl_conclusao = ctk.CTkLabel(self, text="Concluída:")
+        lbl_conclusao.grid(row=2, column=2, sticky="w", padx=10, pady=(5, 10))
+        self.conclusao_var = ctk.BooleanVar(value=sessao.conclusao)
+        conclusao_toggle = ctk.CTkSwitch(self, text="", variable=self.conclusao_var)
+        conclusao_toggle.grid(row=2, column=3, sticky="w", padx=10, pady=(5, 10))
+        
+        # Frame para erros
+        self.error_frame = None
+
+    def get_data(self) -> Sessao | None:
+        """
+        Valida os dados de entrada e retorna um objeto Sessao atualizado.
+        Retorna None se houver erro de validação.
+        """
+        if self.error_frame:
+            self.error_frame.destroy()
+        
+        errors = []
+        dia_str = self.dia_entry.get()
+        horario_str = self.horario_entry.get()
+        dia_obj: date | None = None
+        horario_obj: time | None = None
+
+        conclusao_marcada = self.conclusao_var.get()
+        status_agendamento_marcado = not self.agendamento_var.get()
+
+        if conclusao_marcada and status_agendamento_marcado:
+            errors.append("Sessão concluída não pode ser agendada.")
+
+        if status_agendamento_marcado and (not dia_str or not horario_str):
+            errors.append("Sessão agendada deve ter dia e horário preenchidos.")
+
+        if dia_str and horario_str:
+            try:
+                dia_obj = datetime.strptime(dia_str, "%d/%m/%Y").date()
+            except ValueError:
+                errors.append("Data inválida. Use o formato DD/MM/AAAA.")
+            
+            try:
+                horario_obj = datetime.strptime(horario_str, "%H:%M").time()
+            except ValueError:
+                errors.append("Horário inválido. Use o formato HH:MM.")
+
+            if horario_obj and horario_obj >= time(22, 0):
+                errors.append("Horário deve ser anterior às 22:00.")
+                horario_obj = None
+
+        elif dia_str or horario_str:
+            errors.append("Dia e Horário devem ser preenchidos ou ambos vazios.")
+
+        if errors:
+            self.error_frame = ctk.CTkFrame(self, fg_color="transparent")
+            self.error_frame.grid(row=3, column=0, columnspan=4, sticky="ew", padx=10, pady=(0, 10))
+            for error_text in errors:
+                ctk.CTkLabel(self.error_frame, text=error_text, text_color="red", font=("Arial", 10)).pack(anchor="w")
+            return None
+
+        nova_sessao = copy(self.sessao)
+        nova_sessao.dia = dia_obj
+        nova_sessao.horario = horario_obj
+        nova_sessao.status_agendamento = status_agendamento_marcado
+        nova_sessao.conclusao = conclusao_marcada
+        
+        return nova_sessao
