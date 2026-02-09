@@ -7,6 +7,7 @@ from armazenamento.services.base.base_paciente_service import BasePacienteServic
 from armazenamento.services.base.base_sessao_service import BaseSessaoService
 from dados.sessao import Sessao
 from interfacegrafica.agenda_pessoa.sessao_card import SessaoCard
+from greedy.wrapper import wrapper
 
 
 class AgendaPessoaWidget(ctk.CTkFrame):
@@ -95,6 +96,7 @@ class AgendaPessoaWidget(ctk.CTkFrame):
         das sessões que tiveram dados alterados.
         """
         sessoes_modificadas = []
+        agendamento_pendente = False
         dados_invalidos = False
 
         for card in self.sessao_cards:
@@ -102,32 +104,43 @@ class AgendaPessoaWidget(ctk.CTkFrame):
             if nova_sessao is None:
                 dados_invalidos = True
                 break
-            
+
             if nova_sessao != card.sessao:
                 sessoes_modificadas.append(nova_sessao)
+
+            if not nova_sessao.status_agendamento:
+                agendamento_pendente = True
 
         if dados_invalidos:
             CTkMessagebox(title="Erro de Validação", message="Existem erros nos dados das sessões. Por favor, corrija-os antes de salvar.", icon="cancel")
             return
 
-        if not sessoes_modificadas:
-            CTkMessagebox(title="Informação", message="Nenhuma alteração para salvar.", icon="info")
+        if not sessoes_modificadas and not agendamento_pendente:
+            CTkMessagebox(title="Informação", message="Nenhuma atualização a ser feita.", icon="info")
             return
-        
+
         payload = []
         for sessao in sessoes_modificadas:
             dia_horario = None
             if sessao.dia and sessao.horario:
                 dia_horario = datetime.combine(sessao.dia, sessao.horario)
-            
+
             payload.append({
                 'id_sessao': sessao.id_sessao,
                 'dia_horario': dia_horario.isoformat() if dia_horario else None
             })
-        
+
         try:
-            self.sessao_service.atualizar_sessoes_agendadas(payload)
-            CTkMessagebox(title="Sucesso", message="Sessões atualizadas com sucesso!")
-            self._carregar_sessoes() # Recarrega os dados para refletir as mudanças
+            if sessoes_modificadas:
+                self.sessao_service.atualizar_sessoes_agendadas(payload)
         except Exception as e:
-            CTkMessagebox(title="Erro", message=f"Ocorreu um erro ao salvar as sessões: {e}", icon="cancel")
+            CTkMessagebox(title="Erro", message=f"Ocorreu um erro ao atualizar as sessões: {e}", icon="cancel")
+        else:
+            try:
+                if agendamento_pendente:
+                    wrapper()
+            except:
+                CTkMessagebox(title="Erro", message=f"Ocorreu um erro no auto-agendamento das sessões: {e}", icon="cancel")
+            else:
+                CTkMessagebox(title="Sucesso", message="Sessões atualizadas com sucesso!")
+                self._carregar_sessoes() # Recarrega os dados para refletir as mudanças
