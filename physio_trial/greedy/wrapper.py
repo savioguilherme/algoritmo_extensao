@@ -7,11 +7,11 @@ from armazenamento.services.base.base_usuario_service import BaseUsuarioService
 from armazenamento.services.base.base_paciente_service import BasePacienteService
 from armazenamento.decorators.auth_method import auth_method
 
-from inject import autoparams
+import inject
 import datetime
 
 @auth_method
-@autoparams
+@inject.params(usuario_service = BaseUsuarioService, paciente_service = BasePacienteService)
 def wrapper(
     usuario_service: BaseUsuarioService,
     paciente_service: BasePacienteService,
@@ -42,6 +42,9 @@ def wrapper(
             "researcher": paciente.pesquisador_responsavel.id_pessoa if paciente.pesquisador_responsavel else None,
             "physio": paciente.fisioterapeuta_responsavel.id_pessoa if paciente.fisioterapeuta_responsavel else None
         }
+
+    # intervalo = 500 #dbg -> intervalo was comming as 0, despite the default value
+    print("Wrapper interval", intervalo) #dbg
 
     planningHorizon = [dia_inicial + datetime.timedelta(days=delta) for delta in range(intervalo)]
     horarios_fisios = [fisio.restricoes_fisioterapeuta.get_horarios() for fisio in fisios]

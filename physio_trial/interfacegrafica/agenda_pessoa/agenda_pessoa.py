@@ -1,4 +1,3 @@
-from inject import autoparams
 import customtkinter as ctk
 
 from interfacegrafica.base_frame import BaseFrame
@@ -11,7 +10,6 @@ class AgendaPessoa(BaseFrame):
     Permite filtrar por pesquisador, fisioterapeuta ou paciente.
     """
 
-    @autoparams()
     def __init__(self, master, voltar_callback,
                  pesquisadores_ids: list[int] | None = None,
                  fisioterapeutas_ids: list[int] | None = None,

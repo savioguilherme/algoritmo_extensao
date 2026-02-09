@@ -14,7 +14,7 @@ class AgendaPessoaWidget(ctk.CTkFrame):
     Widget para exibir e gerenciar a agenda de sessões de um ou mais usuários.
     """
 
-    @inject.autoparams()
+    @inject.params(paciente_service = BasePacienteService, sessao_service = BaseSessaoService)
     def __init__(self, master,
                  paciente_service: BasePacienteService,
                  sessao_service: BaseSessaoService,

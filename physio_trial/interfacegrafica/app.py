@@ -104,7 +104,6 @@ class App(customtkinter.CTk):
                 lambda: self.abrir_menu_fisioterapeuta(self.user_id),
                 pesquisadores_ids = [],
                 fisioterapeutas_ids = [self.user_id],
-                pacientes_ids = None
             )
         elif self.user_type == 2:
             self.agenda = AgendaPessoa(
@@ -112,7 +111,6 @@ class App(customtkinter.CTk):
                 lambda: self.abrir_menu_pesquisador(self.user_id),
                 pesquisadores_ids = [self.user_id],
                 fisioterapeutas_ids = [],
-                pacientes_ids = None
             )
         else:
             retornar = self.abrir_login()
