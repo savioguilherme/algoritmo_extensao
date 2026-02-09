@@ -7,11 +7,11 @@ from armazenamento.services.base.base_usuario_service import BaseUsuarioService
 from armazenamento.services.base.base_paciente_service import BasePacienteService
 from armazenamento.decorators.auth_method import auth_method
 
-from inject import autoparams
+import inject
 import datetime
 
 @auth_method
-@autoparams
+@inject.params(usuario_service = BaseUsuarioService, paciente_service = BasePacienteService)
 def wrapper(
     usuario_service: BaseUsuarioService,
     paciente_service: BasePacienteService,
@@ -42,6 +42,8 @@ def wrapper(
             "researcher": paciente.pesquisador_responsavel.id_pessoa if paciente.pesquisador_responsavel else None,
             "physio": paciente.fisioterapeuta_responsavel.id_pessoa if paciente.fisioterapeuta_responsavel else None
         }
+
+    print("Wrapper interval", intervalo) #dbg
 
     planningHorizon = [dia_inicial + datetime.timedelta(days=delta) for delta in range(intervalo)]
     horarios_fisios = [fisio.restricoes_fisioterapeuta.get_horarios() for fisio in fisios]
@@ -80,16 +82,12 @@ def wrapper(
             if sessao.status_agendamento:
                 dia = as_date(sessao.dia)
                 slot = as_time(sessao.horario)
-                dia_horario = datetime.datetime.combine(dia, slot)
-                if sessao.conclusao or dia < dia_inicial:
-                    schedule_paciente[codigo_dia] = dia
-                    schedule_paciente[codigo_horario] = slot
-                elif fisio.restricoes_fisioterapeuta.esta_disponivel(dia_horario) and pesquisador.restricoes_pesquisador.esta_disponivel(dia_horario) and paciente.restricoes_paciente.esta_disponivel(dia_horario):
+                if dia_inicial <= dia:
                     N_i[paciente.id_pessoa][dia][slot] = False
                     N_pf[fisio.id_pessoa][dia][slot] = False
                     N_pf[pesquisador.id_pessoa][dia][slot] = False
-                    schedule_paciente[codigo_dia] = dia
-                    schedule_paciente[codigo_horario] = slot
+                schedule_paciente[codigo_dia] = dia
+                schedule_paciente[codigo_horario] = slot
         schedule[paciente.id_pessoa] = schedule_paciente
 
     s, patients, schedule, _ = greedy(dia_inicial, planningHorizon, slots, staff, patients, N_i, N_pf, schedule)
@@ -111,8 +109,8 @@ def wrapper(
 
     for paciente in pacientes:
         for sessao in paciente.sessoes_paciente:
-            if sessao.conclusao:
-                continue
+            if sessao.conclusao or sessao.status_agendamento:
+                continue # ignora sessões concluídas ou já agendadas
             codigo = sessao.codigo
             codigo_dia = codigo[0:1] + "D" + codigo[1:]
             codigo_horario = codigo[0:1] + "H" + codigo[1:]
@@ -126,7 +124,8 @@ def wrapper(
             dia_horario = datetime.datetime.combine(dia,horario)
             sessoes_atualizadas.append({
                 'id_sessao': sessao.id_sessao,
-                'dia_horario': dia_horario.isoformat()
+                'dia_horario': dia_horario.isoformat(),
+                'status_agendamento': True
             })
 
     return paciente_service.atualizar_acompanhamentos_com_sessoes(
