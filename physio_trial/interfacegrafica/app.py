@@ -131,7 +131,7 @@ class App(customtkinter.CTk):
         self.tela_menu_paciente = MenuPaciente(
             self,
             user_id, 
-            lambda: retornar_tela(user_id,)
+            lambda: retornar_tela(self.user_id)
         )
 
     # Cadastros de Objetos em geral
