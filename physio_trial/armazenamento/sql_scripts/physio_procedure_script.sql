@@ -295,14 +295,16 @@ AS $BODY$
 BEGIN
     UPDATE public.sessao se
     SET
-        dia           = v.dia,
-        horario       = v.horario,
-		atualizado_em = now()
+        dia                = v.dia,
+        horario            = v.horario,
+		status_agendamento = v.status,
+		atualizado_em      = now()
     FROM (
         SELECT
             (x->>'id_sessao')::int AS id_sessao,
             ((x->>'dia_horario')::timestamp)::date AS dia,
-            ((x->>'dia_horario')::timestamp)::time AS horario
+            ((x->>'dia_horario')::timestamp)::time AS horario,
+			(x->>'status_agendamento')::bool AS status
         FROM jsonb_array_elements(p_lista_sessoes) AS x
     ) v
     WHERE se.id_sessao = v.id_sessao;

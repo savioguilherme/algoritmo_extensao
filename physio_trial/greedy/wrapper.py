@@ -107,7 +107,7 @@ def wrapper(
         for paciente in pacientes
     ]
     
-    sessoes_atualizadas: list[dict[str, int | datetime.datetime]] = []
+    sessoes_atualizadas: list[dict[str, int | datetime.datetime | bool]] = []
 
     for paciente in pacientes:
         for sessao in paciente.sessoes_paciente:
@@ -124,9 +124,11 @@ def wrapper(
             dia = as_date(dia)
             horario = as_time(horario)
             dia_horario = datetime.datetime.combine(dia,horario)
+            sessao.status_agendamento = True
             sessoes_atualizadas.append({
                 'id_sessao': sessao.id_sessao,
-                'dia_horario': dia_horario.isoformat()
+                'dia_horario': dia_horario.isoformat(),
+                'status_agendamento': sessao.status_agendamento
             })
 
     return paciente_service.atualizar_acompanhamentos_com_sessoes(

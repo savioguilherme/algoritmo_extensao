@@ -37,7 +37,7 @@ class BasePacienteService(ABC):
         pass
     
     @abstractmethod
-    def atualizar_acompanhamentos_com_sessoes(self, lista_acompanhamentos: List[Dict[str, int]], sessoes_atualizadas: list[dict[str, int | datetime]]) -> bool:
+    def atualizar_acompanhamentos_com_sessoes(self, lista_acompanhamentos: List[Dict[str, int]], sessoes_atualizadas: list[dict[str, int | datetime | bool]]) -> bool:
         """
         Atualiza os acompanhamentos (pesquisador e fisioterapeuta) de múltiplos pacientes e as sessões agendadas.
         Args:

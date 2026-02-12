@@ -4,7 +4,7 @@ from psycopg.types.json import Jsonb
 from inject import autoparams
 from datetime import datetime, date, time
 
-from armazenamento.context.app_context import current_user_id, current_user_type, current_user_types_list, current_session_codes_list
+from armazenamento.context.app_context import current_user_id, current_user_type, current_user_types_list, current_session_codes_list, current_datetimes
 from armazenamento.services.base.base_usuario_service import BaseUsuarioService
 from armazenamento.services.base.base_usuario_tipo_service import BaseUsuarioTipoService
 from armazenamento.services.base.base_codigo_sessao_service import BaseCodigoSessaoService
@@ -49,6 +49,7 @@ class UsuarioService(BaseUsuarioService):
             current_user_type.set(user_data['tipo'])
             current_user_types_list.set(self._user_type_service.listar_tipos())
             current_session_codes_list.set(self._codigo_sessao_service.listar_codigos_sessoes())
+            current_datetimes.set([]) # TODO: A preencher
             return user_id
 
         raise PermissionError("Senha inválida.")
@@ -59,6 +60,7 @@ class UsuarioService(BaseUsuarioService):
         current_user_id.set(None)
         current_user_types_list.set(None)
         current_session_codes_list.set(None)
+        current_datetimes.set(None)
 
     @auth_method
     def listar_usuarios(self, lista_tipos: list[int], apenas_ativos: bool) -> list[Administrador | Fisioterapeuta | Pesquisador]:

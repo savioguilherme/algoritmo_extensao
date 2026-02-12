@@ -20,7 +20,7 @@ class PacienteService(BasePacienteService):
     def __init__(self, dal: DataAccessLayer):
         super().__init__(dal)
     
-    def atualizar_acompanhamentos_com_sessoes(self, lista_acompanhamentos: List[Dict[str, int]], sessoes_atualizadas: list[dict[str, int | datetime]]) -> bool:
+    def atualizar_acompanhamentos_com_sessoes(self, lista_acompanhamentos: List[Dict[str, int]], sessoes_atualizadas: list[dict[str, int | datetime | bool]]) -> bool:
         _ = self._dal.call_procedure(
             "usp_paciente_alterar_acompanhamentos_com_sessoes",
             p_lista_acompanhamentos=Jsonb(lista_acompanhamentos),

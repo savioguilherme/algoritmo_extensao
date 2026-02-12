@@ -171,8 +171,8 @@ acompanhamentos: list[dict[str, int]] = [
 paciente_service.atualizar_acompanhamentos(lista_acompanhamentos=acompanhamentos)
 
 sessoes_atualizadas: list[dict[str, int | datetime]] = [
-    {'id_sessao': 1, 'dia_horario': datetime(2025, 12, 22, 9, 1).isoformat()},
-    {'id_sessao': 2, 'dia_horario': datetime(2025, 12, 29, 9, 29).isoformat()}
+    {'id_sessao': 1, 'dia_horario': datetime(2025, 12, 22, 9, 1).isoformat(), 'status_agendamento': True},
+    {'id_sessao': 2, 'dia_horario': datetime(2025, 12, 29, 9, 29).isoformat(), 'status_agendamento': True}
 ]
 
 session_service = SessaoService(dal=dal)
