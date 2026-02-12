@@ -64,7 +64,7 @@ print("Usuário deletado com sucesso.")
 # print(f"Pesquisador inserido com ID: {new_id}")
 
 servico_usuario.atualizar_fisioterapeuta(
-    Fisioterapeuta(id_fisioterapeuta=2, nome_fisioterapeuta="Fisioterapeuta Modificado Again Teste 001", email="fisio.test01@usp.br", data_nascimento=date(2000, 8, 14), tipo=current_user_types_list.get()[1], login="fisio.test001", senha="senha12345", status_fisioterapeuta=True)
+    Fisioterapeuta(id_fisioterapeuta=2, nome_fisioterapeuta="Fisioterapeuta Modificado Again Teste 001", email="fisio.test01@usp.br", data_nascimento=date(2000, 8, 14), tipo=current_user_types_list.get()[1], login="fisio.test001", senha=None, status_fisioterapeuta=True)
 )
 
 # modifyied_user = servico_usuario.consultar(13)

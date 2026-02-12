@@ -247,7 +247,8 @@ class UsuarioService(BaseUsuarioService):
             p_nome=adm.nome,
             p_data_nascimento=adm.data_nascimento.isoformat(),
             p_login=adm.login,
-            p_senha=bcrypt.hashpw(adm.senha.encode('utf-8'), bcrypt.gensalt()).decode('utf-8'),
+            p_senha=bcrypt.hashpw(adm.senha.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+            if adm.senha is not None else None,
             p_ativo=adm.status_pessoa,
             p_disponibilidades=None,
             p_restricoes=None
@@ -288,7 +289,8 @@ class UsuarioService(BaseUsuarioService):
             p_nome=fisio.nome,
             p_data_nascimento=fisio.data_nascimento.isoformat(),
             p_login=fisio.login,
-            p_senha=bcrypt.hashpw(fisio.senha.encode('utf-8'), bcrypt.gensalt()).decode('utf-8'),
+            p_senha=bcrypt.hashpw(fisio.senha.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+            if fisio.senha is not None else None,
             p_ativo=fisio.status_pessoa,
             p_disponibilidades=Jsonb(
                 [
@@ -338,7 +340,8 @@ class UsuarioService(BaseUsuarioService):
             p_nome=pesq.nome,
             p_data_nascimento=pesq.data_nascimento.isoformat(),
             p_login=pesq.login,
-            p_senha=bcrypt.hashpw(pesq.senha.encode('utf-8'), bcrypt.gensalt()).decode('utf-8'),
+            p_senha=bcrypt.hashpw(pesq.senha.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+            if pesq.senha is not None else None,
             p_ativo=pesq.status_pessoa,
             p_disponibilidades=Jsonb(
                 [
