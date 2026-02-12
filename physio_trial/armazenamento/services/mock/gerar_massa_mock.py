@@ -6,7 +6,7 @@ from dados.sessao import Sessao
 from armazenamento.services.base.base_codigo_sessao_service import BaseCodigoSessaoService
 
 from inject import autoparams
-from datetime import time
+from datetime import date, time
 
 @autoparams()
 def gerar_massa_mock(codigo_sessao_service: BaseCodigoSessaoService):
@@ -16,16 +16,16 @@ def gerar_massa_mock(codigo_sessao_service: BaseCodigoSessaoService):
 
     # Administradores
     admins = [
-        Administrador(1, "Cláudio", "claudio", "senha123", True),
-        Administrador(2, "Sérgio", "serginho123", "senhaforte2", True),
-        Administrador(3, "Mariana", "mariana.adm", "admin@123", True)
+        Administrador(1, "Cláudio", "claudio26@gmail.com", date(1986,10,4), "claudio", "senha123", True),
+        Administrador(2, "Sérgio", "serginho@gmail.com", date(1990,8,7), "serginho123", "senhaforte2", True),
+        Administrador(3, "Mariana", "marimari@gmail.com", date(1988,3,4), "mariana.adm", "admin@123", True)
     ]
 
     # Fisioterapeutas
     fisios = [
-        Fisioterapeuta(4, "João", "joao.fisio", "fisio#123", True),
-        Fisioterapeuta(5, "Ana", "ana.fisio", "ana@fisio", True),
-        Fisioterapeuta(6, "Carlos", "carlos.fisio", "senha@123", True)
+        Fisioterapeuta(4, "João", "joao.fisio@gmail.com", date(1985, 5, 10), "joao.fisio", "fisio#123", True),
+        Fisioterapeuta(5, "Ana", "ana.fisio@outlook.com", date(1992, 11, 20), "ana.fisio", "ana@fisio", True),
+        Fisioterapeuta(6, "Carlos", "carlos.fisio@gmail.com", date(1980, 2, 28), "carlos.fisio", "senha@123", True)
     ]
 
     # Restrições dos Fisioterapeutas
@@ -47,8 +47,8 @@ def gerar_massa_mock(codigo_sessao_service: BaseCodigoSessaoService):
 
     # Pesquisadores
     pesquisadores = [
-        Pesquisador(7, "Pedro", "pedro.pesq", "pesq@123", True),
-        Pesquisador(8, "Beatriz", "beatriz.pesq", "senha#forte", True)
+        Pesquisador(7, "Pedro", "pedro.pesq@gmail.com", date(1989, 7, 15), "pedro.pesq", "pesq@123", True),
+        Pesquisador(8, "Beatriz", "beatriz.pesq@yahoo.com", date(1995, 1, 22), "beatriz.pesq", "senha#forte", True)
     ]
 
     # Restrições dos Pesquisadores
@@ -62,10 +62,10 @@ def gerar_massa_mock(codigo_sessao_service: BaseCodigoSessaoService):
 
     # Pacientes
     pacientes = [
-        Paciente(9, "Maria"),
-        Paciente(10, "José"),
-        Paciente(11, "Antônio"),
-        Paciente(12, "Fernanda")
+        Paciente(9, "Maria", "maria.paciente@gmail.com", date(2000, 3, 1)),
+        Paciente(10, "José", "jose.paciente@outlook.com", date(1998, 9, 12)),
+        Paciente(11, "Antônio", "antonio.paciente@gmail.com", date(2001, 6, 30)),
+        Paciente(12, "Fernanda", "fernanda.paciente@gmail.com", date(1995, 12, 5))
     ]
 
     # Restrições dos pacientes

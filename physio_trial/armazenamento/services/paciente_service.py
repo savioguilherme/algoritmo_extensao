@@ -60,8 +60,8 @@ class PacienteService(BasePacienteService):
                 {
                     'id_sessao': sessao.id_sessao,
                     'codigo': current_session_codes_list.get().index(sessao.codigo) + 1,
-                    'dia': sessao.dia.isoformat(),
-                    'horario': sessao.horario,
+                    'dia': sessao.dia.isoformat() if sessao.dia else None,
+                    'horario': sessao.horario.isoformat() if sessao.horario else None,
                     'agendada': sessao.status_agendamento,
                     'conclusao': sessao.conclusao
                 }
@@ -175,8 +175,8 @@ class PacienteService(BasePacienteService):
             sessao = Sessao(
                 id_sessao=sessao_row['id_sessao'],
                 codigo=sessao_row['cod_sigla'],
-                dia=sessao_row['dia'],
-                horario=sessao_row['horario'],
+                dia=date.fromisoformat(sessao_row['dia']) if sessao_row['dia'] else None,
+                horario=time.fromisoformat(sessao_row['horario']) if sessao_row['horario'] else None,
                 conclusao=sessao_row['conclusao'],
                 paciente=paciente,
                 status_agendamento=sessao_row['status_agendamento']
@@ -254,8 +254,8 @@ class PacienteService(BasePacienteService):
                 sessao = Sessao(
                     id_sessao=sessao_row['id_sessao'],
                     codigo=sessao_row['cod_sigla'],
-                    dia=sessao_row['dia'],
-                    horario=sessao_row['horario'],
+                    dia=date.fromisoformat(sessao_row['dia']) if sessao_row['dia'] else None,
+                    horario=time.fromisoformat(sessao_row['horario']) if sessao_row['horario'] else None,
                     conclusao=sessao_row['conclusao'],
                     paciente=paciente,
                     status_agendamento=sessao_row['status_agendamento']

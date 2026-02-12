@@ -4,6 +4,8 @@ from datetime import timedelta
 from greedy.globalConsts import LANGUAGE
 
 def greedy(initialDay, planningHorizon, slots, staff, patients, N_i, N_pf, schedule):
+
+    print("Greedy params", initialDay, planningHorizon, slots, staff, patients) #dbg
     
     s = False
     
@@ -90,14 +92,20 @@ def greedy(initialDay, planningHorizon, slots, staff, patients, N_i, N_pf, sched
     total = 1 if total < 1 else total
     done = 0
     random.shuffle(notAssignedPatients)
+    print("Not assigned patients", notAssignedPatients) #dbg
+    print("All physio", all_physio) #dbg
+    print("All researchers", all_researchers) #dbg
+    print("Planning horizon", planningHorizon) #dbg
+    print("Considering days", list(range(0, len(planningHorizon)-150, 2))) #dbg
     for patient in notAssignedPatients:
         print(f"----- scheduling new patients: {done/total}") if LANGUAGE == "en" else print(f"----- agendando novos pacientes: {done/total}")
         for interval in range(0, len(planningHorizon)-150, 2):
+            print("Considering interval", interval) #dbg
             s, patients, schedule, N_pf = assignStaff(N_pf, N_i, patients, patient, all_researchers, all_physio, schedule, slots, planningHorizon, initialDay+timedelta(days=interval))
             if s:
                 break
         if not s:
-            print(f"Unable to schedule the patient {patients[patient]['Name']}") if LANGUAGE == "en" else print(f"Incapaz de agenda paciente com nome {patients[patient]['Name']}")
+            print(f"Unable to schedule the patient {patients[patient]['Name']}") if LANGUAGE == "en" else print(f"Incapaz de agendar paciente com nome {patients[patient]['Name']}")
             # exit()
             return False, patients, schedule, N_pf
         else:
@@ -149,6 +157,8 @@ def scheduleFollow(N_pf, slots, planningHorizon, patient, researcher, schedule, 
     return s, schedule, N_pf
 
 def scheduleSession(N_pf, slots, planningHorizon, patient, researcher, physio, initialDay, schedule, sessionNum, E_researcher, E_physio, isReschedule = False):
+
+    print("scheduling", patient, sessionNum) #dbg
     
     if sessionNum >= 10:
         return True, schedule, N_pf
@@ -179,6 +189,7 @@ def scheduleSession(N_pf, slots, planningHorizon, patient, researcher, physio, i
             s, possible_slots = trySchedule(E_researcher, day, slots, planningHorizon, schedule, patient)
         else:
             s, possible_slots = trySchedule(E_physio, day, slots, planningHorizon, schedule, patient)
+        print("patient", patient, "session", sessionNum, "slots", possible_slots) #dbg
             
         if s:
             slot = random.choice(possible_slots)
@@ -264,13 +275,18 @@ def trySchedule(E, day, slots, planningHorizon, schedule, patient):
     return len(possible_slots) > 0, possible_slots
     
 def assignStaff(N_pf, N_i, patients, patient, all_researchers, all_physio, schedule, slots, planningHorizon, initialDay):
+    print("Assigning staff for", patient) #dbg
     
     random.shuffle(all_researchers)
     random.shuffle(all_physio)
+
+    print("All physio", all_physio) #dbg
+    print("All researchers", all_researchers) #dbg
     
     s = False
     for researcher in all_researchers:
         for physio in all_physio:
+            print("trying to assign", researcher, physio) #dbg
             E_researcher, E_physio = generateE(N_i, N_pf, patient, researcher, physio, slots, planningHorizon)
             s, schedule, N_pf = scheduleSession(N_pf, slots, planningHorizon, patient, researcher, physio, initialDay, schedule, 0, E_researcher, E_physio)
             if s:
