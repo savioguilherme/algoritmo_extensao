@@ -16,7 +16,7 @@ from dados.pesquisador import Pesquisador
 
 @autoparams()
 class CadastroPaciente(BaseFrame):
-    
+
     '''Classe que cria a tela de cadastro para inserir pacientes no sistema'''
 
     @autoparams()
@@ -27,7 +27,9 @@ class CadastroPaciente(BaseFrame):
         self.voltar_callback = voltar_callback
         self.paciente_service = paciente_service
         self.usuario_service = usuario_service
-        
+
+        self.string_definir_automaticamente = "Definir automaticamente"
+
         self.fisioterapeutas: list[Fisioterapeuta] = []
         self.fisioterapeutas_map: dict[str, Fisioterapeuta] = {}
 
@@ -94,7 +96,7 @@ class CadastroPaciente(BaseFrame):
         nome_pesq = self.optionmenu_pesquisador.get()
         pesquisador = self.pesquisadores_map.get(nome_pesq)
 
-        if not nome or not email or not data_nascimento_str or not pesquisador or not fisioterapeuta: 
+        if not nome or not email or not data_nascimento_str: 
             CTkMessagebox(
                 title="Erro", 
                 message="Preencha todos os campos!", 
@@ -152,8 +154,9 @@ class CadastroPaciente(BaseFrame):
             self.fisioterapeutas_map = {
                 fisio.nome: fisio for fisio in fisioterapeutas
             }
+            self.fisioterapeutas_map[self.string_definir_automaticamente] = None
 
-            nomes_fisio = list(self.fisioterapeutas_map.keys())
+            nomes_fisio = [self.string_definir_automaticamente] + list(self.fisioterapeutas_map.keys())
 
             self.optionmenu_fisioterapeuta.configure(values=nomes_fisio)
 
@@ -182,13 +185,14 @@ class CadastroPaciente(BaseFrame):
             self.pesquisadores_map = {
                 pesq.nome: pesq for pesq in pesquisadores
             }
+            self.pesquisadores_map[self.string_definir_automaticamente] = None
 
-            nome_pesq = list(self.pesquisadores_map.keys())
+            nomes_pesq = [self.string_definir_automaticamente] + list(self.pesquisadores_map.keys())
 
-            self.optionmenu_pesquisador.configure(values=nome_pesq)
+            self.optionmenu_pesquisador.configure(values=nomes_pesq)
 
-            if nome_pesq:
-                self.optionmenu_pesquisador.set(nome_pesq[0])
+            if nomes_pesq:
+                self.optionmenu_pesquisador.set(nomes_pesq[0])
         
         except Exception as e:
             CTkMessagebox(

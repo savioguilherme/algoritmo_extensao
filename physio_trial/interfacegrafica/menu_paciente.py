@@ -14,7 +14,6 @@ from dados.fisioterapeuta import Fisioterapeuta
 from dados.paciente import Paciente
 from dados.pesquisador import Pesquisador
 
-
 class MenuPaciente(BaseFrame): 
 
     '''Menu para atualizar e verificar dados de um paciente'''
@@ -34,6 +33,8 @@ class MenuPaciente(BaseFrame):
         self.fisioterapeutas_map: dict[str, Fisioterapeuta] = {}
         self.pesquisadores: list[Pesquisador] = []
         self.pesquisadores_map: dict[str, Pesquisador] = {}
+
+        self.string_definir_automaticamente = "Definir automaticamente"
 
         self.grid_columnconfigure((0,1), weight=1)
         self.grid_rowconfigure(1, weight=1)
@@ -121,12 +122,13 @@ class MenuPaciente(BaseFrame):
             fisioterapeuta_tipo_id = user_types_list[1] if len(user_types_list) > 1 else 1
             fisioterapeutas = self.usuario_service.listar_usuarios(lista_tipos=[fisioterapeuta_tipo_id], apenas_ativos=True)
             self.fisioterapeutas_map = {fisio.nome: fisio for fisio in fisioterapeutas}
-            nomes_fisio = list(self.fisioterapeutas_map.keys())
+            self.fisioterapeutas_map[self.string_definir_automaticamente] = None
+            nomes_fisio = [self.string_definir_automaticamente] + list(self.fisioterapeutas_map.keys())
             self.optionmenu_fisioterapeuta.configure(values=nomes_fisio)
             if self.paciente and self.paciente.fisioterapeuta_responsavel:
                 self.optionmenu_fisioterapeuta.set(self.paciente.fisioterapeuta_responsavel.nome)
             elif nomes_fisio:
-                self.optionmenu_fisioterapeuta.set(nomes_fisio[0])
+                self.optionmenu_fisioterapeuta.set(self.string_definir_automaticamente)
         except Exception as e:
             CTkMessagebox(title="Erro", message=f"Erro ao carregar fisioterapeutas: {str(e)}", icon="cancel")
             self.voltar_callback()
@@ -137,12 +139,13 @@ class MenuPaciente(BaseFrame):
             pesquisador_tipo_id = user_types_list[2] if len(user_types_list) > 2 else 1
             pesquisadores = self.usuario_service.listar_usuarios(lista_tipos=[pesquisador_tipo_id], apenas_ativos=True)
             self.pesquisadores_map = {pesq.nome: pesq for pesq in pesquisadores}
-            nome_pesq = list(self.pesquisadores_map.keys())
-            self.optionmenu_pesquisador.configure(values=nome_pesq)
+            self.pesquisadores_map[self.string_definir_automaticamente] = None
+            nomes_pesq = [self.string_definir_automaticamente] + list(self.pesquisadores_map.keys())
+            self.optionmenu_pesquisador.configure(values=nomes_pesq)
             if self.paciente and self.paciente.pesquisador_responsavel:
                 self.optionmenu_pesquisador.set(self.paciente.pesquisador_responsavel.nome)
-            elif nome_pesq:
-                self.optionmenu_pesquisador.set(nome_pesq[0])
+            else
+                self.optionmenu_pesquisador.set(self.string_definir_automaticamente)
         except Exception as e:
             CTkMessagebox(title="Erro", message=f"Erro ao carregar pesquisadores: {str(e)}", icon="cancel")
             self.voltar_callback()
@@ -161,7 +164,7 @@ class MenuPaciente(BaseFrame):
         status_conclusao = self.switch_status_conclusao.get() == 1
         status_abandono = self.switch_status_abandono.get() == 1
 
-        if not nome or not email or not data_nascimento_str or not fisioterapeuta or not pesquisador:
+        if not nome or not email or not data_nascimento_str:
             CTkMessagebox(title="Erro", message="Preencha todos os campos!", icon="cancel").get()
             return
 
