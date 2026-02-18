@@ -90,9 +90,9 @@ def wrapper(
                 schedule_paciente[codigo_horario] = slot
         schedule[paciente.id_pessoa] = schedule_paciente
 
-    s, patients, schedule, _ = greedy(dia_inicial, planningHorizon, slots, staff, patients, N_i, N_pf, schedule)
+    patients, schedule = greedy(dia_inicial, planningHorizon, slots, staff, patients, N_i, N_pf, schedule)
 
-    if not s:
+    if not patients:
         return False
 
     # atualiza pacientes com base nos resultados da heurística
