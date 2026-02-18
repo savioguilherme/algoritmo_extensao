@@ -11,7 +11,7 @@ import inject
 import datetime
 
 @auth_method
-@inject.params(usuario_service = BaseUsuarioService, paciente_service = BasePacienteService)
+@inject.autoparams
 def wrapper(
     usuario_service: BaseUsuarioService,
     paciente_service: BasePacienteService,
@@ -90,7 +90,10 @@ def wrapper(
                 schedule_paciente[codigo_horario] = slot
         schedule[paciente.id_pessoa] = schedule_paciente
 
-    patients, schedule = greedy(dia_inicial, planningHorizon, slots, staff, patients, N_i, N_pf, schedule)
+    s, patients, schedule, _ = greedy(dia_inicial, planningHorizon, slots, staff, patients, N_i, N_pf, schedule)
+
+    if not s:
+        return False
 
     # atualiza pacientes com base nos resultados da heurística
     acompanhamentos: list[dict[str, int]] = [
@@ -100,12 +103,9 @@ def wrapper(
             'id_pesquisador': patients[paciente.id_pessoa]['researcher']
         }
         for paciente in pacientes
-        if
-            paciente.fisioterapeuta_responsavel.id_pessoa != patients[paciente.id_pessoa]['physio'] or
-            paciente.pesquisador_responsavel.id_pessoa != patients[paciente.id_pessoa]['researcher']
     ]
     
-    sessoes_atualizadas: list[dict[str, int | str | bool]] = []
+    sessoes_atualizadas: list[dict[str, int | datetime.datetime | bool]] = []
 
     for paciente in pacientes:
         for sessao in paciente.sessoes_paciente:
@@ -117,10 +117,10 @@ def wrapper(
             patient_schedule = schedule[paciente.id_pessoa]
             dia = patient_schedule[codigo_dia]
             horario = patient_schedule[codigo_horario]
-            if dia == sessao.dia and horario == sessao.horario:
-                continue
             if dia is None or horario is None:
                 continue
+            dia = as_date(dia)
+            horario = as_time(horario)
             dia_horario = datetime.datetime.combine(dia,horario)
             sessao.status_agendamento = True
             sessoes_atualizadas.append({
@@ -144,3 +144,27 @@ def calcular_disponibilidade(dias, horarios, restricoes):
             disponibilidade_dia[horario] = esta_disponivel
         disponibilidade[dia] = disponibilidade_dia
     return disponibilidade
+
+def as_date(v) -> datetime.date:
+    if v is None:
+        return None
+    if isinstance(v, datetime.date) and not isinstance(v, datetime.datetime):
+        return v
+    if isinstance(v, datetime.datetime):
+        return v.date()
+    if isinstance(v, str):
+        # aceita "YYYY-MM-DD" e "YYYY-MM-DDTHH:MM:SS"
+        return datetime.date.fromisoformat(v.split("T")[0])
+    raise TypeError(f"Tipo inválido para dia: {type(v)} => {v}")
+
+def as_time(v) -> datetime.time:
+    if v is None:
+        return None
+    if isinstance(v, datetime.time):
+        return v
+    if isinstance(v, datetime.datetime):
+        return v.time()
+    if isinstance(v, str):
+        # aceita "HH:MM" ou "HH:MM:SS"
+        return datetime.time.fromisoformat(v)
+    raise TypeError(f"Tipo inválido para horario: {type(v)} => {v}")
