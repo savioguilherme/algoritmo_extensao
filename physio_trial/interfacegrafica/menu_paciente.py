@@ -144,7 +144,7 @@ class MenuPaciente(BaseFrame):
             self.optionmenu_pesquisador.configure(values=nomes_pesq)
             if self.paciente and self.paciente.pesquisador_responsavel:
                 self.optionmenu_pesquisador.set(self.paciente.pesquisador_responsavel.nome)
-            else
+            else:
                 self.optionmenu_pesquisador.set(self.string_definir_automaticamente)
         except Exception as e:
             CTkMessagebox(title="Erro", message=f"Erro ao carregar pesquisadores: {str(e)}", icon="cancel")
