@@ -7,9 +7,10 @@ class SessaoCard(ctk.CTkFrame):
     """
     Card para exibir e editar os detalhes de uma sessão.
     """
-    def __init__(self, parent, sessao: Sessao):
+    def __init__(self, parent, sessao: Sessao, avisos: list[str] | None = None):
         super().__init__(parent)
         self.sessao = sessao
+        self.avisos = avisos or []
 
         # Estilo
         self.configure(fg_color=["#EEEEEE", "#222222"], corner_radius=10)
@@ -50,17 +51,35 @@ class SessaoCard(ctk.CTkFrame):
         conclusao_toggle = ctk.CTkSwitch(self, text="", variable=self.conclusao_var)
         conclusao_toggle.grid(row=2, column=3, sticky="w", padx=10, pady=(5, 10))
         
-        # Frame para erros
-        self.error_frame = None
+        # Frame para avisos e erros
+        self.message_frame = ctk.CTkFrame(self, fg_color="transparent", height=0)
+        self.message_frame.grid(row=3, column=0, columnspan=4, sticky="ew", padx=10, pady=(0, 10))
+        
+        self._display_messages()
+
+    def _display_messages(self, errors: list[str] | None = None):
+        """Exibe as mensagens de aviso e erro."""
+        errors = errors or []
+        
+        # Limpa o frame de mensagens
+        for widget in self.message_frame.winfo_children():
+            widget.destroy()
+            
+        # Exibe avisos
+        if self.avisos:
+            for aviso_text in self.avisos:
+                ctk.CTkLabel(self.message_frame, text=aviso_text, text_color="orange", font=("Arial", 10)).pack(anchor="w")
+
+        # Exibe erros
+        if errors:
+            for error_text in errors:
+                ctk.CTkLabel(self.message_frame, text=error_text, text_color="red", font=("Arial", 10)).pack(anchor="w")
 
     def get_data(self) -> Sessao | None:
         """
         Valida os dados de entrada e retorna um objeto Sessao atualizado.
         Retorna None se houver erro de validação.
         """
-        if self.error_frame:
-            self.error_frame.destroy()
-        
         errors = []
         dia_str = self.dia_entry.get()
         horario_str = self.horario_entry.get()
@@ -94,11 +113,8 @@ class SessaoCard(ctk.CTkFrame):
         elif dia_str or horario_str:
             errors.append("Dia e Horário devem ser preenchidos ou ambos vazios.")
 
+        self._display_messages(errors)
         if errors:
-            self.error_frame = ctk.CTkFrame(self, fg_color="transparent")
-            self.error_frame.grid(row=3, column=0, columnspan=4, sticky="ew", padx=10, pady=(0, 10))
-            for error_text in errors:
-                ctk.CTkLabel(self.error_frame, text=error_text, text_color="red", font=("Arial", 10)).pack(anchor="w")
             return None
 
         nova_sessao = copy(self.sessao)

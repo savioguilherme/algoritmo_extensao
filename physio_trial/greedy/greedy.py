@@ -53,9 +53,8 @@ def greedy(initialDay, planningHorizon, slots, staff, patients, N_i, N_pf, sched
                 if not s:
                     print(f"Unable to assign a new follow-up (the one {90*(follow+1)} days after the beginning) for {patients[patient]['Nome']}") if LANGUAGE == "en" else print(f"Incapaz de definir um novo follow up (após {90*(follow+1)} dias) para paciente {patients[patient]['Nome']}")
                     # exit()
-                    return False, patients, schedule, N_pf
-                else:
-                    done += 1
+                    # return False, patients, schedule, N_pf
+                done += 1
     done = total
     print(f"---------- rescheduling follow-ups: {done/total}") if LANGUAGE == "en" else print(f"----- reagendando follow-ups: {done/total}")
                     
@@ -78,9 +77,8 @@ def greedy(initialDay, planningHorizon, slots, staff, patients, N_i, N_pf, sched
             if not s:
                 print(f"Unable to assign a new session (Session number {(session+1)}) for {patients[patient]['Name']}. The person responsible: researcher ({patients[patient]['researcher']}) and physio ({patients[patient]['physio']})") if LANGUAGE == "en" else print(f"Incapaz de definir uma nova sessão (Sessão número {(session+1)}) para paciente {patients[patient]['Name']}. Responsáveis por paciente: pesquisadorx ({patients[patient]['researcher']}) e fisio ({patients[patient]['physio']})")
                 # exit()
-                return False, patients, schedule, N_pf
-            else:
-                done += 1
+                # return False, patients, schedule, N_pf
+            done += 1
     done = total
     print(f"----- rescheduling sessions: {done/total}") if LANGUAGE == "en" else print(f"----- reagendando sessões: {done/total}")
     
@@ -107,13 +105,12 @@ def greedy(initialDay, planningHorizon, slots, staff, patients, N_i, N_pf, sched
         if not s:
             print(f"Unable to schedule the patient {patients[patient]['Name']}") if LANGUAGE == "en" else print(f"Incapaz de agendar paciente com nome {patients[patient]['Name']}")
             # exit()
-            return False, patients, schedule, N_pf
-        else:
-            done += 1
+            # return False, patients, schedule, N_pf
+        done += 1
     done = total
     print(f"----- scheduling new patients: {done/total}") if LANGUAGE == "en" else print(f"----- agendando novos pacientes: {done/total}")
             
-    return s, patients, schedule, N_pf
+    return patients, schedule
     
 #it is used to make the greedy algorithm faster, so the available slots are quickly found
 def generateE(N_i, N_pf, patient, researcher, physio, slots, planningHorizon):
@@ -276,16 +273,28 @@ def trySchedule(E, day, slots, planningHorizon, schedule, patient):
     
 def assignStaff(N_pf, N_i, patients, patient, all_researchers, all_physio, schedule, slots, planningHorizon, initialDay):
     print("Assigning staff for", patient) #dbg
-    
-    random.shuffle(all_researchers)
-    random.shuffle(all_physio)
 
-    print("All physio", all_physio) #dbg
-    print("All researchers", all_researchers) #dbg
+    possible_researchers = []
+    possible_physio = []
+    
+    if patients[patient]["researcher"] is None:
+        random.shuffle(all_researchers)
+        possible_researchers = all_researchers
+    else:
+        possible_researchers = [patients[patient]["researcher"]]
+
+    if patients[patient]["physio"] is None:
+        random.shuffle(all_physio)
+        possible_physio = all_physio
+    else:
+        possible_physio = [patients[patient]["physio"]]
+
+    print("Possible physio", possible_physio) #dbg
+    print("Possible researchers", possible_researchers) #dbg
     
     s = False
-    for researcher in all_researchers:
-        for physio in all_physio:
+    for researcher in possible_researchers:
+        for physio in possible_physio:
             print("trying to assign", researcher, physio) #dbg
             E_researcher, E_physio = generateE(N_i, N_pf, patient, researcher, physio, slots, planningHorizon)
             s, schedule, N_pf = scheduleSession(N_pf, slots, planningHorizon, patient, researcher, physio, initialDay, schedule, 0, E_researcher, E_physio)

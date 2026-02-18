@@ -5,6 +5,10 @@ from CTkMessagebox import CTkMessagebox
 
 from armazenamento.services.base.base_paciente_service import BasePacienteService
 from armazenamento.services.base.base_sessao_service import BaseSessaoService
+from armazenamento.services.base.base_usuario_service import BaseUsuarioService
+from dados.fisioterapeuta import Fisioterapeuta
+from dados.paciente import Paciente
+from dados.pesquisador import Pesquisador
 from dados.sessao import Sessao
 from interfacegrafica.agenda_pessoa.sessao_card import SessaoCard
 from greedy.wrapper import wrapper
@@ -15,10 +19,11 @@ class AgendaPessoaWidget(ctk.CTkFrame):
     Widget para exibir e gerenciar a agenda de sessões de um ou mais usuários.
     """
 
-    @inject.params(paciente_service = BasePacienteService, sessao_service = BaseSessaoService)
+    @inject.params(paciente_service=BasePacienteService, sessao_service=BaseSessaoService, usuario_service=BaseUsuarioService)
     def __init__(self, master,
                  paciente_service: BasePacienteService,
                  sessao_service: BaseSessaoService,
+                 usuario_service: BaseUsuarioService,
                  pesquisadores_ids: list[int] | None = None,
                  fisioterapeutas_ids: list[int] | None = None,
                  pacientes_ids: list[int] | None = None):
@@ -26,6 +31,7 @@ class AgendaPessoaWidget(ctk.CTkFrame):
 
         self.paciente_service = paciente_service
         self.sessao_service = sessao_service
+        self.usuario_service = usuario_service
         self.pesquisadores_ids = pesquisadores_ids
         self.fisioterapeutas_ids = fisioterapeutas_ids
         self.pacientes_ids = pacientes_ids
@@ -49,24 +55,25 @@ class AgendaPessoaWidget(ctk.CTkFrame):
 
     def _carregar_sessoes(self):
         """
-        Carrega e filtra as sessões a serem exibidas.
+        Carrega e filtra as sessões a serem exibidas, verificando conflitos de horário.
         """
         # Limpa cards existentes antes de carregar novos
         for card in self.sessao_cards:
             card.destroy()
         self.sessao_cards = []
 
+        # Obter pacientes e sessões filtradas
         pacientes = self.paciente_service.listar_pacientes(apenas_ativos=False)
         sessoes_filtradas: list[Sessao] = []
+        profissionais_ids = set()
 
         for paciente in pacientes:
-            # Filtro de paciente
             if self.pacientes_ids is not None and paciente.id_pessoa not in self.pacientes_ids:
                 continue
 
             for sessao in paciente.sessoes_paciente:
                 is_pesquisador_session, is_fisio_session = self._classificar_sessao(sessao.codigo)
-                
+
                 passes_pesquisador_filter = True
                 if is_pesquisador_session and self.pesquisadores_ids is not None:
                     if paciente.pesquisador_responsavel is None or \
@@ -81,12 +88,41 @@ class AgendaPessoaWidget(ctk.CTkFrame):
 
                 if passes_pesquisador_filter and passes_fisioterapeuta_filter:
                     sessoes_filtradas.append(sessao)
-        
-        # Ordena as sessoes por data e horario para exibição
+                    if paciente.pesquisador_responsavel:
+                        profissionais_ids.add(paciente.pesquisador_responsavel.id_pessoa)
+                    if paciente.fisioterapeuta_responsavel:
+                        profissionais_ids.add(paciente.fisioterapeuta_responsavel.id_pessoa)
+
+        # Obter dados completos dos profissionais com suas restrições
+        profissionais = {uid: self.usuario_service.consultar(uid) for uid in profissionais_ids}
+
+        # Ordenar sessoes e criar cards com avisos
         sessoes_filtradas.sort(key=lambda s: (s.dia or date.max, s.horario or time.max))
 
         for sessao in sessoes_filtradas:
-            card = SessaoCard(self, sessao)
+            avisos = []
+            if sessao.dia and sessao.horario:
+                dia_horario = datetime.combine(sessao.dia, sessao.horario)
+
+                # Checar disponibilidade do paciente
+                if not sessao.paciente.restricoes_paciente.esta_disponivel(dia_horario):
+                    avisos.append(f"Conflito de horário para o paciente.")
+
+                is_pesquisador_session, is_fisio_session = self._classificar_sessao(sessao.codigo)
+
+                # Checar disponibilidade do Fisioterapeuta
+                if is_fisio_session and sessao.paciente.fisioterapeuta_responsavel:
+                    fisio = profissionais.get(sessao.paciente.fisioterapeuta_responsavel.id_pessoa)
+                    if not fisio.restricoes_fisioterapeuta.esta_disponivel(dia_horario):
+                         avisos.append(f"Conflito de horário para o fisioterapeuta.")
+
+                # Checar disponibilidade do Pesquisador
+                if is_pesquisador_session and sessao.paciente.pesquisador_responsavel:
+                    pesq = profissionais.get(sessao.paciente.pesquisador_responsavel.id_pessoa)
+                    if not pesq.restricoes_pesquisador.esta_disponivel(dia_horario):
+                        avisos.append(f"Conflito de horário para o pesquisador.")
+
+            card = SessaoCard(self, sessao, avisos=avisos)
             card.pack(fill="x", expand=True, padx=10, pady=5)
             self.sessao_cards.append(card)
 
@@ -139,7 +175,7 @@ class AgendaPessoaWidget(ctk.CTkFrame):
             try:
                 if agendamento_pendente:
                     wrapper()
-            except:
+            except Exception as e:
                 CTkMessagebox(title="Erro", message=f"Ocorreu um erro no auto-agendamento das sessões: {e}", icon="cancel")
             else:
                 CTkMessagebox(title="Sucesso", message="Sessões atualizadas com sucesso!")
