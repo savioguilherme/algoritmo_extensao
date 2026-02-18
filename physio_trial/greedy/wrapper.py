@@ -126,7 +126,8 @@ def wrapper(
             sessoes_atualizadas.append({
                 'id_sessao': sessao.id_sessao,
                 'dia_horario': dia_horario.isoformat(),
-                'status_agendamento': sessao.status_agendamento
+                'status_agendamento': sessao.status_agendamento,
+                'conclusao': sessao.conclusao
             })
 
     return paciente_service.atualizar_acompanhamentos_com_sessoes(

@@ -298,13 +298,15 @@ BEGIN
         dia                = v.dia,
         horario            = v.horario,
 		status_agendamento = v.status,
+		conclusao          = v.conclusao,
 		atualizado_em      = now()
     FROM (
         SELECT
             (x->>'id_sessao')::int AS id_sessao,
             ((x->>'dia_horario')::timestamp)::date AS dia,
             ((x->>'dia_horario')::timestamp)::time AS horario,
-			(x->>'status_agendamento')::bool AS status
+			(x->>'status_agendamento')::bool AS status,
+			(x->>'conclusao')::bool AS conclusao
         FROM jsonb_array_elements(p_lista_sessoes) AS x
     ) v
     WHERE se.id_sessao = v.id_sessao;
