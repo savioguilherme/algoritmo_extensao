@@ -74,6 +74,8 @@ class AgendaPessoaWidget(ctk.CTkFrame):
             for sessao in paciente.sessoes_paciente:
                 is_pesquisador_session, is_fisio_session = self._classificar_sessao(sessao.codigo)
 
+                print("sessao recebida {} {}: {} {}".format(sessao.paciente.id_pessoa, sessao.codigo, sessao.status_agendamento, sessao.conclusao)) #dbg
+
                 passes_pesquisador_filter = True
                 if is_pesquisador_session and self.pesquisadores_ids is not None:
                     if paciente.pesquisador_responsavel is None or \
@@ -141,7 +143,11 @@ class AgendaPessoaWidget(ctk.CTkFrame):
                 dados_invalidos = True
                 break
 
-            if nova_sessao != card.sessao:
+            if \
+                nova_sessao.dia != card.sessao.dia or \
+                nova_sessao.horario != card.sessao.horario or \
+                nova_sessao.status_agendamento != card.sessao.status_agendamento or \
+                nova_sessao.conclusao != card.sessao.conclusao:
                 sessoes_modificadas.append(nova_sessao)
 
             if not nova_sessao.status_agendamento:
@@ -161,22 +167,28 @@ class AgendaPessoaWidget(ctk.CTkFrame):
             if sessao.dia and sessao.horario:
                 dia_horario = datetime.combine(sessao.dia, sessao.horario)
 
+            print("sessao enviada {} {}: {} {}".format(sessao.paciente.id_pessoa, sessao.codigo, sessao.status_agendamento, sessao.conclusao)) #dbg
+
             payload.append({
                 'id_sessao': sessao.id_sessao,
-                'dia_horario': dia_horario.isoformat() if dia_horario else None
+                'dia_horario': dia_horario.isoformat() if dia_horario else None,
+                'status_agendamento': sessao.status_agendamento,
+                'conclusao': sessao.conclusao
             })
 
         try:
             if sessoes_modificadas:
                 self.sessao_service.atualizar_sessoes_agendadas(payload)
         except Exception as e:
-            CTkMessagebox(title="Erro", message=f"Ocorreu um erro ao atualizar as sessões: {e}", icon="cancel")
+            CTkMessagebox(title="Erro", message="Ocorreu um erro ao atualizar as sessões", icon="cancel")
         else:
             try:
                 if agendamento_pendente:
+                    print("agenda widget pre wrapper")
                     wrapper()
+                    print("agenda widget post wrapper")
             except Exception as e:
-                CTkMessagebox(title="Erro", message=f"Ocorreu um erro no auto-agendamento das sessões: {e}", icon="cancel")
+                CTkMessagebox(title="Erro", message="Ocorreu um erro no auto-agendamento das sessões", icon="cancel")
             else:
                 CTkMessagebox(title="Sucesso", message="Sessões atualizadas com sucesso!")
                 self._carregar_sessoes() # Recarrega os dados para refletir as mudanças

@@ -87,20 +87,21 @@ class SessaoCard(ctk.CTkFrame):
         horario_obj: time | None = None
 
         conclusao_marcada = self.conclusao_var.get()
-        status_agendamento_marcado = not self.agendamento_var.get()
+        agendamento_automatico_marcado = self.agendamento_var.get()
 
-        if conclusao_marcada and status_agendamento_marcado:
+        if conclusao_marcada and agendamento_automatico_marcado:
             errors.append("Sessão concluída não pode ser agendada.")
 
-        if status_agendamento_marcado and (not dia_str or not horario_str):
+        if not agendamento_automatico_marcado and (not dia_str or not horario_str):
             errors.append("Sessão agendada deve ter dia e horário preenchidos.")
 
-        if dia_str and horario_str:
+        if dia_str:
             try:
                 dia_obj = datetime.strptime(dia_str, "%d/%m/%Y").date()
             except ValueError:
                 errors.append("Data inválida. Use o formato DD/MM/AAAA.")
-            
+
+        if horario_str:
             try:
                 horario_obj = datetime.strptime(horario_str, "%H:%M").time()
             except ValueError:
@@ -110,9 +111,6 @@ class SessaoCard(ctk.CTkFrame):
                 errors.append("Horário deve ser anterior às 22:00.")
                 horario_obj = None
 
-        elif dia_str or horario_str:
-            errors.append("Dia e Horário devem ser preenchidos ou ambos vazios.")
-
         self._display_messages(errors)
         if errors:
             return None
@@ -120,7 +118,7 @@ class SessaoCard(ctk.CTkFrame):
         nova_sessao = copy(self.sessao)
         nova_sessao.dia = dia_obj
         nova_sessao.horario = horario_obj
-        nova_sessao.status_agendamento = status_agendamento_marcado
+        nova_sessao.status_agendamento = not agendamento_automatico_marcado
         nova_sessao.conclusao = conclusao_marcada
         
         return nova_sessao
