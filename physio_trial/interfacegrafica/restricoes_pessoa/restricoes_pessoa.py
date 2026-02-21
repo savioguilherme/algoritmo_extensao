@@ -36,7 +36,10 @@ class RestricoesPessoa(ctk.CTkFrame):
                 for horario in sorted(list(horarios)):  # sort for consistent order
                     self._adicionar_disponibilidade_card(dia_semana, horario)
 
-        btn_add_disp = ctk.CTkButton(disponibilidades_outer_frame, text="Adicionar Disponibilidade", command=self._adicionar_disponibilidade_card)
+        #btn_add_disp = ctk.CTkButton(disponibilidades_outer_frame, text="Adicionar Disponibilidade", command=self._adicionar_disponibilidade_card)
+        #btn_add_disp.pack(pady=10)
+
+        btn_add_disp = self.widgets.button(disponibilidades_outer_frame, texto="Adicionar Disponibilidades", comando=self._adicionar_disponibilidade_card, cor="blue")
         btn_add_disp.pack(pady=10)
 
         # Frame de Restrições
@@ -54,7 +57,9 @@ class RestricoesPessoa(ctk.CTkFrame):
             for restricao_dt in sorted(list(restricoes.restricoes)):  # sort
                 self._adicionar_restricao_card(restricao_dt)
 
-        btn_add_rest = ctk.CTkButton(restricoes_outer_frame, text="Adicionar Restrição", command=self._adicionar_restricao_card)
+        #btn_add_rest = ctk.CTkButton(restricoes_outer_frame, text="Adicionar Restrição", command=self._adicionar_restricao_card)
+        
+        btn_add_rest = self.widgets.button(restricoes_outer_frame, "Adicionar Restrição", self._adicionar_restricao_card, "blue")
         btn_add_rest.pack(pady=10)
 
     def _adicionar_disponibilidade_card(self, day=None, time_obj=None):
