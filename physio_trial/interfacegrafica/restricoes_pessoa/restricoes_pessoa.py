@@ -29,7 +29,7 @@ class RestricoesPessoa(ctk.CTkFrame):
 
         # Convert data and create the availability table
         initial_table_data = self._convert_restricoes_to_table_data(restricoes)
-        for horario in [time(8),time(10),time(13),time(14)]:
+        for horario in [time(8),time(10),time(14),time(16)]:
             if not horario in initial_table_data:
                 initial_table_data[horario] = [False] * 7
         self.disponibilidade_tabela = DisponibilidadeSemanalTabela(disponibilidades_outer_frame, initial_data=initial_table_data)

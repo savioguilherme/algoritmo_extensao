@@ -47,10 +47,9 @@ class AgendaPessoaWidget(ctk.CTkFrame):
         Retorna (is_pesquisador, is_fisioterapeuta).
         """
         if codigo_sessao:
-            if codigo_sessao.startswith("S"):
-                return False, True  # Fisioterapeuta
-            if codigo_sessao.startswith("F"):
+            if codigo_sessao.startswith("F") or codigo_sessao == "S08":
                 return True, False  # Pesquisador
+            return False, True  # Fisioterapeuta
         return False, False
 
     def _carregar_sessoes(self):
