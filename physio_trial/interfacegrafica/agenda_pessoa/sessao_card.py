@@ -19,9 +19,21 @@ class SessaoCard(ctk.CTkFrame):
         self.grid_columnconfigure((0, 2), weight=0)
         self.grid_columnconfigure((1, 3), weight=1)
 
-        # Linha 0: Nome do Paciente
+        # Linha 0: Nome do Paciente e sessão
         lbl_paciente = ctk.CTkLabel(self, text=f"Paciente: {sessao.paciente.nome}", font=("Arial", 14, "bold"))
-        lbl_paciente.grid(row=0, column=0, columnspan=4, sticky="ew", padx=10, pady=(10, 5))
+        lbl_paciente.grid(row=0, column=0, columnspan=2, sticky="w", padx=10, pady=(10, 5))
+
+        try:
+            tipo_sessao = sessao.codigo[0]
+            numero_sessao = int(sessao.codigo[1:])+1
+            if tipo_sessao == "S":
+                nome_sessao = f"Sessão {numero_sessao}"
+            elif tipo_sessao == "F":
+                nome_sessao = f"Follow-up {numero_sessao}"
+        except:
+            nome_sessao = "Sessão desconhecida"
+        lbl_sessao = ctk.CTkLabel(self, text=nome_sessao, font=("Arial", 14, "bold"))
+        lbl_sessao.grid(row=0, column=2, columnspan=2, sticky="e", padx=10, pady=(10, 5))
 
         # Linha 1: Dia e Horário
         lbl_dia = ctk.CTkLabel(self, text="Dia (DD/MM/AAAA):")
