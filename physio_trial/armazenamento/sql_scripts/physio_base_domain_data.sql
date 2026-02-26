@@ -14,7 +14,7 @@ values (0, 'Segunda'), (1, 'Terça'), (2, 'Quarta'),
 insert into public.codigo_sessao(id_codigo, codigo)
 values (1, 'S00'), (2, 'S01'), (3, 'S02'), (4, 'S03'),
 (5, 'S04'), (6, 'S05'), (7, 'S06'), (8, 'S07'), (9, 'S08'),
-(10, 'S09'), (11, 'F00'), (12, 'F01');
+(10, 'F00'), (11, 'F01');
 
 select * from public.usuario_tipo;
 

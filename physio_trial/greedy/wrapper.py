@@ -2,7 +2,7 @@ from dados.fisioterapeuta import Fisioterapeuta
 from dados.pesquisador import Pesquisador
 from greedy.greedy import greedy
 
-from armazenamento.context.app_context import current_user_types_list
+from armazenamento.context.app_context import current_user_types_list, current_session_codes_list
 from armazenamento.services.base.base_usuario_service import BaseUsuarioService
 from armazenamento.services.base.base_paciente_service import BasePacienteService
 from armazenamento.decorators.auth_method import auth_method
@@ -26,7 +26,9 @@ def wrapper(
     usuarios = usuario_service.listar_usuarios(lista_tipos=[usuario_tipos[1], usuario_tipos[2]], apenas_ativos=True)
     fisios = [usuario for usuario in usuarios if isinstance(usuario, Fisioterapeuta) and usuario.tipo == usuario_tipos[1]]
     pesquisadores = [usuario for usuario in usuarios if isinstance(usuario, Pesquisador) and usuario.tipo == usuario_tipos[2]]
-    pacientes = [paciente for paciente in paciente_service.listar_pacientes(apenas_ativos=True) if paciente.sessoes_paciente is not None and len(paciente.sessoes_paciente) == 12]
+    pacientes = [paciente for paciente in paciente_service.listar_pacientes(apenas_ativos=True)
+        if paciente.sessoes_paciente is not None and len(paciente.sessoes_paciente) == len(current_session_codes_list.get())
+    ]
 
     # constroi staff e patients
 
