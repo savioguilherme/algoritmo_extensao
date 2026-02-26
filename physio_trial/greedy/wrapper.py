@@ -11,7 +11,7 @@ import inject
 import datetime
 
 @auth_method
-@inject.autoparams
+@inject.params(usuario_service=BaseUsuarioService, paciente_service=BasePacienteService)
 def wrapper(
     usuario_service: BaseUsuarioService,
     paciente_service: BasePacienteService,

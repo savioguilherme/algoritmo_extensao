@@ -24,17 +24,19 @@ class MenuFisioterapeuta(BaseFrame):
         self.carregar_usuario_logado()
 
         #configurando o frame
-        self.grid_rowconfigure((1,2,3), weight=0)
-        self.grid_columnconfigure((1,2,3), weight=1)
+        self.grid_rowconfigure((2), weight=1)
+        self.grid_rowconfigure((1), weight=0)
+        self.grid_columnconfigure((1,2,3), weight=0)
+        self.grid_columnconfigure((4), weight=1)
 
         self.btn_agenda = self.widgets.button(self, texto="Agenda", comando=self.abrir_agenda, cor="blue")
-        self.btn_agenda.grid(row=1, column=1, sticky="e", padx=20, pady=(20,10))
+        self.btn_agenda.grid(row=1, column=1, sticky="", padx=(20,10), pady=(40,40))
 
         self.btn_alterar_dados = self.widgets.button(self, texto="Alterar meus dados", comando=self.abrir_menu_atualiza_dados, cor="green")
-        self.btn_alterar_dados.grid(row=1, column=2, sticky="w", padx=(10,20), pady=(20,10))
+        self.btn_alterar_dados.grid(row=1, column=2, sticky="", padx=(10,10), pady=(40,40))
 
         self.btn_voltar = self.widgets.button(self, texto="Sair", comando=self.voltar_callback, cor="red")
-        self.btn_voltar.grid(row=2, column=1, sticky="e", padx=(20,20), pady=(10,20))
+        self.btn_voltar.grid(row=1, column=3, sticky="", padx=(10,20), pady=(40,40))
 
     def carregar_usuario_logado(self):
         try:

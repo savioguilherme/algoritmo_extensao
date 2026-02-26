@@ -61,12 +61,12 @@ def greedy(initialDay, planningHorizon, slots, staff, patients, N_i, N_pf, sched
     #schedule the sessions of those with a staff defined
     print("---------- rescheduling sessions") if LANGUAGE == "en" else print("----- reagendando sessões")
     total = 0
-    for session in range(9, -1, -1):
+    for session in range(8, -1, -1):
         for patient in assignedPatients_sessions[session]:
             total += 1
     total = 1 if total < 1 else total
     done = 0
-    for session in range(9, -1, -1):
+    for session in range(8, -1, -1):
         for patient in assignedPatients_sessions[session]:
             print(f"----- rescheduling sessions: {done/total}") if LANGUAGE == "en" else print(f"----- reagendando sessões: {done/total}")
             researcher = patients[patient]["researcher"]
@@ -157,7 +157,7 @@ def scheduleSession(N_pf, slots, planningHorizon, patient, researcher, physio, i
 
     print("scheduling", patient, sessionNum) #dbg
     
-    if sessionNum >= 10:
+    if sessionNum >= 9:
         return True, schedule, N_pf
     
     s = False
@@ -182,7 +182,12 @@ def scheduleSession(N_pf, slots, planningHorizon, patient, researcher, physio, i
             triesDays.append(nextOption)
             
     for day in triesDays:
-        if sessionNum in [0, 9]:
+        '''
+        A sessão S00 representa a segunda sessão do paciente Ela ocorre após a sessão inicial com o pesquisador, que não é marcada pela heurística. A décima sessão, S08, também é feita pelo pesquisador.
+        sessão: 1 2 3 4 5 6 7 8 9 10
+        código: - 0 1 2 3 4 5 6 7 8
+        '''
+        if sessionNum == 8:
             s, possible_slots = trySchedule(E_researcher, day, slots, planningHorizon, schedule, patient)
         else:
             s, possible_slots = trySchedule(E_physio, day, slots, planningHorizon, schedule, patient)
@@ -192,7 +197,7 @@ def scheduleSession(N_pf, slots, planningHorizon, patient, researcher, physio, i
             slot = random.choice(possible_slots)
             schedule[patient][f"SD0{sessionNum}"] = day
             schedule[patient][f"SH0{sessionNum}"] = slot
-            if sessionNum in [0, 9]:
+            if sessionNum == 8:
                 N_pf[researcher][day][slot] = False
             else:
                 N_pf[physio][day][slot] = False
@@ -214,32 +219,12 @@ def scheduleSession(N_pf, slots, planningHorizon, patient, researcher, physio, i
                         N_pf, schedule = unschedule(schedule, patient, researcher, N_pf, "FD00", "FH00")
                         N_pf, schedule = unschedule(schedule, patient, researcher, N_pf, "FD01", "FH01")
 
-                    if sessionNum in [0, 9]:
+                    if sessionNum == 8:
                         N_pf, schedule = unschedule(schedule, patient, researcher, N_pf, f"SD0{sessionNum}", f"SH0{sessionNum}")
                     else:
                         N_pf, schedule = unschedule(schedule, patient, physio, N_pf, f"SD0{sessionNum}", f"SH0{sessionNum}")
-                                                
-                    # for session in range(sessionNum, 10):
-                    #     if session in [0, 9]:
-                    #         N_pf, schedule = unschedule(schedule, patient, researcher, N_pf, f"SD0{session}", f"SH0{session}")
-                    #     else:
-                    #         N_pf, schedule = unschedule(schedule, patient, physio, N_pf, f"SD0{session}", f"SH0{session}")
                 else:
                     break
-    
-    # if not s:
-    #     ##unschedule the following sessions
-    #     for session in range(sessionNum, 10):
-    #         if session in [0, 9]:
-    #             N_pf, schedule = unschedule(schedule, patient, researcher, N_pf, f"SD0{session}", f"SH0{session}")
-    #         else:
-    #             N_pf, schedule = unschedule(schedule, patient, physio, N_pf, f"SD0{session}", f"SH0{session}")
-            
-    #     ##if needed, unschedule the follow-ups
-    #     if sessionNum == 0:
-    #         N_pf, schedule = unschedule(schedule, patient, researcher, N_pf, "FD00", "FH00")
-    #         N_pf, schedule = unschedule(schedule, patient, researcher, N_pf, "FD01", "FH01")
-    
     
     return s, schedule, N_pf
     
@@ -254,7 +239,7 @@ def unschedule(schedule, patient, staffMember, N_pf, nameTag_day, nameTag_slot):
     
 def scheduleDays(schedule, patient):  #once, a very rare case happened of a follow up being schedule at the same shift an day of the last session
     days = []
-    for i in range(10):
+    for i in range(9):
         days.append(schedule[patient][f"SD0{(i)}"])
     for i in range(2):
         days.append(schedule[patient][f"FD0{(i)}"])
@@ -313,11 +298,11 @@ def assignStaff(N_pf, N_i, patients, patient, all_researchers, all_physio, sched
     
 def orderPatients(schedule, ids):
     
-    unscheduledPatientsByNumberOfScheduledSessions = {sessionName: [] for sessionName in range(10)}
+    unscheduledPatientsByNumberOfScheduledSessions = {sessionName: [] for sessionName in range(9)}
     unscheduledPatientsByFollowups = {followupName: [] for followupName in range(2)}
     
     for patient in ids:
-        for session in range(10):
+        for session in range(9):
             if schedule[patient][f"SD0{session}"] is None:
                 unscheduledPatientsByNumberOfScheduledSessions[session].append(patient)
                 break
@@ -325,7 +310,7 @@ def orderPatients(schedule, ids):
             if schedule[patient][f"FD0{follow}"] is None:
                 unscheduledPatientsByFollowups[follow].append(patient)
     
-    for session in range(10):
+    for session in range(9):
         random.shuffle(unscheduledPatientsByNumberOfScheduledSessions[session])
     for follow in range(2):
         random.shuffle(unscheduledPatientsByFollowups[follow])

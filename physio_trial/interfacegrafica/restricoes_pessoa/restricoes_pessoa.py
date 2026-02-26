@@ -1,45 +1,45 @@
 import customtkinter as ctk
-from datetime import datetime
+from datetime import datetime, time
+from typing import Dict, List
 
 from interfacegrafica.base_widgets import BaseWidgets
 from interfacegrafica.restricoes_pessoa.restricao_card import RestricaoCard
-from interfacegrafica.restricoes_pessoa.disponibilidade_semanal_card import DisponibilidadeSemanalCard
+from interfacegrafica.restricoes_pessoa.disponibilidade_semanal_tabela import DisponibilidadeSemanalTabela
 from dados.restricoes_dias_horarios import RestricoesDiasHorarios
 
 
 class RestricoesPessoa(ctk.CTkFrame):
     """Widget para cadastro de restrições de agenda."""
 
-    def __init__(self, master, restricoes=None):
+    def __init__(self, master, restricoes: RestricoesDiasHorarios | None = None):
         super().__init__(master, fg_color="transparent")
 
         if restricoes is None:
             restricoes = RestricoesDiasHorarios()
 
         self.widgets = BaseWidgets()
-
         self.grid_columnconfigure(0, weight=1)
 
-        # Frame de Disponibilidades
+        # --- Frame de Disponibilidades ---
         disponibilidades_outer_frame = ctk.CTkFrame(self, fg_color="transparent")
         disponibilidades_outer_frame.grid(row=0, column=0, padx=10, pady=(0, 10), sticky="nsew")
         disponibilidades_outer_frame.grid_columnconfigure(0, weight=1)
 
         ctk.CTkLabel(disponibilidades_outer_frame, text="Disponibilidades Semanais", font=("Arial", 16, "bold")).pack(pady=5)
 
-        self.disponibilidades_frame = ctk.CTkFrame(disponibilidades_outer_frame, fg_color="transparent", height=0)
-        self.disponibilidades_frame.pack(fill="x", expand=True, padx=5)
+        # Convert data and create the availability table
+        initial_table_data = self._convert_restricoes_to_table_data(restricoes)
+        for horario in [time(8),time(10),time(14),time(16)]:
+            if not horario in initial_table_data:
+                initial_table_data[horario] = [False] * 7
+        self.disponibilidade_tabela = DisponibilidadeSemanalTabela(disponibilidades_outer_frame, initial_data=initial_table_data)
+        self.disponibilidade_tabela.pack(fill="x", expand=True, padx=5)
 
-        self.disponibilidade_cards = []
-        if restricoes.disponibilidade_semanal:
-            for dia_semana, horarios in enumerate(restricoes.disponibilidade_semanal):
-                for horario in sorted(list(horarios)):  # sort for consistent order
-                    self._adicionar_disponibilidade_card(dia_semana, horario)
-
-        btn_add_disp = ctk.CTkButton(disponibilidades_outer_frame, text="Adicionar Disponibilidade", command=self._adicionar_disponibilidade_card)
+        # Button to add a new row (time) to the table
+        btn_add_disp = self.widgets.button(disponibilidades_outer_frame, texto="Adicionar Horário", comando=self.disponibilidade_tabela.adicionar_linha, cor="blue")
         btn_add_disp.pack(pady=10)
 
-        # Frame de Restrições
+        # --- Frame de Restrições (Specific one-time restrictions) ---
         restricoes_outer_frame = ctk.CTkFrame(self, fg_color="transparent")
         restricoes_outer_frame.grid(row=1, column=0, padx=10, pady=(0, 10), sticky="nsew")
         restricoes_outer_frame.grid_columnconfigure(0, weight=1)
@@ -51,28 +51,26 @@ class RestricoesPessoa(ctk.CTkFrame):
 
         self.restricoes_cards = []
         if restricoes.restricoes:
-            for restricao_dt in sorted(list(restricoes.restricoes)):  # sort
+            for restricao_dt in sorted(list(restricoes.restricoes)):
                 self._adicionar_restricao_card(restricao_dt)
 
-        btn_add_rest = ctk.CTkButton(restricoes_outer_frame, text="Adicionar Restrição", command=self._adicionar_restricao_card)
+        #btn_add_rest = ctk.CTkButton(restricoes_outer_frame, text="Adicionar Restrição", command=self._adicionar_restricao_card)
+        
+        btn_add_rest = self.widgets.button(restricoes_outer_frame, "Adicionar Restrição", self._adicionar_restricao_card, "blue")
         btn_add_rest.pack(pady=10)
 
-    def _adicionar_disponibilidade_card(self, day=None, time_obj=None):
-        if day is None:
-            day = datetime.now().weekday()
-        if time_obj is None:
-            time_obj = datetime.now().time().replace(second=0, microsecond=0)
+    def _convert_restricoes_to_table_data(self, restricoes: RestricoesDiasHorarios) -> Dict[time, List[bool]]:
+        """Converts a RestricoesDiasHorarios object to the dict format for the table widget."""
+        table_data = {}
+        for dia_semana, horarios in enumerate(restricoes.disponibilidade_semanal):
+            for horario in horarios:
+                if not horario in table_data:
+                    table_data[horario] = [False] * 7
+                table_data[horario][dia_semana] = True
+        return table_data
 
-        card = DisponibilidadeSemanalCard(
-            parent=self.disponibilidades_frame,
-            day=day,
-            time_obj=time_obj
-        )
-        card.set_delete_callback(lambda: self._remover_card(card, self.disponibilidade_cards))
-        card.pack(fill="x", expand=True, pady=5)
-        self.disponibilidade_cards.append(card)
-
-    def _adicionar_restricao_card(self, data=None):
+    def _adicionar_restricao_card(self, data: datetime | None = None):
+        """Adds a new card for a specific one-time restriction."""
         if data is None:
             data = datetime.now().replace(second=0, microsecond=0)
 
@@ -84,23 +82,31 @@ class RestricoesPessoa(ctk.CTkFrame):
         card.pack(fill="x", expand=True, pady=5)
         self.restricoes_cards.append(card)
 
-    def _remover_card(self, card, card_list):
+    def _remover_card(self, card: ctk.CTkFrame, card_list: list):
+        """Removes a card from the UI and the tracking list."""
         card.destroy()
         if card in card_list:
             card_list.remove(card)
 
-    def get_dados(self):
+    def get_dados(self) -> RestricoesDiasHorarios | None:
+        """
+        Retrieves and validates all data from the widgets.
+        Returns a RestricoesDiasHorarios object or None if any validation fails.
+        """
         novas_restricoes = RestricoesDiasHorarios()
         has_error = False
 
-        for card in self.disponibilidade_cards:
-            data = card.get_data()
-            if data:
-                dia_semana, horario = data
-                novas_restricoes.adicionar_disponibilidade(dia_semana, horario)
-            else:
-                has_error = True
+        # Get data from the availability table
+        table_data = self.disponibilidade_tabela.get_data()
+        if table_data is None:
+            has_error = True
+        else:
+            for horario, availability_list in table_data.items():
+                for dia_semana, is_available in enumerate(availability_list):
+                    if is_available:
+                        novas_restricoes.adicionar_disponibilidade(dia_semana, horario)
 
+        # Get data from the one-time restriction cards
         for card in self.restricoes_cards:
             data = card.get_data()
             if data:

@@ -1,7 +1,6 @@
 from inject import autoparams
 import customtkinter as ctk
 from datetime import date
-
 from interfacegrafica.base_frame import BaseFrame
 from interfacegrafica.base_widgets import BaseWidgets
 from interfacegrafica.restricoes_pessoa.restricoes_pessoa import RestricoesPessoa
@@ -30,31 +29,37 @@ class CadastroFisioterapeuta(BaseFrame):
 
         self.label_nome = self.widgets.label(self.scrollable_frame, texto="Nome:", cor="transparent")
         self.label_nome.grid(row=0, column=0, sticky="e", padx=(20,10) ,pady=(10,5))
+
         self.entry_nome = self.widgets.entry(self.scrollable_frame, None, None)
         self.entry_nome.grid(row=0, column=1, sticky="ew", padx=(10,20), pady=(10,5))
 
         self.label_email = self.widgets.label(self.scrollable_frame, texto="Email:", cor="transparent")
         self.label_email.grid(row=1, column=0, sticky="e",padx=(20,10), pady=(5,5))
+
         self.entry_email = self.widgets.entry(self.scrollable_frame, None, None)
         self.entry_email.grid(row=1, column=1, sticky="ew", padx=(10,20), pady=(5,5))
 
         self.label_data_nascimento = self.widgets.label(self.scrollable_frame, texto="Data de Nascimento (dd/mm/aaaa):", cor="transparent")
         self.label_data_nascimento.grid(row=2, column=0, sticky="e", padx=(20,10), pady=(5,5))
+
         self.entry_data_nascimento = self.widgets.entry(self.scrollable_frame, None, None)
         self.entry_data_nascimento.grid(row=2, column=1, sticky="ew", padx=(10,20), pady=(5,5))
 
         self.label_login = self.widgets.label(self.scrollable_frame, texto="Login:", cor="transparent")
         self.label_login.grid(row=3, column=0, sticky="e", padx=(20,10), pady=(5,5))
+
         self.entry_login = self.widgets.entry(self.scrollable_frame, None , None)
         self.entry_login.grid(row=3, column=1, sticky="ew", padx=(10,20), pady=(5,5))
 
         self.label_senha = self.widgets.label(self.scrollable_frame, texto="Senha:", cor="transparent")
         self.label_senha.grid(row=4, column=0, sticky="e", padx=(20,10), pady=(5,5))
+
         self.entry_senha = self.widgets.entry(self.scrollable_frame, "*",  None)
         self.entry_senha.grid(row=4, column=1, sticky="ew", padx=(10,20), pady=(5,5))
 
         self.label_confirma_nova_senha = self.widgets.label(self.scrollable_frame, "Confirme a senha:", cor="transparent")
         self.label_confirma_nova_senha.grid(row=5, column=0, sticky="e", padx=(20,10), pady=(5,5))
+
         self.entry_confirma_nova_senha = self.widgets.entry(self.scrollable_frame, "*", None)
         self.entry_confirma_nova_senha.grid(row=5, column=1, sticky="ew", padx=(10,20), pady=(5,5))
         

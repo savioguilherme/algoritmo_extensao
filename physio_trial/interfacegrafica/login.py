@@ -22,14 +22,17 @@ class Login(BaseFrame):
         self.usuario_service = usuario_service
 
         #configurando o frame
+        self.grid_rowconfigure((4), weight=1)
         self.grid_rowconfigure((1,2,3), weight=0)
-        self.grid_columnconfigure((1,2,3), weight=1)
+        self.grid_columnconfigure((1,2), weight=0)
+        self.grid_columnconfigure((3), weight=1)
+
 
         self.label_login = self.widgets.label(self, texto="Login:", cor="transparent")
-        self.label_login.grid(row=1, column=1, sticky="e", padx=(20,10), pady=(20,10))
+        self.label_login.grid(row=1, column=1, sticky="e", padx=(20,10), pady=(40,20))
 
         self.entry_login = self.widgets.entry(self, None, None)
-        self.entry_login.grid(row=1, column=2, sticky="w", padx=(10,20), pady=(20,10))
+        self.entry_login.grid(row=1, column=2, sticky="w", padx=(10,20), pady=(40,20))
 
         self.label_senha = self.widgets.label(self, texto="Senha:", cor="transparent")
         self.label_senha.grid(row=2, column=1, sticky="e", padx=(20,10), pady=(10,20))
@@ -38,10 +41,10 @@ class Login(BaseFrame):
         self.entry_senha.grid(row=2, column=2, sticky="w", padx=(10,20), pady=(10,20))
 
         self.bnt_entrar = self.widgets.button(self, texto="Entrar", comando=self.realizar_login, cor="blue")
-        self.bnt_entrar.grid(row=3, column=1, sticky="e", padx=(20,10), pady=(10,20))
+        self.bnt_entrar.grid(row=3, column=1, sticky="e", padx=(20,10), pady=(20,20))
 
         self.bnt_encerrar = self.widgets.button(self, texto="Encerrar", comando=self.encerrar, cor="red")
-        self.bnt_encerrar.grid(row=3, column=2, sticky="w", padx=(10,20), pady=(10,20))
+        self.bnt_encerrar.grid(row=3, column=2, sticky="w", padx=(10,20), pady=(20,20))
 
     def realizar_login(self):
         try:
