@@ -26,7 +26,8 @@ def wrapper(
     usuarios = usuario_service.listar_usuarios(lista_tipos=[usuario_tipos[1], usuario_tipos[2]], apenas_ativos=True)
     fisios = [usuario for usuario in usuarios if isinstance(usuario, Fisioterapeuta) and usuario.tipo == usuario_tipos[1]]
     pesquisadores = [usuario for usuario in usuarios if isinstance(usuario, Pesquisador) and usuario.tipo == usuario_tipos[2]]
-    pacientes = [paciente for paciente in paciente_service.listar_pacientes(apenas_ativos=True)
+    pacientes = [
+        paciente for paciente in paciente_service.listar_pacientes(apenas_ativos=True)
         if paciente.sessoes_paciente is not None and len(paciente.sessoes_paciente) == len(current_session_codes_list.get())
     ]
 
