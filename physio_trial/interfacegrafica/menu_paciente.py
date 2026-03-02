@@ -123,7 +123,7 @@ class MenuPaciente(BaseFrame):
             fisioterapeutas = self.usuario_service.listar_usuarios(lista_tipos=[fisioterapeuta_tipo_id], apenas_ativos=True)
             self.fisioterapeutas_map = {fisio.nome: fisio for fisio in fisioterapeutas}
             self.fisioterapeutas_map[self.string_definir_automaticamente] = None
-            nomes_fisio = [self.string_definir_automaticamente] + list(self.fisioterapeutas_map.keys())
+            nomes_fisio = list(self.fisioterapeutas_map.keys())
             self.optionmenu_fisioterapeuta.configure(values=nomes_fisio)
             if self.paciente and self.paciente.fisioterapeuta_responsavel:
                 self.optionmenu_fisioterapeuta.set(self.paciente.fisioterapeuta_responsavel.nome)
@@ -140,7 +140,7 @@ class MenuPaciente(BaseFrame):
             pesquisadores = self.usuario_service.listar_usuarios(lista_tipos=[pesquisador_tipo_id], apenas_ativos=True)
             self.pesquisadores_map = {pesq.nome: pesq for pesq in pesquisadores}
             self.pesquisadores_map[self.string_definir_automaticamente] = None
-            nomes_pesq = [self.string_definir_automaticamente] + list(self.pesquisadores_map.keys())
+            nomes_pesq = list(self.pesquisadores_map.keys())
             self.optionmenu_pesquisador.configure(values=nomes_pesq)
             if self.paciente and self.paciente.pesquisador_responsavel:
                 self.optionmenu_pesquisador.set(self.paciente.pesquisador_responsavel.nome)

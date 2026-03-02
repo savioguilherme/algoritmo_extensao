@@ -72,12 +72,17 @@ class UsuarioService(BaseUsuarioService):
 
         if result is None:
             return []
-        
+
+        if not isinstance(result, list):
+            result = [result]
+
         final_list: list[Administrador | Fisioterapeuta | Pesquisador] = []
         user_types_list: list[int] = current_user_types_list.get() or []
 
         if len(user_types_list) == 0:
             return final_list
+
+        print("### result from listing: ", result)
 
         for row in result:
             row_type: int = row['tipo']

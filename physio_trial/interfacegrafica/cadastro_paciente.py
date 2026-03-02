@@ -145,28 +145,28 @@ class CadastroPaciente(BaseFrame):
         try:
             user_types_list = current_user_types_list.get() or []
             fisioterapeuta_tipo_id = user_types_list[1] if len(user_types_list) > 1 else 1
-                
+
             fisioterapeutas = self.usuario_service.listar_usuarios(
                 lista_tipos=[fisioterapeuta_tipo_id], 
                 apenas_ativos=True
             )
-        
+
             self.fisioterapeutas_map = {
                 fisio.nome: fisio for fisio in fisioterapeutas
             }
             self.fisioterapeutas_map[self.string_definir_automaticamente] = None
 
-            nomes_fisio = [self.string_definir_automaticamente] + list(self.fisioterapeutas_map.keys())
+            nomes_fisio = list(self.fisioterapeutas_map.keys())
 
             self.optionmenu_fisioterapeuta.configure(values=nomes_fisio)
 
             if nomes_fisio:
-                self.optionmenu_fisioterapeuta.set(nomes_fisio[0])
+                self.optionmenu_fisioterapeuta.set(self.string_definir_automaticamente)
 
         except Exception as e:
             CTkMessagebox(
                 title="Erro", 
-                message=f"Erro ao carregar dados do usuário: {str(e)}", 
+                message=f"Erro ao carregar dados do fisioterapeuta: {str(e)}", 
                 icon="cancel"
             ).get()
 
@@ -187,17 +187,16 @@ class CadastroPaciente(BaseFrame):
             }
             self.pesquisadores_map[self.string_definir_automaticamente] = None
 
-            nomes_pesq = [self.string_definir_automaticamente] + list(self.pesquisadores_map.keys())
+            nomes_pesq = list(self.pesquisadores_map.keys())
 
             self.optionmenu_pesquisador.configure(values=nomes_pesq)
-
             if nomes_pesq:
-                self.optionmenu_pesquisador.set(nomes_pesq[0])
-        
+                self.optionmenu_pesquisador.set(self.string_definir_automaticamente)
+
         except Exception as e:
             CTkMessagebox(
                 title="Erro",
-                message=f"Erro ao carregar dados do usuário: {str(e)}",
+                message=f"Erro ao carregar dados do pesquisador: {str(e)}",
                 icon="cancel"
             ).get()
 

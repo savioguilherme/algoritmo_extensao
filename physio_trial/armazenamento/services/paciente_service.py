@@ -192,8 +192,11 @@ class PacienteService(BasePacienteService):
         if results is None:
             return []
 
+        if not isinstance(results, list):
+            results = [results]
+
         final_list: list[Paciente] = []
-        
+
         for row in results:
             fisio_result = row['fisioterapeuta']
             pesq_result = row['pesquisador']
