@@ -1,9 +1,11 @@
 import customtkinter as ctk
 from datetime import datetime, time
+from interfacegrafica.base_widgets import BaseWidgets
 
 class RestricaoCard(ctk.CTkFrame):
     def __init__(self, parent, data=datetime.now(), delete_callback=None):
         super().__init__(parent)
+        self.widgets = BaseWidgets()
 
         # Estilo
         self.configure(fg_color=["#EEEEEE", "#222222"], corner_radius=10)
@@ -13,18 +15,22 @@ class RestricaoCard(ctk.CTkFrame):
         self.grid_columnconfigure(4, weight=0)
 
         # Dia
-        self.lbl_date = ctk.CTkLabel(self, text="Dia (DD/MM/AAAA):", font=("Arial", 12))
+        #self.lbl_date = ctk.CTkLabel(self, text="Dia (DD/MM/AAAA):", font=("Arial", 12))
+        self.lbl_date = self.widgets.label(self, "Dia (DD/MM/AAAA):", "transparent")
         self.lbl_date.grid(row=0, column=0, sticky="w", padx=15, pady=(10, 5))
 
-        self.date_entry = ctk.CTkEntry(self, width=90, placeholder_text="DD/MM/AAAA")
+        #self.date_entry = ctk.CTkEntry(self, width=90, placeholder_text="DD/MM/AAAA")
+        self.date_entry = self.widgets.entry(self, None, "DD/MM/AAAA")
         self.date_entry.insert(0, data.strftime("%d/%m/%Y"))
         self.date_entry.grid(row=0, column=1, padx=(5, 15), pady=(10, 5))
 
         # Horário
-        self.lbl_time = ctk.CTkLabel(self, text="Horário (HH:MM):", font=("Arial", 12))
+        #self.lbl_time = ctk.CTkLabel(self, text="Horário (HH:MM):", font=("Arial", 12))
+        self.lbl_time = self.widgets.label(self, "Horário (HH:MM):", "transparent")
         self.lbl_time.grid(row=0, column=2, sticky="w", padx=15, pady=(10, 5))
 
-        self.time_entry = ctk.CTkEntry(self, width=60, placeholder_text="HH:MM")
+        #self.time_entry = ctk.CTkEntry(self, width=60, placeholder_text="HH:MM")
+        self.time_entry = self.widgets.entry(self, None, "HH:MM")
         self.time_entry.insert(0, data.strftime("%H:%M"))
         self.time_entry.grid(row=0, column=3, padx=(5, 15), pady=(10, 5))
 

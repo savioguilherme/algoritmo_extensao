@@ -1,6 +1,7 @@
 import customtkinter as ctk
 from datetime import time, datetime
 from typing import Dict, List, Any
+from interfacegrafica.base_widgets import BaseWidgets
 
 class DisponibilidadeSemanalTabela(ctk.CTkFrame):
     """
@@ -17,6 +18,7 @@ class DisponibilidadeSemanalTabela(ctk.CTkFrame):
                                (for Mon-Sun availability).
         """
         super().__init__(parent, fg_color="transparent")
+        self.widgets = BaseWidgets()
         
         # Configure grid columns
         # Column 0 for time, 1-7 for days, 8 for delete button
@@ -27,8 +29,9 @@ class DisponibilidadeSemanalTabela(ctk.CTkFrame):
         self.row_widgets: List[Dict[str, Any]] = []
 
         # --- Header ---
-        for i, day in enumerate(["horário (HH:MM)", "seg", "ter", "qua", "qui", "sex", "sab", "dom", "remover"]):
-            header_label = ctk.CTkLabel(self, text=day, font=("Arial", 12, "bold"))
+        for i, day in enumerate(["Horário (HH:MM)", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab", "Dom", "Remover"]):
+            header_label = self.widgets.label(self, day, "transparent")
+            #header_label = ctk.CTkLabel(self, text=day, font=("Arial", 12, "bold"))
             header_label.grid(row=0, column=i, padx=5, pady=5)
         
         # --- Initial Rows ---
